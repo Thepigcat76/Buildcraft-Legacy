@@ -1,9 +1,12 @@
 package com.thepigcat.fancy_pipes.content.blockentities;
 
 import com.thepigcat.fancy_pipes.FancyPipes;
+import com.thepigcat.fancy_pipes.FancyPipesClient;
 import com.thepigcat.fancy_pipes.content.blocks.PipeBlock;
+import com.thepigcat.fancy_pipes.networking.SyncPipeDirectionPayload;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.util.BlockUtils;
+import com.thepigcat.fancy_pipes.util.CapabilityUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
@@ -22,12 +25,11 @@ import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.ItemStackHandler;
+import net.neoforged.neoforge.network.PacketDistributor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class PipeBlockEntity extends BlockEntity {
     public Direction extracting;
@@ -67,45 +69,55 @@ public class PipeBlockEntity extends BlockEntity {
 
     public void tick() {
         if (!level.isClientSide()) {
-            if (this.extracting != null) {
-                IItemHandler itemHandler = capabilityCaches.get(this.extracting).getCapability();
-                if (itemHandler != null) {
-                    ItemStack extractedItem = itemHandler.extractItem(0, 64, false);
-                    this.itemHandler.insertItem(0, extractedItem, false);
-                    this.from = this.extracting;
-                    FancyPipes.LOGGER.debug("Extracting from chest");
+            if (level.getGameTime() % 20 == 0) {
+                // If pipe can extract, extract from itemhandler on extracting side
+                if (this.extracting != null) {
+                    IItemHandler extractingHandler = capabilityCaches.get(this.extracting).getCapability();
+                    if (extractingHandler != null) {
+                        ItemStack stack = extractingHandler.extractItem(0, 64, false);
+                        this.itemHandler.insertItem(0, stack, false);
+
+                        this.from = this.extracting;
+
+                        List<Direction> directions = new ArrayList<>(this.directions);
+                        directions.remove(this.extracting);
+
+                        if (!directions.isEmpty()) {
+                            this.to = directions.getFirst();
+                        }
+
+                        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(this.getBlockPos(), Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
+                    }
                 }
-            }
 
-            Set<Direction> directions = new ObjectArraySet<>(this.directions);
-            directions.remove(this.from);
+                // handle item transmission
+                if (this.to != null) {
+                    IItemHandler insertingHandler = capabilityCaches.get(this.to).getCapability();
+                    if (insertingHandler != null) {
+                        ItemStack stack = this.itemHandler.extractItem(0, 64, false);
+                        insertingHandler.insertItem(0, stack, false);
 
-            for (Direction direction : directions) {
-                IItemHandler itemHandler = capabilityCaches.get(direction).getCapability();
-                if (itemHandler != null) {
-                    ItemStack itemStack = this.itemHandler.extractItem(0, 64, false);
-                    itemHandler.insertItem(0, itemStack, false);
+                        PipeBlockEntity blockEntity = BlockUtils.getBe(PipeBlockEntity.class, level, worldPosition.relative(this.to));
 
-                    PipeBlockEntity be = BlockUtils.getBe(PipeBlockEntity.class, level, worldPosition.relative(direction));
-                    if (be != null) {
-                        be.from = direction.getOpposite();
+                        if (blockEntity != null) {
+                            List<Direction> directions = new ArrayList<>(this.directions);
+                            directions.remove(this.from);
+
+                            blockEntity.from = this.to.getOpposite();
+
+                            if (!directions.isEmpty()) {
+                                blockEntity.to = directions.getFirst();
+                            } else {
+                                FancyPipes.LOGGER.debug("EEE");
+                            }
+
+                            PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(blockEntity.getBlockPos(), Optional.ofNullable(blockEntity.from), Optional.ofNullable(blockEntity.to)));
+                        }
+                    } else {
+                        FancyPipes.LOGGER.debug("no tiem: {}", this.worldPosition.relative(this.to));
                     }
                 }
             }
-//
-//            for (Direction direction : Direction.values()) {
-//                BlockEntity blockEntity = level.getBlockEntity(worldPosition.relative(direction));
-//                if (blockEntity instanceof PipeBlockEntity) {
-//                    if (itemHandler != null) {
-//                        ItemStack stack = itemHandler.getStackInSlot(0).copy();
-//                        this.itemHandler.insertItem(0, stack, false);
-//                        itemHandler.extractItem(0, stack.getCount(), false);
-//                        this.from = direction;
-//                    }
-//                } else {
-//
-//                }
-//            }
         }
     }
 

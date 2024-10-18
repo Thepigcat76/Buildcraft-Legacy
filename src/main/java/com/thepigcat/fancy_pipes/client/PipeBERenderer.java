@@ -28,27 +28,27 @@ public class PipeBERenderer implements BlockEntityRenderer<PipeBlockEntity> {
             offset += 0.001f;
         }
 
-        ItemStack stack = Items.IRON_INGOT.getDefaultInstance(); /*pipeBlockEntity.getItemHandler().getStackInSlot(0);*/
+        ItemStack stack = pipeBlockEntity.getItemHandler().getStackInSlot(0);
 
-        Direction from = Direction.EAST;
-        Direction to = Direction.SOUTH;
+        Direction from = pipeBlockEntity.from.getOpposite();
+        Direction to = pipeBlockEntity.to;
 
         float scalar = 1.5f - offset;
 
         poseStack.pushPose();
         {
-            Vec3i normal = from.getNormal();
-            double x = 0.5 + normal.getX();
-            double y = 0.5 + normal.getY();
-            double z = 0.5 + normal.getZ();
-            FancyPipes.LOGGER.debug("pre: X: {}, Y: {}, Z: {}", x, y, z);
-            double x1 = x - normal.getX() * scalar;
-            double y1 = y - normal.getY() * scalar;
-            double z1 = z - normal.getZ() * scalar;
-            FancyPipes.LOGGER.debug("post: X: {}, Y: {}, Z: {}", x1, y1, 1);
-            poseStack.translate(x1, y1, z1);
-            poseStack.scale(0.5f, 0.5f, 0.5f);
-            Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
+            if (from != null && to != null) {
+                Vec3i normal = from.getNormal();
+                double x = 0.5 + normal.getX();
+                double y = 0.5 + normal.getY();
+                double z = 0.5 + normal.getZ();
+                double x1 = x - normal.getX() * scalar;
+                double y1 = y - normal.getY() * scalar;
+                double z1 = z - normal.getZ() * scalar;
+                poseStack.translate(x1, y1, z1);
+                poseStack.scale(0.5f, 0.5f, 0.5f);
+                Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
+            }
         }
         poseStack.popPose();
     }

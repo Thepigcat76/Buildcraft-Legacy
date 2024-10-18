@@ -3,14 +3,19 @@ package com.thepigcat.fancy_pipes.content.blocks;
 import com.mojang.serialization.MapCodec;
 import com.thepigcat.fancy_pipes.content.blockentities.PipeBlockEntity;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
+import com.thepigcat.fancy_pipes.registries.FPItems;
 import com.thepigcat.fancy_pipes.util.BlockUtils;
 import com.thepigcat.fancy_pipes.util.CapabilityUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.network.chat.Component;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -201,10 +206,19 @@ public class PipeBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected InteractionResult useWithoutItem(BlockState state, Level level, BlockPos pos, Player player, BlockHitResult hitResult) {
+    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         PipeBlockEntity be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
-        be.extracting = hitResult.getDirection();
-        return InteractionResult.SUCCESS;
+        if (stack.is(FPItems.WRENCH.get())) {
+            be.extracting = hitResult.getDirection();
+        } else {
+            Direction direction = be.to;
+            if (direction != null) {
+                player.sendSystemMessage(Component.literal("Pos: " + pos.relative(direction)));
+            } else {
+                player.sendSystemMessage(Component.literal(":skull:"));
+            }
+        }
+        return ItemInteractionResult.SUCCESS;
     }
 
     public boolean canConnectToPipe(BlockState connectTo) {

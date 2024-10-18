@@ -2,12 +2,15 @@ package com.thepigcat.fancy_pipes;
 
 import com.thepigcat.fancy_pipes.client.PipeBERenderer;
 import com.thepigcat.fancy_pipes.content.blockentities.PipeBlockEntity;
+import com.thepigcat.fancy_pipes.networking.SyncPipeDirectionPayload;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.registries.FPBlocks;
 import com.thepigcat.fancy_pipes.registries.FPItems;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
+import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
+import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -50,13 +53,15 @@ public final class FancyPipes {
 
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, MODID);
 
-    public static final DeferredHolder<CreativeModeTab, CreativeModeTab> TAB = CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
-            .title(Component.translatable("itemGroup.examplemod"))
-            .withTabsBefore(CreativeModeTabs.COMBAT)
-            .icon(FPBlocks.PIPE::toStack)
-            .displayItems((parameters, output) -> {
-                output.accept(FPBlocks.PIPE);
-            }).build());
+    static {
+        CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
+                .title(Component.translatable("itemGroup.examplemod"))
+                .withTabsBefore(CreativeModeTabs.COMBAT)
+                .icon(FPBlocks.PIPE::toStack)
+                .displayItems((parameters, output) -> {
+                    output.accept(FPBlocks.PIPE);
+                }).build());
+    }
 
     public FancyPipes(IEventBus modEventBus, ModContainer modContainer) {
         CREATIVE_MODE_TABS.register(modEventBus);
@@ -67,9 +72,15 @@ public final class FancyPipes {
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
 
         modEventBus.addListener(this::attachCaps);
+        modEventBus.addListener(this::registerPayloads);
     }
 
     private void attachCaps(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.PIPE.get(), PipeBlockEntity::getItemHandler);
+    }
+
+    private void registerPayloads(RegisterPayloadHandlersEvent event) {
+        PayloadRegistrar registrar = event.registrar(MODID);
+        registrar.playToClient(SyncPipeDirectionPayload.TYPE, SyncPipeDirectionPayload.STREAM_CODEC, SyncPipeDirectionPayload::sync);
     }
 }
