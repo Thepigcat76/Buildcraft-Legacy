@@ -1,18 +1,16 @@
-package com.thepigcat.fancy_pipes.content.blocks;
+package com.thepigcat.fancy_pipes.api.blocks;
 
-import com.mojang.serialization.MapCodec;
-import com.thepigcat.fancy_pipes.content.blockentities.PipeBlockEntity;
+import com.thepigcat.fancy_pipes.api.blockentities.PipeBlockEntity;
+import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.registries.FPItems;
 import com.thepigcat.fancy_pipes.util.BlockUtils;
-import com.thepigcat.fancy_pipes.util.CapabilityUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
-import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -29,6 +27,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
@@ -38,8 +37,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
 
-public class PipeBlock extends BaseEntityBlock {
-    public static final BooleanProperty[] CONNECTION = new BooleanProperty[6];
+public abstract class PipeBlock extends BaseEntityBlock {
+    public static final EnumProperty<PipeState>[] CONNECTION = new EnumProperty[6];
+
     public final int border;
     public final VoxelShape shapeCenter;
     public final VoxelShape shapeD;
@@ -52,19 +52,19 @@ public class PipeBlock extends BaseEntityBlock {
 
     static {
         for (Direction dir : Direction.values()) {
-            CONNECTION[dir.get3DDataValue()] = BooleanProperty.create(dir.getSerializedName());
+            CONNECTION[dir.get3DDataValue()] = EnumProperty.create(dir.getSerializedName(), PipeState.class);
         }
     }
 
     public PipeBlock(Properties properties) {
         super(properties);
         registerDefaultState(getStateDefinition().any()
-                .setValue(CONNECTION[0], false)
-                .setValue(CONNECTION[1], false)
-                .setValue(CONNECTION[2], false)
-                .setValue(CONNECTION[3], false)
-                .setValue(CONNECTION[4], false)
-                .setValue(CONNECTION[5], false)
+                .setValue(CONNECTION[0], PipeState.NONE)
+                .setValue(CONNECTION[1], PipeState.NONE)
+                .setValue(CONNECTION[2], PipeState.NONE)
+                .setValue(CONNECTION[3], PipeState.NONE)
+                .setValue(CONNECTION[4], PipeState.NONE)
+                .setValue(CONNECTION[5], PipeState.NONE)
         );
         int width = 10;
         border = (16 - width) / 2;
@@ -86,7 +86,7 @@ public class PipeBlock extends BaseEntityBlock {
         int index = 0;
 
         for (Direction direction : Direction.values()) {
-            if (blockState.getValue(CONNECTION[direction.ordinal()])) {
+            if (blockState.getValue(CONNECTION[direction.ordinal()]) != PipeState.NONE) {
                 index |= 1 << direction.ordinal();
             }
         }
@@ -127,18 +127,13 @@ public class PipeBlock extends BaseEntityBlock {
     }
 
     @Override
-    protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(PipeBlock::new);
-    }
-
-    @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return new PipeBlockEntity(blockPos, blockState);
+        return FPBlockEntities.COBBLESTONE_PIPE.get().create(blockPos, blockState);
     }
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, FPBlockEntities.PIPE.get(), (beLevel, bePos, beState, be) -> be.tick());
+        return createTickerHelper(blockEntityType, FPBlockEntities.COBBLESTONE_PIPE.get(), (beLevel, bePos, beState, be) -> be.tick());
     }
 
     @Override
@@ -155,13 +150,13 @@ public class PipeBlock extends BaseEntityBlock {
     public @NotNull BlockState updateShape(BlockState blockState, Direction facingDirection, BlockState facingBlockState, LevelAccessor level, BlockPos blockPos, BlockPos facingBlockPos) {
         int connectionIndex = facingDirection.ordinal();
         BlockEntity blockEntity = level.getBlockEntity(facingBlockPos);
-        PipeBlockEntity pipeBE = BlockUtils.getBe(PipeBlockEntity.class, level, blockPos);
-        if (canConnectToPipe(facingBlockState) || (blockEntity != null && canConnectTo(blockEntity))) {
+        PipeBlockEntity<?> pipeBE = BlockUtils.getBe(PipeBlockEntity.class, level, blockPos);
+        if (facingBlockState.is(this) || (blockEntity != null && canConnectTo(blockEntity))) {
             pipeBE.getDirections().add(facingDirection);
-            return blockState.setValue(CONNECTION[connectionIndex], true);
+            return blockState.setValue(CONNECTION[connectionIndex], PipeState.CONNECTED);
         } else if (facingBlockState.isEmpty()) {
             pipeBE.getDirections().remove(facingDirection);
-            return blockState.setValue(CONNECTION[connectionIndex], false);
+            return blockState.setValue(CONNECTION[connectionIndex], PipeState.NONE);
         }
 
         return blockState;
@@ -180,7 +175,7 @@ public class PipeBlock extends BaseEntityBlock {
             BlockEntity blockEntity = level.getBlockEntity(facingBlockPos);
 
             if (blockEntity != null && canConnectTo(blockEntity)) {
-                blockState = blockState.setValue(CONNECTION[connectionIndex], true);
+                blockState = blockState.setValue(CONNECTION[connectionIndex], PipeState.CONNECTED);
             }
         }
 
@@ -191,14 +186,14 @@ public class PipeBlock extends BaseEntityBlock {
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
-        PipeBlockEntity be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
+        PipeBlockEntity<?> be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
         be.setDirections(connectionsToDirections(state));
     }
 
     private static Set<Direction> connectionsToDirections(BlockState state) {
         Set<Direction> directions = new ObjectArraySet<>();
         for (Direction direction : Direction.values()) {
-            if (state.getValue(CONNECTION[direction.ordinal()])) {
+            if (state.getValue(CONNECTION[direction.ordinal()]) != PipeState.NONE) {
                 directions.add(direction);
             }
         }
@@ -207,7 +202,7 @@ public class PipeBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        PipeBlockEntity be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
+        ItemPipeBE be = BlockUtils.getBe(ItemPipeBE.class, level, pos);
         if (stack.is(FPItems.WRENCH.get())) {
             be.extracting = hitResult.getDirection();
         } else {
@@ -217,15 +212,27 @@ public class PipeBlock extends BaseEntityBlock {
             } else {
                 player.sendSystemMessage(Component.literal(":skull:"));
             }
+            player.sendSystemMessage(Component.literal("dirs: " + be.getDirections()));
         }
         return ItemInteractionResult.SUCCESS;
     }
 
-    public boolean canConnectToPipe(BlockState connectTo) {
-        return connectTo.is(this);
-    }
+    public abstract boolean canConnectTo(BlockEntity connectTo);
 
-    public boolean canConnectTo(BlockEntity connectTo) {
-        return CapabilityUtils.itemHandlerCapability(connectTo) != null;
+    public enum PipeState implements StringRepresentable {
+        EXTRACTING("extracting"),
+        CONNECTED("connected"),
+        NONE("none");
+
+        private final String name;
+
+        PipeState(String name) {
+            this.name = name;
+        }
+
+        @Override
+        public @NotNull String getSerializedName() {
+            return this.name;
+        }
     }
 }

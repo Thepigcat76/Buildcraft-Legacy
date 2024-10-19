@@ -2,8 +2,7 @@
   "parent": "minecraft:block/block",
   "render_type": "cutout",
   "textures": {
-    "texture": "fancy_pipes:block/pipe",
-    "particle": "fancy_pipes:block/pipe"
+    "particle": "#texture"
   },
   "elements": [
     {
