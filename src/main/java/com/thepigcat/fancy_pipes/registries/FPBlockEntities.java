@@ -1,6 +1,7 @@
 package com.thepigcat.fancy_pipes.registries;
 
 import com.thepigcat.fancy_pipes.FancyPipes;
+import com.thepigcat.fancy_pipes.content.blockentities.CrateBE;
 import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,4 +14,6 @@ public final class FPBlockEntities {
 
     public static final Supplier<BlockEntityType<ItemPipeBE>> COBBLESTONE_PIPE = BLOCK_ENTITIES.register("cobblestone_item_pipe",
             () -> BlockEntityType.Builder.of(ItemPipeBE::new, FPBlocks.COBBLESTONE_ITEM_PIPE.get(), FPBlocks.WOODEN_ITEM_PIPE.get()).build(null));
+    public static final Supplier<BlockEntityType<CrateBE>> CRATE = BLOCK_ENTITIES.register("crate",
+            () -> BlockEntityType.Builder.of(CrateBE::new, FPBlocks.CRATE.get()).build(null));
 }

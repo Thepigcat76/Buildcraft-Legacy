@@ -9,9 +9,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
-import net.neoforged.neoforge.client.model.generators.BlockStateProvider;
-import net.neoforged.neoforge.client.model.generators.ModelFile;
-import net.neoforged.neoforge.client.model.generators.MultiPartBlockStateBuilder;
+import net.neoforged.neoforge.client.model.generators.*;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class FPBlockStateProvider extends BlockStateProvider {
@@ -21,6 +19,8 @@ public class FPBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
+        pillarBlock(FPBlocks.CRATE.get());
+
         for (Block block : FPBlocks.BLOCKS.getRegistry().get()) {
             if (block instanceof ExtractingPipeBlock) {
                 extractingPipeBlock(block);
@@ -29,6 +29,22 @@ public class FPBlockStateProvider extends BlockStateProvider {
             }
 
         }
+    }
+
+    private void pillarBlock(Block block) {
+        ResourceLocation side = blockTexture(block);
+        ResourceLocation top = extend(side, "_top");
+        getVariantBuilder(block).partialState().setModels(
+                new ConfiguredModel(models().cube(
+                        name(block),
+                        top,
+                        top,
+                        side,
+                        side,
+                        side,
+                        side
+                ).texture("particle", side))
+        );
     }
 
     private void pipeBlock(Block block) {
@@ -80,6 +96,23 @@ public class FPBlockStateProvider extends BlockStateProvider {
     private ModelFile pipeExtractingModel(ResourceLocation blockLoc) {
         return models().withExistingParent(blockLoc.getPath() + "_connection_extracting", modLoc("block/pipe_connection"))
                 .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/" + blockLoc.getPath() + "_extracting"));
+    }
+
+    private ResourceLocation key(Block block) {
+        return BuiltInRegistries.BLOCK.getKey(block);
+    }
+
+    private String name(Block block) {
+        return key(block).getPath();
+    }
+
+    public ResourceLocation blockTexture(Block block) {
+        ResourceLocation name = key(block);
+        return ResourceLocation.fromNamespaceAndPath(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
+    }
+
+    private ResourceLocation extend(ResourceLocation rl, String suffix) {
+        return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), rl.getPath() + suffix);
     }
 
 }

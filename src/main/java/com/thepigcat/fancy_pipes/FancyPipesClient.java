@@ -1,5 +1,6 @@
 package com.thepigcat.fancy_pipes;
 
+import com.thepigcat.fancy_pipes.client.CrateBERenderer;
 import com.thepigcat.fancy_pipes.client.PipeBERenderer;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import net.neoforged.bus.api.IEventBus;
@@ -17,5 +18,6 @@ public final class FancyPipesClient {
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
         event.registerBlockEntityRenderer(FPBlockEntities.COBBLESTONE_PIPE.get(), PipeBERenderer::new);
+        event.registerBlockEntityRenderer(FPBlockEntities.CRATE.get(), CrateBERenderer::new);
     }
 }

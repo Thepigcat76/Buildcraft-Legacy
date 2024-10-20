@@ -1,5 +1,6 @@
 package com.thepigcat.fancy_pipes;
 
+import com.thepigcat.fancy_pipes.content.blockentities.CrateBE;
 import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
 import com.thepigcat.fancy_pipes.networking.SyncPipeDirectionPayload;
 import com.thepigcat.fancy_pipes.networking.SyncPipeMovementPayload;
@@ -61,6 +62,7 @@ public final class FancyPipes {
 
     private void attachCaps(RegisterCapabilitiesEvent event) {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.COBBLESTONE_PIPE.get(), ItemPipeBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.CRATE.get(), CrateBE::getItemHandler);
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

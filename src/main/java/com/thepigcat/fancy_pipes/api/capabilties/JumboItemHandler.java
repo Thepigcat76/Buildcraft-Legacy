@@ -1,3 +1,8 @@
+/**
+ * Mostly from functional storage's BigItemHandler class
+ * Credits to buzz and all contributors <3
+ */
+
 package com.thepigcat.fancy_pipes.api.capabilties;
 
 import com.mojang.datafixers.util.Pair;
@@ -5,6 +10,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.thepigcat.fancy_pipes.FancyPipes;
 import net.minecraft.core.HolderLookup;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
@@ -22,11 +28,8 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
             BigStack.CODEC.listOf().fieldOf("items").forGetter(JumboItemHandler::getItems),
             Codec.INT.fieldOf("slotLimit").forGetter(JumboItemHandler::getSlotLimit)
     ).apply(builder, JumboItemHandler::new));
-    public static final String BIG_ITEMHANDLER = "big_itemhandler";
 
-    public static String BIG_ITEMS = "big_items";
-    public static String STACK = "stack";
-    public static String AMOUNT = "amount";
+    public static final String BIG_ITEMHANDLER = "big_itemhandler";
 
     private List<BigStack> items;
     private int slotLimit;
@@ -36,7 +39,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
     }
 
     public JumboItemHandler(int slots, int slotLimit) {
-        this.items = new ArrayList<>(slots);
+        this.items = NonNullList.withSize(slots, BigStack.EMPTY);
         this.slotLimit = slotLimit;
     }
 
@@ -62,6 +65,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
+        FancyPipes.LOGGER.debug("Inserting");
         if (isItemValid(slot, stack)) {
             BigStack bigStack = this.items.get(slot);
             int inserted = Math.min(getSlotLimit(slot) - bigStack.getAmount(), stack.getCount());
@@ -135,7 +139,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
 
     @Override
     public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        Optional<Pair<JumboItemHandler, Tag>> bigStackTagPair = JumboItemHandler.CODEC.decode(NbtOps.INSTANCE, nbt)
+        Optional<Pair<JumboItemHandler, Tag>> bigStackTagPair = JumboItemHandler.CODEC.decode(NbtOps.INSTANCE, nbt.getCompound(BIG_ITEMHANDLER))
                 .resultOrPartial(msg -> FancyPipes.LOGGER.error("Error decoding jumbo item handler, {}", msg));
 
         if (bigStackTagPair.isPresent()) {
@@ -151,6 +155,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
                         Codec.INT.fieldOf("amount").forGetter(BigStack::getAmount)
                 ).apply(builder, BigStack::new)
         );
+        public static final BigStack EMPTY = new BigStack(ItemStack.EMPTY, 0);
 
         private ItemStack stack;
         private ItemStack slotStack;

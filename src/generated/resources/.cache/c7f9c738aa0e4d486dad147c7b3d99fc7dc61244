@@ -1,4 +1,5 @@
-// 1.21.1	2024-10-19T20:49:18.987131501	Item Models: fancy_pipes
+// 1.21.1	2024-10-20T19:36:18.376196498	Item Models: fancy_pipes
 40cd7c3102108674c50cffea768b3ebc3192d310 assets/fancy_pipes/models/item/cobblestone_pipe.json
+421d63afdaebb8f833c98d44c4f90845495b5b5a assets/fancy_pipes/models/item/crate.json
 71562b6d68b7463db37f0728c9414f10d5963345 assets/fancy_pipes/models/item/wooden_pipe.json
 7a37a5c55b23f0db93dc535b5f4409c6975bdd73 assets/fancy_pipes/models/item/wrench.json

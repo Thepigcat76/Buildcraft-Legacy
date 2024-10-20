@@ -1,0 +1,11 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "fancy_pipes:block/crate_top",
+    "east": "fancy_pipes:block/crate",
+    "north": "fancy_pipes:block/crate",
+    "south": "fancy_pipes:block/crate",
+    "up": "fancy_pipes:block/crate_top",
+    "west": "fancy_pipes:block/crate"
+  }
+}

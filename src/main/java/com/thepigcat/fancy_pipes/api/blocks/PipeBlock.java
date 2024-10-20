@@ -83,7 +83,6 @@ public abstract class PipeBlock extends BaseEntityBlock {
         shapes = new VoxelShape[64];
     }
 
-
     @Override
     public VoxelShape getShape(BlockState blockState, BlockGetter p_60556_, BlockPos p_60557_, CollisionContext p_60558_) {
         int index = 0;
@@ -161,7 +160,7 @@ public abstract class PipeBlock extends BaseEntityBlock {
             pipeBE.getDirections().remove(facingDirection);
             return blockState.setValue(CONNECTION[connectionIndex], PipeState.NONE);
         }
-        setPipeProperties(pipeBE);
+        setPipeProperties(pipeBE, blockState);
 
         return blockState;
     }
@@ -188,7 +187,7 @@ public abstract class PipeBlock extends BaseEntityBlock {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
         PipeBlockEntity<?> be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
-        setPipeProperties(be);
+        setPipeProperties(be, state);
     }
 
     public static void setPipeProperties(PipeBlockEntity<?> be) {
