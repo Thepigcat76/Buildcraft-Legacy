@@ -7,6 +7,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
@@ -40,6 +41,8 @@ public class PipeBERenderer implements BlockEntityRenderer<ItemPipeBE> {
                 poseStack.translate(x1, y1, z1);
                 poseStack.scale(0.5f, 0.5f, 0.5f);
                 Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
+            } else if (pipeBlockEntity.getBlockPos().equals(new BlockPos(-368, 82, 121))) {
+                FancyPipes.LOGGER.debug("from: {}, to: {}", from, to);
             }
         }
         poseStack.popPose();

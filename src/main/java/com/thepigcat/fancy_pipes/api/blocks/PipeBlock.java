@@ -1,9 +1,9 @@
 package com.thepigcat.fancy_pipes.api.blocks;
 
+import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.api.blockentities.PipeBlockEntity;
 import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
-import com.thepigcat.fancy_pipes.registries.FPItems;
 import com.thepigcat.fancy_pipes.util.BlockUtils;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.core.BlockPos;
@@ -26,15 +26,18 @@ import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
+import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Set;
 
 public abstract class PipeBlock extends BaseEntityBlock {
@@ -86,8 +89,8 @@ public abstract class PipeBlock extends BaseEntityBlock {
         int index = 0;
 
         for (Direction direction : Direction.values()) {
-            if (blockState.getValue(CONNECTION[direction.ordinal()]) != PipeState.NONE) {
-                index |= 1 << direction.ordinal();
+            if (blockState.getValue(CONNECTION[direction.get3DDataValue()]) != PipeState.NONE) {
+                index |= 1 << direction.get3DDataValue();
             }
         }
 
@@ -148,16 +151,17 @@ public abstract class PipeBlock extends BaseEntityBlock {
 
     @Override
     public @NotNull BlockState updateShape(BlockState blockState, Direction facingDirection, BlockState facingBlockState, LevelAccessor level, BlockPos blockPos, BlockPos facingBlockPos) {
-        int connectionIndex = facingDirection.ordinal();
-        BlockEntity blockEntity = level.getBlockEntity(facingBlockPos);
+        int connectionIndex = facingDirection.get3DDataValue();
         PipeBlockEntity<?> pipeBE = BlockUtils.getBe(PipeBlockEntity.class, level, blockPos);
-        if (facingBlockState.is(this) || (blockEntity != null && canConnectTo(blockEntity))) {
+        PipeState connectionType = getConnectionType(level, blockPos, blockState, facingDirection, facingBlockPos);
+        if (connectionType != PipeState.NONE) {
             pipeBE.getDirections().add(facingDirection);
-            return blockState.setValue(CONNECTION[connectionIndex], PipeState.CONNECTED);
+            return blockState.setValue(CONNECTION[connectionIndex], connectionType);
         } else if (facingBlockState.isEmpty()) {
             pipeBE.getDirections().remove(facingDirection);
             return blockState.setValue(CONNECTION[connectionIndex], PipeState.NONE);
         }
+        setPipeProperties(pipeBE);
 
         return blockState;
     }
@@ -170,13 +174,10 @@ public abstract class PipeBlock extends BaseEntityBlock {
         BlockState blockState = defaultBlockState();
 
         for (Direction direction : Direction.values()) {
-            int connectionIndex = direction.ordinal();
+            int connectionIndex = direction.get3DDataValue();
             BlockPos facingBlockPos = blockPos.relative(direction);
-            BlockEntity blockEntity = level.getBlockEntity(facingBlockPos);
 
-            if (blockEntity != null && canConnectTo(blockEntity)) {
-                blockState = blockState.setValue(CONNECTION[connectionIndex], PipeState.CONNECTED);
-            }
+            blockState = blockState.setValue(CONNECTION[connectionIndex], getConnectionType(level, blockPos, blockState, direction, facingBlockPos));
         }
 
         return blockState;
@@ -187,37 +188,46 @@ public abstract class PipeBlock extends BaseEntityBlock {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
         PipeBlockEntity<?> be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
-        be.setDirections(connectionsToDirections(state));
+        setPipeProperties(be);
     }
 
-    private static Set<Direction> connectionsToDirections(BlockState state) {
+    public static void setPipeProperties(PipeBlockEntity<?> be) {
+        setPipeProperties(be, be.getBlockState());
+    }
+
+    public static void setPipeProperties(PipeBlockEntity<?> be, BlockState state) {
         Set<Direction> directions = new ObjectArraySet<>();
         for (Direction direction : Direction.values()) {
-            if (state.getValue(CONNECTION[direction.ordinal()]) != PipeState.NONE) {
+            PipeState pipeState = state.getValue(CONNECTION[direction.get3DDataValue()]);
+            if (pipeState != PipeState.NONE) {
                 directions.add(direction);
+                if (pipeState == PipeState.EXTRACTING) {
+                    be.extracting = direction;
+                }
             }
         }
-        return directions;
+        FancyPipes.LOGGER.debug("set Dirs: {}", directions);
+        be.setDirections(directions);
     }
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        ItemPipeBE be = BlockUtils.getBe(ItemPipeBE.class, level, pos);
-        if (stack.is(FPItems.WRENCH.get())) {
-            be.extracting = hitResult.getDirection();
-        } else {
+        if (!level.isClientSide) {
+            ItemPipeBE be = BlockUtils.getBe(ItemPipeBE.class, level, pos);
             Direction direction = be.to;
             if (direction != null) {
                 player.sendSystemMessage(Component.literal("Pos: " + pos.relative(direction)));
             } else {
                 player.sendSystemMessage(Component.literal(":skull:"));
             }
-            player.sendSystemMessage(Component.literal("dirs: " + be.getDirections()));
+
+            player.sendSystemMessage(Component.literal("dirs: "+be.getDirections()));
+            player.sendSystemMessage(Component.literal("------"));
         }
         return ItemInteractionResult.SUCCESS;
     }
 
-    public abstract boolean canConnectTo(BlockEntity connectTo);
+    public abstract PipeState getConnectionType(LevelAccessor level, BlockPos pipePos, BlockState pipeState, Direction connectionDirection, BlockPos connectPos);
 
     public enum PipeState implements StringRepresentable {
         EXTRACTING("extracting"),

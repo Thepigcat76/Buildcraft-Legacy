@@ -1,6 +1,7 @@
 package com.thepigcat.fancy_pipes.datagen;
 
 import com.thepigcat.fancy_pipes.FancyPipes;
+import com.thepigcat.fancy_pipes.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.fancy_pipes.api.blocks.PipeBlock;
 import com.thepigcat.fancy_pipes.registries.FPBlocks;
 import net.minecraft.core.Direction;
@@ -21,13 +22,12 @@ public class FPBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         for (Block block : FPBlocks.BLOCKS.getRegistry().get()) {
-            if (block instanceof PipeBlock) {
-                if (block == FPBlocks.WOODEN_ITEM_PIPE.get()) {
-                    extractingPipeBlock(block);
-                } else {
-                    pipeBlock(block);
-                }
+            if (block instanceof ExtractingPipeBlock) {
+                extractingPipeBlock(block);
+            } else if (block instanceof PipeBlock) {
+                pipeBlock(block);
             }
+
         }
     }
 
@@ -68,18 +68,18 @@ public class FPBlockStateProvider extends BlockStateProvider {
     }
 
     private ModelFile pipeBaseModel(ResourceLocation blockLoc) {
-        return models().withExistingParent(blockLoc.getPath()+"_base", modLoc("block/pipe_base"))
-                .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/"+blockLoc.getPath()));
+        return models().withExistingParent(blockLoc.getPath() + "_base", modLoc("block/pipe_base"))
+                .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/" + blockLoc.getPath()));
     }
 
     private ModelFile pipeConnectionModel(ResourceLocation blockLoc) {
-        return models().withExistingParent(blockLoc.getPath()+"_connection", modLoc("block/pipe_connection"))
-                .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/"+blockLoc.getPath()));
+        return models().withExistingParent(blockLoc.getPath() + "_connection", modLoc("block/pipe_connection"))
+                .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/" + blockLoc.getPath()));
     }
 
     private ModelFile pipeExtractingModel(ResourceLocation blockLoc) {
-        return models().withExistingParent(blockLoc.getPath()+"_connection_extracting", modLoc("block/pipe_connection"))
-                .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/"+blockLoc.getPath()+"_extracting"));
+        return models().withExistingParent(blockLoc.getPath() + "_connection_extracting", modLoc("block/pipe_connection"))
+                .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/" + blockLoc.getPath() + "_extracting"));
     }
 
 }

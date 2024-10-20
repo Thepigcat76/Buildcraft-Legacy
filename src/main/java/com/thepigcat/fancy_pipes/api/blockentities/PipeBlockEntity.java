@@ -1,5 +1,6 @@
 package com.thepigcat.fancy_pipes.api.blockentities;
 
+import com.thepigcat.fancy_pipes.api.blocks.PipeBlock;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import it.unimi.dsi.fastutil.objects.ObjectArraySet;
 import net.minecraft.core.BlockPos;
@@ -34,15 +35,19 @@ public abstract class PipeBlockEntity<CAP> extends BlockEntity {
 
     protected abstract BlockCapability<CAP, Direction> getCapType();
 
+    public Map<Direction, BlockCapabilityCache<CAP, Direction>> getCapabilityCaches() {
+        return capabilityCaches;
+    }
+
     @Override
     public void onLoad() {
         super.onLoad();
         if (level instanceof ServerLevel serverLevel) {
+            PipeBlock.setPipeProperties(this);
             Direction[] directions = Direction.values();
             for (Direction direction : directions) {
                 capabilityCaches.put(direction, BlockCapabilityCache.create(getCapType(), serverLevel, worldPosition.relative(direction), direction));
             }
-            level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
         }
     }
 
@@ -59,14 +64,11 @@ public abstract class PipeBlockEntity<CAP> extends BlockEntity {
     @Override
     protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.loadAdditional(tag, registries);
-        int extractingIndex = tag.getInt("extracting");
-        this.extracting = extractingIndex >= 0 ? Direction.values()[extractingIndex] : null;
     }
 
     @Override
     protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
         super.saveAdditional(tag, registries);
-        tag.putInt("extracting", this.extracting != null ? this.extracting.ordinal() : -1);
     }
 
     @Nullable
