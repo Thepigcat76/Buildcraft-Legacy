@@ -61,7 +61,8 @@ public final class FancyPipes {
     }
 
     private void attachCaps(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.COBBLESTONE_PIPE.get(), ItemPipeBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.EXTRACTING_ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.CRATE.get(), CrateBE::getItemHandler);
     }
 

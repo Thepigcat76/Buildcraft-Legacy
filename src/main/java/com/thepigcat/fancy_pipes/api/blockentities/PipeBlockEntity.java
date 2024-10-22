@@ -13,6 +13,7 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
@@ -27,8 +28,8 @@ public abstract class PipeBlockEntity<CAP> extends BlockEntity {
     protected final Map<Direction, BlockCapabilityCache<CAP, Direction>> capabilityCaches;
     protected Set<Direction> directions;
 
-    public PipeBlockEntity(BlockPos pos, BlockState blockState) {
-        super(FPBlockEntities.COBBLESTONE_PIPE.get(), pos, blockState);
+    public PipeBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
+        super(type, pos, blockState);
         this.capabilityCaches = new HashMap<>(6);
         this.directions = new ObjectArraySet<>(6);
     }

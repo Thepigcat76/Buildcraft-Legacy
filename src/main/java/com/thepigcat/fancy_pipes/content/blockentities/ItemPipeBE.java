@@ -4,6 +4,7 @@ import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.api.blockentities.PipeBlockEntity;
 import com.thepigcat.fancy_pipes.networking.SyncPipeDirectionPayload;
 import com.thepigcat.fancy_pipes.networking.SyncPipeMovementPayload;
+import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.util.BlockUtils;
 import com.thepigcat.fancy_pipes.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
@@ -12,6 +13,7 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -24,7 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
-    private final ItemStackHandler itemHandler;
+    protected final ItemStackHandler itemHandler;
 
     public Direction from;
     public Direction to;
@@ -33,7 +35,11 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     protected long lastWorldTick;
 
     public ItemPipeBE(BlockPos pos, BlockState blockState) {
-        super(pos, blockState);
+        this(FPBlockEntities.ITEM_PIPE.get(), pos, blockState);
+    }
+
+    public ItemPipeBE(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {
+        super(blockEntityType, pos, blockState);
         this.itemHandler = new ItemStackHandler(1) {
             @Override
             protected void onContentsChanged(int slot) {
@@ -56,28 +62,6 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
             return;
         this.lastWorldTick = worldTick;
 
-        // If pipe can extract, extract from itemhandler on extracting side
-        if (!level.isClientSide() && level.getGameTime() % 50 == 0) {
-            if (this.extracting != null) {
-                IItemHandler extractingHandler = capabilityCaches.get(this.extracting).getCapability();
-                if (extractingHandler != null) {
-                    ItemStack stack = extractingHandler.extractItem(0, 64, false);
-                    this.itemHandler.insertItem(0, stack, false);
-
-                    this.from = this.extracting;
-
-                    List<Direction> directions = new ArrayList<>(this.directions);
-                    directions.remove(this.extracting);
-
-                    if (!directions.isEmpty()) {
-                        this.to = directions.getFirst();
-                    }
-
-                    PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(this.getBlockPos(), Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
-                }
-            }
-        }
-
         // handle item transmission
         if (!level.isClientSide() && this.movement >= 1f) {
             if (this.to != null) {
@@ -89,17 +73,15 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
 
                     ItemPipeBE blockEntity = BlockUtils.getBe(ItemPipeBE.class, level, worldPosition.relative(this.to));
 
-
                     if (blockEntity != null) {
                         List<Direction> directions = new ArrayList<>(blockEntity.directions);
                         directions.remove(this.to.getOpposite());
 
-                        FancyPipes.LOGGER.debug("next dirs: {}", directions);
-
                         blockEntity.from = this.to.getOpposite();
 
                         if (!directions.isEmpty()) {
-                            blockEntity.to = directions.getFirst();
+                            int dirIndex = level.random.nextInt(0, directions.size());
+                            blockEntity.to = directions.get(dirIndex);
                         }
                         blockEntity.lastMovement = Math.abs(1 - this.lastMovement);
                         blockEntity.movement = Math.abs(1 - this.movement);
@@ -122,6 +104,7 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
         }
     }
 
+    // TODO: Use parameter
     public ItemStackHandler getItemHandler(Direction direction) {
         return itemHandler;
     }

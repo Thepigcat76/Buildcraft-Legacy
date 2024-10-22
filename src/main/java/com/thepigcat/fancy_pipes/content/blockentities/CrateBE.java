@@ -24,7 +24,15 @@ public class CrateBE extends BlockEntity {
 
     public CrateBE(BlockPos pos, BlockState blockState) {
         super(FPBlockEntities.CRATE.get(), pos, blockState);
-        this.itemHandler = new JumboItemHandler(4096);
+        this.itemHandler = new JumboItemHandler(4096) {
+            @Override
+            public void onChanged() {
+                setChanged();
+                if (!level.isClientSide()) {
+                    level.sendBlockUpdated(getBlockPos(), getBlockState(), getBlockState(), 3);
+                }
+            }
+        };
     }
 
     @Override

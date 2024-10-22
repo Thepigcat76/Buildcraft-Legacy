@@ -2,6 +2,7 @@ package com.thepigcat.fancy_pipes.api.blocks;
 
 import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.api.blockentities.PipeBlockEntity;
+import com.thepigcat.fancy_pipes.content.blockentities.ExtractItemPipeBE;
 import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.util.BlockUtils;
@@ -31,13 +32,9 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
-import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
 import java.util.Set;
 
 public abstract class PipeBlock extends BaseEntityBlock {
@@ -130,12 +127,14 @@ public abstract class PipeBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return FPBlockEntities.COBBLESTONE_PIPE.get().create(blockPos, blockState);
+        return getBlockEntityType().create(blockPos, blockState);
     }
+
+    protected abstract BlockEntityType<? extends PipeBlockEntity<?>> getBlockEntityType();
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, FPBlockEntities.COBBLESTONE_PIPE.get(), (beLevel, bePos, beState, be) -> be.tick());
+        return createTickerHelper(blockEntityType, getBlockEntityType(), (beLevel, bePos, beState, be) -> be.tick());
     }
 
     @Override

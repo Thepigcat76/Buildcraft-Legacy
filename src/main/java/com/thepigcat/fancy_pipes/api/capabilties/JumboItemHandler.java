@@ -14,6 +14,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.INBTSerializable;
 import net.neoforged.neoforge.items.IItemHandler;
@@ -30,17 +31,23 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
     ).apply(builder, JumboItemHandler::new));
 
     public static final String BIG_ITEMHANDLER = "big_itemhandler";
+    public static String BIG_ITEMS = "BigItems";
+    public static String STACK = "Stack";
+    public static String AMOUNT = "Amount";
 
-    private List<BigStack> items;
-    private int slotLimit;
+    private final List<BigStack> items;
+    private final int slotLimit;
 
     public JumboItemHandler(int slotLimit) {
         this(1, slotLimit);
     }
 
     public JumboItemHandler(int slots, int slotLimit) {
-        this.items = NonNullList.withSize(slots, BigStack.EMPTY);
         this.slotLimit = slotLimit;
+        this.items = new ArrayList<>();
+        for (int i = 0; i < slots; i++) {
+            this.items.add(i, new BigStack(ItemStack.EMPTY, 0));
+        }
     }
 
     public JumboItemHandler(List<BigStack> items, int slotLimit) {
@@ -65,7 +72,6 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
 
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
-        FancyPipes.LOGGER.debug("Inserting");
         if (isItemValid(slot, stack)) {
             BigStack bigStack = this.items.get(slot);
             int inserted = Math.min(getSlotLimit(slot) - bigStack.getAmount(), stack.getCount());
@@ -81,7 +87,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
         return stack;
     }
 
-    private void onChanged() {
+    public void onChanged() {
     }
 
     @Override
@@ -128,25 +134,29 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
     }
 
     @Override
-    public @UnknownNullability CompoundTag serializeNBT(HolderLookup.Provider provider) {
+    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
         CompoundTag compoundTag = new CompoundTag();
-        Optional<Tag> tag = JumboItemHandler.CODEC.encodeStart(NbtOps.INSTANCE, this)
-                .resultOrPartial(msg -> FancyPipes.LOGGER.error("Error encoding jumbo item handler, {}", msg));
-
-        tag.ifPresent(value -> compoundTag.put(BIG_ITEMHANDLER, value));
+        CompoundTag items = new CompoundTag();
+        for (int i = 0; i < this.items.size(); i++) {
+            CompoundTag bigStack = new CompoundTag();
+            bigStack.put(STACK, this.items.get(i).getStack().saveOptional(provider));
+            bigStack.putInt(AMOUNT, this.items.get(i).getAmount());
+            items.put(i + "", bigStack);
+        }
+        compoundTag.put(BIG_ITEMS, items);
         return compoundTag;
     }
 
     @Override
-    public void deserializeNBT(HolderLookup.Provider provider, CompoundTag nbt) {
-        Optional<Pair<JumboItemHandler, Tag>> bigStackTagPair = JumboItemHandler.CODEC.decode(NbtOps.INSTANCE, nbt.getCompound(BIG_ITEMHANDLER))
-                .resultOrPartial(msg -> FancyPipes.LOGGER.error("Error decoding jumbo item handler, {}", msg));
-
-        if (bigStackTagPair.isPresent()) {
-            JumboItemHandler itemHandler = bigStackTagPair.get().getFirst();
-            this.items = itemHandler.items;
-            this.slotLimit = itemHandler.slotLimit;
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
+        for (String allKey : nbt.getCompound(BIG_ITEMS).getAllKeys()) {
+            this.items.get(Integer.parseInt(allKey)).setStack(deserialize(provider, nbt.getCompound(BIG_ITEMS).getCompound(allKey).getCompound(STACK)));
+            this.items.get(Integer.parseInt(allKey)).setAmount(nbt.getCompound(BIG_ITEMS).getCompound(allKey).getInt(AMOUNT));
         }
+    }
+
+    public static ItemStack deserialize(HolderLookup.Provider provider, CompoundTag tag) {
+        return ItemStack.OPTIONAL_CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag).getOrThrow().getFirst();
     }
 
     public static class BigStack {

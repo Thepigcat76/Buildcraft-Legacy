@@ -17,7 +17,8 @@ public final class FancyPipesClient {
     }
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
-        event.registerBlockEntityRenderer(FPBlockEntities.COBBLESTONE_PIPE.get(), PipeBERenderer::new);
+        event.registerBlockEntityRenderer(FPBlockEntities.ITEM_PIPE.get(), PipeBERenderer::new);
+        event.registerBlockEntityRenderer(FPBlockEntities.EXTRACTING_ITEM_PIPE.get(), PipeBERenderer::new);
         event.registerBlockEntityRenderer(FPBlockEntities.CRATE.get(), CrateBERenderer::new);
     }
 }

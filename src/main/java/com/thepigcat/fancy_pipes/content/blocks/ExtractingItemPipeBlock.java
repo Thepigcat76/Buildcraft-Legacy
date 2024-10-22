@@ -1,18 +1,22 @@
 package com.thepigcat.fancy_pipes.content.blocks;
 
 import com.mojang.serialization.MapCodec;
+import com.thepigcat.fancy_pipes.api.blockentities.PipeBlockEntity;
 import com.thepigcat.fancy_pipes.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.fancy_pipes.api.blocks.PipeBlock;
+import com.thepigcat.fancy_pipes.content.blockentities.ExtractItemPipeBE;
+import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 
-public class WoodenItemPipeBlock extends ExtractingPipeBlock {
-    public WoodenItemPipeBlock(Properties properties) {
+public class ExtractingItemPipeBlock extends ExtractingPipeBlock {
+    public ExtractingItemPipeBlock(Properties properties) {
         super(properties);
     }
 
@@ -43,6 +47,11 @@ public class WoodenItemPipeBlock extends ExtractingPipeBlock {
 
     @Override
     protected MapCodec<? extends BaseEntityBlock> codec() {
-        return simpleCodec(WoodenItemPipeBlock::new);
+        return simpleCodec(ExtractingItemPipeBlock::new);
+    }
+
+    @Override
+    protected BlockEntityType<? extends PipeBlockEntity<?>> getBlockEntityType() {
+        return FPBlockEntities.EXTRACTING_ITEM_PIPE.get();
     }
 }
