@@ -28,18 +28,20 @@ public class ExtractItemPipeBE extends ItemPipeBE {
                 IItemHandler extractingHandler = cache.getCapability();
                 if (extractingHandler != null) {
                     ItemStack stack = extractingHandler.extractItem(0, 64, false);
-                    this.itemHandler.insertItem(0, stack, false);
+                    if (!stack.isEmpty()) {
+                        this.itemHandler.insertItem(0, stack, false);
 
-                    this.from = this.extracting;
+                        this.from = this.extracting;
 
-                    List<Direction> directions = new ArrayList<>(this.directions);
-                    directions.remove(this.extracting);
+                        List<Direction> directions = new ArrayList<>(this.directions);
+                        directions.remove(this.extracting);
 
-                    if (!directions.isEmpty()) {
-                        this.to = directions.getFirst();
+                        if (!directions.isEmpty()) {
+                            this.to = directions.getFirst();
+                        }
+
+                        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(this.getBlockPos(), Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
                     }
-
-                    PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(this.getBlockPos(), Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
                 }
             }
         }

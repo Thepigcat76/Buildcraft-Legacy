@@ -4,6 +4,7 @@ import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.content.blockentities.CrateBE;
 import com.thepigcat.fancy_pipes.content.blockentities.ExtractItemPipeBE;
 import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
+import com.thepigcat.fancy_pipes.content.blockentities.TankBE;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -20,4 +21,6 @@ public final class FPBlockEntities {
 
     public static final Supplier<BlockEntityType<CrateBE>> CRATE = BLOCK_ENTITIES.register("crate",
             () -> BlockEntityType.Builder.of(CrateBE::new, FPBlocks.CRATE.get()).build(null));
+    public static final Supplier<BlockEntityType<TankBE>> TANK = BLOCK_ENTITIES.register("tank",
+            () -> BlockEntityType.Builder.of(TankBE::new, FPBlocks.TANK.get()).build(null));
 }

@@ -61,7 +61,6 @@ public class CrateBERenderer implements BlockEntityRenderer<CrateBE> {
                 poseStack.mulPose(Axis.XP.rotationDegrees(180));
                 String text = String.valueOf(stack.getCount());
                 float width = font.width(text) * 0.0175f / 2;
-                FancyPipes.LOGGER.debug("width: {}", width);
                 poseStack.translate(0.5 - width, -0.92, -1.01);
                 poseStack.scale(0.0175f, 0.0175f, 0.0175f);
                 font.drawInBatch(text, 0, 0, FastColor.ARGB32.color(255, 255, 255), false,

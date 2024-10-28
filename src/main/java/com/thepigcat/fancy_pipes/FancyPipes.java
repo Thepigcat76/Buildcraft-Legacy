@@ -54,7 +54,7 @@ public final class FancyPipes {
         FPBlocks.BLOCKS.register(modEventBus);
         FPItems.ITEMS.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, FPConfig.SPEC);
 
         modEventBus.addListener(this::attachCaps);
         modEventBus.addListener(this::registerPayloads);

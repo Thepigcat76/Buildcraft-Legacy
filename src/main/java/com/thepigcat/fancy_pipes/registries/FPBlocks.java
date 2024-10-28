@@ -4,6 +4,7 @@ import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.content.blocks.ExtractingItemPipeBlock;
 import com.thepigcat.fancy_pipes.content.blocks.ItemPipeBlock;
 import com.thepigcat.fancy_pipes.content.blocks.CrateBlock;
+import com.thepigcat.fancy_pipes.content.blocks.TankBlock;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -22,6 +23,7 @@ public final class FPBlocks {
 
     // MISC
     public static final DeferredBlock<CrateBlock> CRATE = registerBlockAndItem("crate", CrateBlock::new, BlockBehaviour.Properties.of());
+    public static final DeferredBlock<TankBlock> TANK = registerBlockAndItem("tank", TankBlock::new, BlockBehaviour.Properties.of());
 
     public static <T extends Block> DeferredBlock<T> registerBlockAndItem(String name, Function<BlockBehaviour.Properties, T> blockConstructor, BlockBehaviour.Properties props) {
         DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, blockConstructor, props);

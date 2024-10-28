@@ -2,6 +2,7 @@ package com.thepigcat.fancy_pipes;
 
 import com.thepigcat.fancy_pipes.client.CrateBERenderer;
 import com.thepigcat.fancy_pipes.client.PipeBERenderer;
+import com.thepigcat.fancy_pipes.client.TankBERenderer;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
@@ -20,5 +21,6 @@ public final class FancyPipesClient {
         event.registerBlockEntityRenderer(FPBlockEntities.ITEM_PIPE.get(), PipeBERenderer::new);
         event.registerBlockEntityRenderer(FPBlockEntities.EXTRACTING_ITEM_PIPE.get(), PipeBERenderer::new);
         event.registerBlockEntityRenderer(FPBlockEntities.CRATE.get(), CrateBERenderer::new);
+        event.registerBlockEntityRenderer(FPBlockEntities.TANK.get(), TankBERenderer::new);
     }
 }

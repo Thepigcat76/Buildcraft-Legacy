@@ -3,6 +3,7 @@ package com.thepigcat.fancy_pipes.datagen;
 import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.fancy_pipes.api.blocks.PipeBlock;
+import com.thepigcat.fancy_pipes.content.blocks.TankBlock;
 import com.thepigcat.fancy_pipes.registries.FPBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -20,6 +21,7 @@ public class FPBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         pillarBlock(FPBlocks.CRATE.get());
+        tankBlock(FPBlocks.TANK.get());
 
         for (Block block : FPBlocks.BLOCKS.getRegistry().get()) {
             if (block instanceof ExtractingPipeBlock) {
@@ -31,11 +33,30 @@ public class FPBlockStateProvider extends BlockStateProvider {
         }
     }
 
+    private void tankBlock(Block block) {
+        ResourceLocation blockTexture = blockTexture(block);
+        ResourceLocation topTexture = extend(blockTexture, "_top");
+        ResourceLocation topJoinedTexture = extend(blockTexture, "_top_joined");
+        ResourceLocation sideTexture = extend(blockTexture, "_side");
+        ResourceLocation sideJoinedTexture = extend(blockTexture, "_side_joined");
+
+        getVariantBuilder(block)
+                .partialState().with(TankBlock.TOP_JOINED, true).with(TankBlock.BOTTOM_JOINED, true)
+                .modelForState().modelFile(tankModel(extend(blockTexture, "_top_and_bottom_joined"), topJoinedTexture, sideJoinedTexture, topJoinedTexture)).addModel()
+                .partialState().with(TankBlock.TOP_JOINED, true).with(TankBlock.BOTTOM_JOINED, false)
+                .modelForState().modelFile(tankModel(extend(blockTexture, "_top_joined"), topJoinedTexture, sideTexture, topTexture)).addModel()
+                .partialState().with(TankBlock.TOP_JOINED, false).with(TankBlock.BOTTOM_JOINED, true)
+                .modelForState().modelFile(tankModel(extend(blockTexture, "_bottom_joined"), topTexture, sideJoinedTexture, topJoinedTexture)).addModel()
+                .partialState().with(TankBlock.TOP_JOINED, false).with(TankBlock.BOTTOM_JOINED, false)
+                .modelForState().modelFile(tankModel(blockTexture, topTexture, sideTexture, topTexture)).addModel();
+    }
+
     private void pillarBlock(Block block) {
         ResourceLocation side = blockTexture(block);
         ResourceLocation top = extend(side, "_top");
-        getVariantBuilder(block).partialState().setModels(
-                new ConfiguredModel(models().cube(
+        simpleBlock(
+                block,
+                models().cube(
                         name(block),
                         top,
                         top,
@@ -43,7 +64,7 @@ public class FPBlockStateProvider extends BlockStateProvider {
                         side,
                         side,
                         side
-                ).texture("particle", side))
+                ).texture("particle", side)
         );
     }
 
@@ -86,6 +107,13 @@ public class FPBlockStateProvider extends BlockStateProvider {
     private ModelFile pipeBaseModel(ResourceLocation blockLoc) {
         return models().withExistingParent(blockLoc.getPath() + "_base", modLoc("block/pipe_base"))
                 .texture("texture", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), "block/" + blockLoc.getPath()));
+    }
+
+    private ModelFile tankModel(ResourceLocation baseLoc, ResourceLocation topLoc, ResourceLocation sideLoc, ResourceLocation bottomLoc) {
+        return models().withExistingParent(baseLoc.getPath(), modLoc("block/tank_base"))
+                .texture("top", ResourceLocation.fromNamespaceAndPath(topLoc.getNamespace(), topLoc.getPath()))
+                .texture("bottom", ResourceLocation.fromNamespaceAndPath(bottomLoc.getNamespace(), bottomLoc.getPath()))
+                .texture("side", ResourceLocation.fromNamespaceAndPath(sideLoc.getNamespace(), sideLoc.getPath()));
     }
 
     private ModelFile pipeConnectionModel(ResourceLocation blockLoc) {
