@@ -1,5 +1,0 @@
-{
-  "parent": "neoforge:item/bucket",
-  "fluid": "fancy_pipes:oil",
-  "loader": "neoforge:fluid_container"
-}

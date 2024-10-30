@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:item/generated",
-  "textures": {
-    "layer0": "fancy_pipes:item/wooden_gear"
-  }
-}

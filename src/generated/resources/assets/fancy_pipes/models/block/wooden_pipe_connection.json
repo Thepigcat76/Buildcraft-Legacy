@@ -1,6 +1,0 @@
-{
-  "parent": "fancy_pipes:block/pipe_connection",
-  "textures": {
-    "texture": "fancy_pipes:block/wooden_pipe"
-  }
-}

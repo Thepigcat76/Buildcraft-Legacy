@@ -1,6 +1,0 @@
-{
-  "parent": "fancy_pipes:item/pipe_inventory",
-  "textures": {
-    "texture": "fancy_pipes:block/cobblestone_pipe"
-  }
-}
