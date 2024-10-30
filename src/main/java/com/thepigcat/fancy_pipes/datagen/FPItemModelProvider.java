@@ -2,15 +2,18 @@ package com.thepigcat.fancy_pipes.datagen;
 
 import com.thepigcat.fancy_pipes.FancyPipes;
 import com.thepigcat.fancy_pipes.api.blocks.PipeBlock;
+import com.thepigcat.fancy_pipes.registries.FPFluids;
 import com.thepigcat.fancy_pipes.registries.FPItems;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.client.model.generators.ItemModelBuilder;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.client.model.generators.ModelFile;
+import net.neoforged.neoforge.client.model.generators.loaders.DynamicFluidContainerModelBuilder;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.registries.DeferredItem;
 
@@ -30,6 +33,8 @@ public class FPItemModelProvider extends ItemModelProvider {
         basicItem(FPItems.GOLD_GEAR.get());
         basicItem(FPItems.DIAMOND_GEAR.get());
 
+        bucketItem(FPFluids.OIL_SOURCE.get());
+
         blockItems();
     }
 
@@ -41,6 +46,16 @@ public class FPItemModelProvider extends ItemModelProvider {
                 parentItemBlock(blockItem.get());
             }
         }
+    }
+
+    public void bucketItem(Fluid fluid) {
+        withExistingParent(name(fluid.getBucket().asItem()), ResourceLocation.fromNamespaceAndPath("neoforge", "item/bucket_drip"))
+                .customLoader(DynamicFluidContainerModelBuilder::begin)
+                .fluid(fluid);
+    }
+
+    public String name(Item item) {
+        return BuiltInRegistries.ITEM.getKey(item).getPath();
     }
 
     public ItemModelBuilder parentItemBlock(Item item, ResourceLocation loc) {

@@ -1,9 +1,10 @@
-// 1.21.1	2024-10-30T00:57:47.170258983	Item Models: fancy_pipes
+// 1.21.1	2024-10-30T11:06:21.94368615	Item Models: fancy_pipes
 40cd7c3102108674c50cffea768b3ebc3192d310 assets/fancy_pipes/models/item/cobblestone_pipe.json
 421d63afdaebb8f833c98d44c4f90845495b5b5a assets/fancy_pipes/models/item/crate.json
 bef9a7945e2c2ed39eb227918f9bab04531fc9cf assets/fancy_pipes/models/item/diamond_gear.json
 248fc00ea322acc10463b3c1758a6b4773de4d04 assets/fancy_pipes/models/item/gold_gear.json
 a68e3d640e22c33a0f837b4db5ae367c6a310712 assets/fancy_pipes/models/item/iron_gear.json
+1836e702dc696c4feb47c8d2dd28f5613a74e308 assets/fancy_pipes/models/item/oil_bucket.json
 86d1c5e1728851e17d40506f8d3d2153c60d82bb assets/fancy_pipes/models/item/stone_gear.json
 4c4f34281570be0a6ae14cae8f60d851ae795277 assets/fancy_pipes/models/item/tank.json
 18e46eb5b2aafc6d66b980739c75492771c23cd9 assets/fancy_pipes/models/item/wooden_gear.json

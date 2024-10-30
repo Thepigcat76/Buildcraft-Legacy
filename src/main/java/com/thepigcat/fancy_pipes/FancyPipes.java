@@ -5,9 +5,7 @@ import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
 import com.thepigcat.fancy_pipes.content.blockentities.TankBE;
 import com.thepigcat.fancy_pipes.networking.SyncPipeDirectionPayload;
 import com.thepigcat.fancy_pipes.networking.SyncPipeMovementPayload;
-import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
-import com.thepigcat.fancy_pipes.registries.FPBlocks;
-import com.thepigcat.fancy_pipes.registries.FPItems;
+import com.thepigcat.fancy_pipes.registries.*;
 import net.minecraft.client.gui.components.tabs.Tab;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
@@ -53,6 +51,8 @@ public final class FancyPipes {
         FPBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         FPBlocks.BLOCKS.register(modEventBus);
         FPItems.ITEMS.register(modEventBus);
+        FPFluids.FLUIDS.register(modEventBus);
+        FPFluidTypes.FLUID_TYPES.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, FPConfig.SPEC);
 

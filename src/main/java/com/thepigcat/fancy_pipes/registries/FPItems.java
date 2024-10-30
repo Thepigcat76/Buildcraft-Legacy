@@ -2,7 +2,9 @@ package com.thepigcat.fancy_pipes.registries;
 
 import com.thepigcat.fancy_pipes.FancyPipes;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -22,6 +24,8 @@ public final class FPItems {
     public static final DeferredItem<Item> IRON_GEAR = registerItem("iron_gear", Item::new);
     public static final DeferredItem<Item> GOLD_GEAR = registerItem("gold_gear", Item::new);
     public static final DeferredItem<Item> DIAMOND_GEAR = registerItem("diamond_gear", Item::new);
+    public static final DeferredItem<BucketItem> OIL_BUCKET = registerItem("oil_bucket",
+            () -> new BucketItem(FPFluids.OIL_SOURCE.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
     private static <T extends Item> DeferredItem<T> registerItem(String name, Function<Item.Properties, T> itemConstructor) {
         DeferredItem<T> item = ITEMS.registerItem(name, itemConstructor, new Item.Properties());
@@ -31,6 +35,12 @@ public final class FPItems {
 
     private static <T extends Item> DeferredItem<T> registerItem(String name, Function<Item.Properties, T> itemConstructor, Item.Properties properties) {
         DeferredItem<T> item = ITEMS.registerItem(name, itemConstructor, properties);
+        TAB_ITEMS.add(item);
+        return item;
+    }
+
+    private static <T extends Item> DeferredItem<T> registerItem(String name, Supplier<T> itemConstructor) {
+        DeferredItem<T> item = ITEMS.register(name, itemConstructor);
         TAB_ITEMS.add(item);
         return item;
     }
