@@ -28,6 +28,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -59,11 +60,24 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        IFluidHandler fluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        IFluidHandler itemFluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
 
-        if (fluidHandler != null) {
+        if (itemFluidHandler != null) {
             TankBE be = BlockUtils.getBe(TankBE.class, level, pos);
-            be.getFluidTank().setFluid(fluidHandler.getFluidInTank(0));
+            IFluidHandler tankFluidHandler = be.getFluidTank();
+
+            IFluidHandler fluidHandler0 = tankFluidHandler;
+            IFluidHandler fluidHandler1 = itemFluidHandler;
+
+            if (!itemFluidHandler.getFluidInTank(0).isEmpty()) {
+                fluidHandler0 = itemFluidHandler;
+                fluidHandler1 = tankFluidHandler;
+            }
+
+            FluidStack drained = fluidHandler0.drain(fluidHandler0.getFluidInTank(0), IFluidHandler.FluidAction.EXECUTE);
+            int filled = fluidHandler1.fill(drained, IFluidHandler.FluidAction.EXECUTE);
+            fluidHandler0.fill(drained.copyWithAmount(drained.getAmount() - filled), IFluidHandler.FluidAction.EXECUTE);
+
             return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.FAIL;
@@ -89,7 +103,7 @@ public class TankBlock extends BaseEntityBlock {
         if (direction == Direction.UP) {
             return state.setValue(TOP_JOINED, neighborState.is(this));
         } else if (direction == Direction.DOWN) {
-            return  state.setValue(BOTTOM_JOINED, neighborState.is(this));
+            return state.setValue(BOTTOM_JOINED, neighborState.is(this));
         }
         return super.updateShape(state, direction, neighborState, level, pos, neighborPos);
     }

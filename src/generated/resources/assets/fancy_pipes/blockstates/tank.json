@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "bottom_joined=false,top_joined=false": {
+      "model": "fancy_pipes:block/tank"
+    },
+    "bottom_joined=false,top_joined=true": {
+      "model": "fancy_pipes:block/tank_top_joined"
+    },
+    "bottom_joined=true,top_joined=false": {
+      "model": "fancy_pipes:block/tank_bottom_joined"
+    },
+    "bottom_joined=true,top_joined=true": {
+      "model": "fancy_pipes:block/tank_top_and_bottom_joined"
+    }
+  }
+}

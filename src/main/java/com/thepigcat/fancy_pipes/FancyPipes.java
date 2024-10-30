@@ -2,11 +2,13 @@ package com.thepigcat.fancy_pipes;
 
 import com.thepigcat.fancy_pipes.content.blockentities.CrateBE;
 import com.thepigcat.fancy_pipes.content.blockentities.ItemPipeBE;
+import com.thepigcat.fancy_pipes.content.blockentities.TankBE;
 import com.thepigcat.fancy_pipes.networking.SyncPipeDirectionPayload;
 import com.thepigcat.fancy_pipes.networking.SyncPipeMovementPayload;
 import com.thepigcat.fancy_pipes.registries.FPBlockEntities;
 import com.thepigcat.fancy_pipes.registries.FPBlocks;
 import com.thepigcat.fancy_pipes.registries.FPItems;
+import net.minecraft.client.gui.components.tabs.Tab;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -40,8 +42,6 @@ public final class FancyPipes {
                 .withTabsBefore(CreativeModeTabs.COMBAT)
                 .icon(FPBlocks.COBBLESTONE_ITEM_PIPE::toStack)
                 .displayItems((parameters, output) -> {
-                    output.accept(FPItems.WRENCH);
-
                     for (DeferredItem<?> item : FPItems.TAB_ITEMS) {
                         output.accept(item);
                     }
@@ -64,6 +64,7 @@ public final class FancyPipes {
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.EXTRACTING_ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.CRATE.get(), CrateBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FPBlockEntities.TANK.get(), TankBE::getFluidTank);
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

@@ -24,6 +24,11 @@ public class FPItemModelProvider extends ItemModelProvider {
     @Override
     protected void registerModels() {
         handHeldItem(FPItems.WRENCH.get());
+        basicItem(FPItems.WOODEN_GEAR.get());
+        basicItem(FPItems.STONE_GEAR.get());
+        basicItem(FPItems.IRON_GEAR.get());
+        basicItem(FPItems.GOLD_GEAR.get());
+        basicItem(FPItems.DIAMOND_GEAR.get());
 
         blockItems();
     }

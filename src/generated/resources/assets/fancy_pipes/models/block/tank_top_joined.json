@@ -1,0 +1,8 @@
+{
+  "parent": "fancy_pipes:block/tank_base",
+  "textures": {
+    "bottom": "fancy_pipes:block/tank_top",
+    "side": "fancy_pipes:block/tank_side",
+    "top": "fancy_pipes:block/tank_top_joined"
+  }
+}
