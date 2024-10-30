@@ -1,0 +1,121 @@
+{
+  "multipart": [
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection"
+      },
+      "when": {
+        "down": "connected"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection_extracting"
+      },
+      "when": {
+        "down": "extracting"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection",
+        "x": 180
+      },
+      "when": {
+        "up": "connected"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection_extracting",
+        "x": 180
+      },
+      "when": {
+        "up": "extracting"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "north": "connected"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection_extracting",
+        "x": 90,
+        "y": 180
+      },
+      "when": {
+        "north": "extracting"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "east": "connected"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection_extracting",
+        "x": 90,
+        "y": 270
+      },
+      "when": {
+        "east": "extracting"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection",
+        "x": 90
+      },
+      "when": {
+        "south": "connected"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection_extracting",
+        "x": 90
+      },
+      "when": {
+        "south": "extracting"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "west": "connected"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_connection_extracting",
+        "x": 90,
+        "y": 90
+      },
+      "when": {
+        "west": "extracting"
+      }
+    },
+    {
+      "apply": {
+        "model": "buildcraft:block/wooden_pipe_base"
+      }
+    }
+  ]
+}

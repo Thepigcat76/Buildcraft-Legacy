@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "L": {
+      "tag": "minecraft:logs"
+    },
+    "S": {
+      "tag": "minecraft:wooden_slabs"
+    }
+  },
+  "pattern": [
+    "LSL",
+    "L L",
+    "LSL"
+  ],
+  "result": {
+    "count": 1,
+    "id": "buildcraft:crate"
+  }
+}

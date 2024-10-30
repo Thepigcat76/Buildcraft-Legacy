@@ -1,0 +1,8 @@
+{
+  "parent": "buildcraft:block/tank_base",
+  "textures": {
+    "bottom": "buildcraft:block/tank_top_joined",
+    "side": "buildcraft:block/tank_side_joined",
+    "top": "buildcraft:block/tank_top_joined"
+  }
+}

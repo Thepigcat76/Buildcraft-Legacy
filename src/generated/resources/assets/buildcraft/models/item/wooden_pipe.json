@@ -1,0 +1,6 @@
+{
+  "parent": "buildcraft:item/pipe_inventory",
+  "textures": {
+    "texture": "buildcraft:block/wooden_pipe"
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "block.buildcraft.cobblestone_pipe": "Cobblestone Item Pipe",
+  "block.buildcraft.crate": "Crate",
+  "block.buildcraft.oil_block": "Oil",
+  "block.buildcraft.tank": "Tank",
+  "block.buildcraft.wooden_pipe": "Wooden Item Pipe",
+  "fluid_type.buildcraft.oil": "Oil",
+  "item.buildcraft.diamond_gear": "Diamond Gear",
+  "item.buildcraft.gold_gear": "Gold Gear",
+  "item.buildcraft.iron_gear": "Iron Gear",
+  "item.buildcraft.oil_bucket": "Oil Bucket",
+  "item.buildcraft.stone_gear": "Stone Gear",
+  "item.buildcraft.wooden_gear": "Wooden Gear",
+  "item.buildcraft.wrench": "Wrench"
+}

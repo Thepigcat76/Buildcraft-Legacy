@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "tag": "c:glass_blocks"
+    },
+    "M": {
+      "tag": "c:cobblestones"
+    }
+  },
+  "pattern": [
+    "MGM"
+  ],
+  "result": {
+    "count": 8,
+    "id": "buildcraft:cobblestone_pipe"
+  }
+}

@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "buildcraft:block/crate_top",
+    "east": "buildcraft:block/crate",
+    "north": "buildcraft:block/crate",
+    "particle": "buildcraft:block/crate",
+    "south": "buildcraft:block/crate",
+    "up": "buildcraft:block/crate_top",
+    "west": "buildcraft:block/crate"
+  }
+}

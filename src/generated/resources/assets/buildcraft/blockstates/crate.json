@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "buildcraft:block/crate"
+    }
+  }
+}
