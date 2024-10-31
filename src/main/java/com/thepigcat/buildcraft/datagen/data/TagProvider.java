@@ -2,6 +2,8 @@ package com.thepigcat.buildcraft.datagen.data;
 
 import com.thepigcat.buildcraft.FancyPipes;
 import com.thepigcat.buildcraft.registries.FPBlocks;
+import com.thepigcat.buildcraft.registries.FPFluidTypes;
+import com.thepigcat.buildcraft.registries.FPFluids;
 import com.thepigcat.buildcraft.registries.FPItems;
 import com.thepigcat.buildcraft.tags.FPTags;
 import net.minecraft.core.HolderLookup;
@@ -24,6 +26,7 @@ public class TagProvider {
         Block provider = new Block(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(isServer, provider);
         generator.addProvider(isServer, new Item(packOutput, lookupProvider, provider.contentsGetter()));
+        generator.addProvider(isServer, new Fluid(packOutput, lookupProvider, existingFileHelper));
     }
 
     public static class Block extends BlockTagsProvider {
@@ -61,4 +64,16 @@ public class TagProvider {
             tag(FPTags.Items.DIAMOND_GEAR).add(FPItems.DIAMOND_GEAR.get());
         }
     }
+
+    public static class Fluid extends FluidTagsProvider {
+        public Fluid(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(output, provider, FancyPipes.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            tag(FPTags.Fluids.OIL).add(FPFluids.OIL_SOURCE.get(), FPFluids.OIL_FLOWING.get());
+        }
+    }
+
 }

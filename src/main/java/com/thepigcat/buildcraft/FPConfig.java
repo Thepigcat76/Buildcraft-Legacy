@@ -12,13 +12,18 @@ public final class FPConfig {
     private static final ModConfigSpec.IntValue TANK_CAPACITY = BUILDER
             .comment("The maximum amount of fluid a tank can store")
             .defineInRange("tankCapacity", 8_000, 0, Integer.MAX_VALUE);
+    private static final ModConfigSpec.BooleanValue TANK_RETAIN_FLUIDS = BUILDER
+            .comment("Whether the tank should keep its fluid after being broken")
+            .define("tankRetainFluid", true);
 
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int tankCapacity;
+    public static boolean tankRetainFluids;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         tankCapacity = TANK_CAPACITY.getAsInt();
+        tankRetainFluids = TANK_RETAIN_FLUIDS.get();
     }
 }

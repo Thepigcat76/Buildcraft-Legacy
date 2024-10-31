@@ -22,6 +22,7 @@ public class FPBlockStateProvider extends BlockStateProvider {
     protected void registerStatesAndModels() {
         pillarBlock(FPBlocks.CRATE.get());
         tankBlock(FPBlocks.TANK.get());
+        simpleBlock(FPBlocks.WOODEN_ENGINE.get(), new ModelFile.UncheckedModelFile(modLoc("block/wooden_engine")));
 
         for (Block block : FPBlocks.BLOCKS.getRegistry().get()) {
             if (block instanceof ExtractingPipeBlock) {

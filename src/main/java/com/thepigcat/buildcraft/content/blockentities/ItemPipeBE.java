@@ -1,5 +1,6 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
+import com.thepigcat.buildcraft.FancyPipes;
 import com.thepigcat.buildcraft.api.blockentities.PipeBlockEntity;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
@@ -66,6 +67,9 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
                 if (insertingHandler != null) {
                     ItemStack pipeContent = insertingHandler.getStackInSlot(0);
 
+                    ItemStack extractedStack = insertingHandler.extractItem(0, pipeContent.getCount(), true);
+                    ItemStack remainder = this.itemHandler.insertItem(0, extractedStack, true);
+
                     if (pipeContent.isEmpty()) {
                         insertItems(insertingHandler);
 
@@ -113,17 +117,18 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     }
 
     private void moveItemBackward() {
-        ItemPipeBE blockEntity = BlockUtils.getBe(ItemPipeBE.class, level, worldPosition.relative(this.to));
+        Direction to = this.to;
+        this.to = this.from;
+        this.from = to;
+        this.lastMovement = 0;
+        this.movement = 0;
 
-        if (blockEntity != null) {
-            blockEntity.to = blockEntity.from;
+        FancyPipes.LOGGER.debug("Movment when going back: {}", this.movement);
 
-            blockEntity.lastMovement = Math.abs(1 - blockEntity.lastMovement);
-            blockEntity.movement = Math.abs(1 - blockEntity.movement);
-            PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(blockEntity.getBlockPos(), blockEntity.movement, blockEntity.lastMovement));
+        PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(worldPosition, this.movement, this.lastMovement));
 
-            PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(blockEntity.getBlockPos(), Optional.ofNullable(blockEntity.from), Optional.ofNullable(blockEntity.to)));
-        }
+        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
+
     }
 
     /**
@@ -131,17 +136,8 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
      */
     private boolean insertItems(IItemHandler insertingHandler) {
         // Get stack in pipe (only simulated)
-        ItemStack toInsert = itemHandler.extractItem(0, this.itemHandler.getSlotLimit(0), true);
-        // Go through target slots
-        for (int i = 0; i < insertingHandler.getSlots(); i++) {
-            // insert the item in the pipe
-            // lower the count of the extracted
-            // item by the count of the not inserted item
-            toInsert.shrink(insertingHandler.insertItem(i, toInsert, false).getCount());
-        }
-
-        // Actually extract the count that was filled
-        itemHandler.extractItem(0, toInsert.getCount(), false);
+        ItemStack toInsert = itemHandler.extractItem(0, this.itemHandler.getSlotLimit(0), false);
+        insertingHandler.insertItem(0, toInsert, false);
 
         return itemHandler.getStackInSlot(0).isEmpty();
     }

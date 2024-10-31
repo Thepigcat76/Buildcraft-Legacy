@@ -28,9 +28,14 @@ public final class FPBlocks {
     public static final DeferredBlock<ExtractingItemPipeBlock> WOODEN_ITEM_PIPE = registerBlockAndItem("wooden_pipe", ExtractingItemPipeBlock::new,
             BlockBehaviour.Properties.of().strength(2.0f, 3).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
 
+    // ENGINES
+    public static final DeferredBlock<Block> WOODEN_ENGINE = registerBlockAndItem("wooden_engine", Block::new,
+            BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
+
     // MISC
     public static final DeferredBlock<CrateBlock> CRATE = registerBlockAndItem("crate", CrateBlock::new,
             BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
+    // TODO: Option to empty the tank
     public static final DeferredBlock<TankBlock> TANK = registerBlockAndItem("tank", TankBlock::new,
             BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS));
 
