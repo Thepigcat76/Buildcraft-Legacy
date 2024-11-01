@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.tags;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
@@ -17,7 +17,7 @@ public final class FPTags {
         public static final TagKey<Item> DIAMOND_GEAR = cTag("gears/diamond");
 
         private static TagKey<Item> modTag(String name) {
-            return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, name));
+            return TagKey.create(Registries.ITEM, ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, name));
         }
 
         private static TagKey<Item> cTag(String name) {
@@ -29,7 +29,7 @@ public final class FPTags {
         public static final TagKey<Fluid> OIL = cTag("oil");
 
         private static TagKey<Fluid> modTag(String name) {
-            return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, name));
+            return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, name));
         }
 
         private static TagKey<Fluid> cTag(String name) {

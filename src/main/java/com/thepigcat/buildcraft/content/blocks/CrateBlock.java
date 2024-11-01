@@ -1,7 +1,7 @@
 package com.thepigcat.buildcraft.content.blocks;
 
 import com.mojang.serialization.MapCodec;
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.registries.FPBlockEntities;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
@@ -81,7 +81,7 @@ public class CrateBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         BlockEntity be = level.getBlockEntity(pos);
-        FancyPipes.LOGGER.debug("random, 0 - 3: {}", level.random.nextInt(0, 3));
+        BuildcraftLegacy.LOGGER.debug("random, 0 - 3: {}", level.random.nextInt(0, 3));
         if (be != null) {
             IItemHandler itemHandler = CapabilityUtils.itemHandlerCapability(be);
             if (itemHandler != null) {

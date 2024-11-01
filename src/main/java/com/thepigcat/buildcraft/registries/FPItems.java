@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.registries;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.Item;
@@ -14,7 +14,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class FPItems {
-    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(FancyPipes.MODID);
+    public static final DeferredRegister.Items ITEMS = DeferredRegister.createItems(BuildcraftLegacy.MODID);
     public static final List<DeferredItem<BlockItem>> BLOCK_ITEMS = new ArrayList<>();
     public static final List<DeferredItem<?>> TAB_ITEMS = new ArrayList<>();
 

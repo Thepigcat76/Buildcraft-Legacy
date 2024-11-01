@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.networking;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
@@ -13,7 +13,7 @@ import net.neoforged.neoforge.network.handling.IPayloadContext;
 import org.jetbrains.annotations.NotNull;
 
 public record SyncPipeMovementPayload(BlockPos pos, float movement, float lastMovement) implements CustomPacketPayload {
-    public static final Type<SyncPipeMovementPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, "sync_pipe_movement"));
+    public static final Type<SyncPipeMovementPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "sync_pipe_movement"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncPipeMovementPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,
             SyncPipeMovementPayload::pos,

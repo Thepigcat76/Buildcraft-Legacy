@@ -30,11 +30,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-@Mod(FancyPipesClient.MODID)
-public final class FancyPipesClient {
+@Mod(BuildcraftLegacyClient.MODID)
+public final class BuildcraftLegacyClient {
     public static final String MODID = "buildcraft";
 
-    public FancyPipesClient(IEventBus eventBus, ModContainer modContainer) {
+    public BuildcraftLegacyClient(IEventBus eventBus, ModContainer modContainer) {
         eventBus.addListener(this::registerRenderers);
         eventBus.addListener(this::registerClientExtensions);
     }

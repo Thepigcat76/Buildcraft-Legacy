@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.registries;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.content.blockentities.ExtractItemPipeBE;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Supplier;
 
 public final class FPBlockEntities {
-    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, FancyPipes.MODID);
+    public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, BuildcraftLegacy.MODID);
 
     public static final Supplier<BlockEntityType<ItemPipeBE>> ITEM_PIPE = BLOCK_ENTITIES.register("item_pipe",
             () -> BlockEntityType.Builder.of(ItemPipeBE::new, FPBlocks.COBBLESTONE_ITEM_PIPE.get()).build(null));

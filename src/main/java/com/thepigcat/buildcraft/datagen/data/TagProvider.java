@@ -1,8 +1,7 @@
 package com.thepigcat.buildcraft.datagen.data;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.registries.FPBlocks;
-import com.thepigcat.buildcraft.registries.FPFluidTypes;
 import com.thepigcat.buildcraft.registries.FPFluids;
 import com.thepigcat.buildcraft.registries.FPItems;
 import com.thepigcat.buildcraft.tags.FPTags;
@@ -12,9 +11,6 @@ import net.minecraft.data.PackOutput;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.TagKey;
-import net.minecraft.world.level.ItemLike;
-import net.minecraft.world.level.block.Block;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +27,7 @@ public class TagProvider {
 
     public static class Block extends BlockTagsProvider {
         public Block(PackOutput output, CompletableFuture<HolderLookup.Provider> lookupProvider, @Nullable ExistingFileHelper existingFileHelper) {
-            super(output, lookupProvider, FancyPipes.MODID, existingFileHelper);
+            super(output, lookupProvider, BuildcraftLegacy.MODID, existingFileHelper);
         }
 
         @Override
@@ -67,7 +63,7 @@ public class TagProvider {
 
     public static class Fluid extends FluidTagsProvider {
         public Fluid(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
-            super(output, provider, FancyPipes.MODID, existingFileHelper);
+            super(output, provider, BuildcraftLegacy.MODID, existingFileHelper);
         }
 
         @Override

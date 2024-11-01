@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
-import com.thepigcat.buildcraft.FPConfig;
+import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.registries.FPBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -27,7 +27,7 @@ public class TankBE extends BlockEntity {
 
     public TankBE(BlockPos pos, BlockState blockState) {
         super(FPBlockEntities.TANK.get(), pos, blockState);
-        this.fluidTank = new FluidTank(FPConfig.tankCapacity) {
+        this.fluidTank = new FluidTank(BCConfig.tankCapacity) {
             @Override
             protected void onContentsChanged() {
                 super.onContentsChanged();

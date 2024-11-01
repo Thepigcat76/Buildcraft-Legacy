@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.api.blocks;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blockentities.PipeBlockEntity;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.util.BlockUtils;
@@ -202,7 +202,7 @@ public abstract class PipeBlock extends BaseEntityBlock {
                 }
             }
         }
-        FancyPipes.LOGGER.debug("set Dirs: {}", directions);
+        BuildcraftLegacy.LOGGER.debug("set Dirs: {}", directions);
         be.setDirections(directions);
     }
 

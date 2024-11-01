@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.networking;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Optional;
 
 public record SyncPipeDirectionPayload(BlockPos pos, Optional<Direction> from, Optional<Direction> to) implements CustomPacketPayload {
-    public static final Type<SyncPipeDirectionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, "sync_pipe_dir"));
+    public static final Type<SyncPipeDirectionPayload> TYPE = new Type<>(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "sync_pipe_dir"));
     public static final StreamCodec<RegistryFriendlyByteBuf, SyncPipeDirectionPayload> STREAM_CODEC = StreamCodec.composite(
             BlockPos.STREAM_CODEC,
             SyncPipeDirectionPayload::pos,

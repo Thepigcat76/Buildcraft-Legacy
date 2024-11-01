@@ -1,11 +1,10 @@
 package com.thepigcat.buildcraft.registries;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blocks.ExtractingItemPipeBlock;
 import com.thepigcat.buildcraft.content.blocks.ItemPipeBlock;
 import com.thepigcat.buildcraft.content.blocks.CrateBlock;
 import com.thepigcat.buildcraft.content.blocks.TankBlock;
-import net.minecraft.client.resources.sounds.Sound;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -20,7 +19,7 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import java.util.function.Function;
 
 public final class FPBlocks {
-    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(FancyPipes.MODID);
+    public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(BuildcraftLegacy.MODID);
 
     // PIPES
     public static final DeferredBlock<ItemPipeBlock> COBBLESTONE_ITEM_PIPE = registerBlockAndItem("cobblestone_pipe", ItemPipeBlock::new,

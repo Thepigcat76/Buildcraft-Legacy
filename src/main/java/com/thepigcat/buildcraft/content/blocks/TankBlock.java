@@ -1,8 +1,7 @@
 package com.thepigcat.buildcraft.content.blocks;
 
 import com.mojang.serialization.MapCodec;
-import com.thepigcat.buildcraft.FPConfig;
-import com.thepigcat.buildcraft.content.blockentities.CrateBE;
+import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
 import com.thepigcat.buildcraft.registries.FPBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
@@ -127,7 +126,7 @@ public class TankBlock extends BaseEntityBlock {
     protected @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TankBE be) {
             ItemStack stack = new ItemStack(this);
-            if (!be.getFluidTank().isEmpty() && FPConfig.tankRetainFluids) {
+            if (!be.getFluidTank().isEmpty() && BCConfig.tankRetainFluids) {
                 be.saveToItem(stack, params.getLevel().registryAccess());
             }
             return List.of(stack);

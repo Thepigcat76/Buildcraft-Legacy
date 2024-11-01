@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.datagen;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.datagen.assets.EnUSLangProvider;
 import com.thepigcat.buildcraft.datagen.assets.FPBlockStateProvider;
 import com.thepigcat.buildcraft.datagen.assets.FPItemModelProvider;
@@ -21,7 +21,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
-@EventBusSubscriber(modid = FancyPipes.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = BuildcraftLegacy.MODID, bus = EventBusSubscriber.Bus.MOD)
 public class DataGatherer {
     @SubscribeEvent
     public static void onGatherData(GatherDataEvent event) {

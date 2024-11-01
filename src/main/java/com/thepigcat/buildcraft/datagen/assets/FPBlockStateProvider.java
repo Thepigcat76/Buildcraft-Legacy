@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.datagen.assets;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.buildcraft.api.blocks.PipeBlock;
 import com.thepigcat.buildcraft.content.blocks.TankBlock;
@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
 public class FPBlockStateProvider extends BlockStateProvider {
     public FPBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
-        super(output, FancyPipes.MODID, exFileHelper);
+        super(output, BuildcraftLegacy.MODID, exFileHelper);
     }
 
     @Override
@@ -32,6 +32,10 @@ public class FPBlockStateProvider extends BlockStateProvider {
             }
 
         }
+    }
+
+    private void engineBlock(Block block) {
+
     }
 
     private void tankBlock(Block block) {

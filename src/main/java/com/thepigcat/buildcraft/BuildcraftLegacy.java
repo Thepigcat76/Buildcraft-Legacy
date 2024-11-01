@@ -18,7 +18,6 @@ import com.mojang.logging.LogUtils;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.CreativeModeTab;
-import net.minecraft.world.item.CreativeModeTabs;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -26,8 +25,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 // The value here should match an entry in the META-INF/neoforge.mods.toml file
-@Mod(FancyPipes.MODID)
-public final class FancyPipes {
+@Mod(BuildcraftLegacy.MODID)
+public final class BuildcraftLegacy {
     public static final String MODID = "buildcraft";
     public static final Logger LOGGER = LogUtils.getLogger();
 
@@ -44,7 +43,7 @@ public final class FancyPipes {
                 }).build());
     }
 
-    public FancyPipes(IEventBus modEventBus, ModContainer modContainer) {
+    public BuildcraftLegacy(IEventBus modEventBus, ModContainer modContainer) {
         CREATIVE_MODE_TABS.register(modEventBus);
         FPBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         FPBlocks.BLOCKS.register(modEventBus);
@@ -52,7 +51,7 @@ public final class FancyPipes {
         FPFluids.FLUIDS.register(modEventBus);
         FPFluidTypes.FLUID_TYPES.register(modEventBus);
 
-        modContainer.registerConfig(ModConfig.Type.COMMON, FPConfig.SPEC);
+        modContainer.registerConfig(ModConfig.Type.COMMON, BCConfig.SPEC);
 
         modEventBus.addListener(this::attachCaps);
         modEventBus.addListener(this::registerPayloads);

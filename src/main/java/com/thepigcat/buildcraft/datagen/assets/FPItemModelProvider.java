@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.datagen.assets;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.PipeBlock;
 import com.thepigcat.buildcraft.registries.FPBlocks;
 import com.thepigcat.buildcraft.registries.FPFluids;
@@ -29,7 +29,7 @@ public class FPItemModelProvider extends ItemModelProvider {
     );
 
     public FPItemModelProvider(PackOutput output, ExistingFileHelper existingFileHelper) {
-        super(output, FancyPipes.MODID, existingFileHelper);
+        super(output, BuildcraftLegacy.MODID, existingFileHelper);
     }
 
     @Override

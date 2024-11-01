@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.registries;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.fluids.BaseFluidType;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public final class FPFluidTypes {
     public static final DeferredRegister<FluidType> FLUID_TYPES =
-            DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, FancyPipes.MODID);
+            DeferredRegister.create(NeoForgeRegistries.FLUID_TYPES, BuildcraftLegacy.MODID);
 
     public static final Supplier<FluidType> OIL_FLUID_TYPE = register("oil",
             FluidType.Properties.create().lightLevel(2).density(15).viscosity(5).sound(SoundAction.get("drink"),
@@ -29,9 +29,9 @@ public final class FPFluidTypes {
     }
 
     public enum FluidTemplate {
-        OIL(ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, "fluid/fluid_oil"),
-                ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, "fluid/fluid_oil"),
-                ResourceLocation.fromNamespaceAndPath(FancyPipes.MODID, "fluid/oil_overlay"));
+        OIL(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "fluid/fluid_oil"),
+                ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "fluid/fluid_oil"),
+                ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "fluid/oil_overlay"));
 
         private final ResourceLocation still;
         private final ResourceLocation flowing;

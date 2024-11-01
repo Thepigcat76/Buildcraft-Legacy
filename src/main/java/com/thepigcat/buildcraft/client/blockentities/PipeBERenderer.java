@@ -1,7 +1,7 @@
 package com.thepigcat.buildcraft.client.blockentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -42,7 +42,7 @@ public class PipeBERenderer implements BlockEntityRenderer<ItemPipeBE> {
                 poseStack.scale(0.5f, 0.5f, 0.5f);
                 Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
             } else if (pipeBlockEntity.getBlockPos().equals(new BlockPos(-368, 82, 121))) {
-                FancyPipes.LOGGER.debug("from: {}, to: {}", from, to);
+                BuildcraftLegacy.LOGGER.debug("from: {}, to: {}", from, to);
             }
         }
         poseStack.popPose();

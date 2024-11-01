@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.datagen.assets;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.registries.FPBlocks;
 import com.thepigcat.buildcraft.registries.FPFluidTypes;
 import com.thepigcat.buildcraft.registries.FPItems;
@@ -14,7 +14,7 @@ import java.util.function.Supplier;
 
 public class EnUSLangProvider extends LanguageProvider {
     public EnUSLangProvider(PackOutput output) {
-        super(output, FancyPipes.MODID, "en_us");
+        super(output, BuildcraftLegacy.MODID, "en_us");
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
-import com.thepigcat.buildcraft.FancyPipes;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blockentities.PipeBlockEntity;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
@@ -123,7 +123,7 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
         this.lastMovement = 0;
         this.movement = 0;
 
-        FancyPipes.LOGGER.debug("Movment when going back: {}", this.movement);
+        BuildcraftLegacy.LOGGER.debug("Movment when going back: {}", this.movement);
 
         PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(worldPosition, this.movement, this.lastMovement));
 
