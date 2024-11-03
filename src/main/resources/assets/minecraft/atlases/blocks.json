@@ -1,6 +1,18 @@
 {
   "sources": [
     {
+      "type": "single",
+      "resource": "buildcraft:entity/wooden_engine_piston"
+    },
+    {
+      "type": "single",
+      "resource": "buildcraft:entity/cobblestone_engine_piston"
+    },
+    {
+      "type": "single",
+      "resource": "buildcraft:entity/iron_engine_piston"
+    },
+    {
       "type": "directory",
       "source": "fluid",
       "prefix": "fluid/"

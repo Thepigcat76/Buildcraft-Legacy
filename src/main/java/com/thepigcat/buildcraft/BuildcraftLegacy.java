@@ -2,7 +2,9 @@ package com.thepigcat.buildcraft;
 
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
+import com.thepigcat.buildcraft.content.blockentities.StirlingEngineBE;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
+import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
 import com.thepigcat.buildcraft.registries.*;
@@ -35,9 +37,9 @@ public final class BuildcraftLegacy {
     static {
         CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.examplemod"))
-                .icon(FPBlocks.COBBLESTONE_ITEM_PIPE::toStack)
+                .icon(BCBlocks.COBBLESTONE_ITEM_PIPE::toStack)
                 .displayItems((parameters, output) -> {
-                    for (DeferredItem<?> item : FPItems.TAB_ITEMS) {
+                    for (DeferredItem<?> item : BCItems.TAB_ITEMS) {
                         output.accept(item);
                     }
                 }).build());
@@ -45,11 +47,13 @@ public final class BuildcraftLegacy {
 
     public BuildcraftLegacy(IEventBus modEventBus, ModContainer modContainer) {
         CREATIVE_MODE_TABS.register(modEventBus);
-        FPBlockEntities.BLOCK_ENTITIES.register(modEventBus);
-        FPBlocks.BLOCKS.register(modEventBus);
-        FPItems.ITEMS.register(modEventBus);
-        FPFluids.FLUIDS.register(modEventBus);
-        FPFluidTypes.FLUID_TYPES.register(modEventBus);
+        BCBlockEntities.BLOCK_ENTITIES.register(modEventBus);
+        BCBlocks.BLOCKS.register(modEventBus);
+        BCItems.ITEMS.register(modEventBus);
+        BCFluids.FLUIDS.register(modEventBus);
+        BCFluidTypes.FLUID_TYPES.register(modEventBus);
+        BCDataComponents.DATA_COMPONENTS.register(modEventBus);
+        BCMenuTypes.MENUS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, BCConfig.SPEC);
 
@@ -58,10 +62,15 @@ public final class BuildcraftLegacy {
     }
 
     private void attachCaps(RegisterCapabilitiesEvent event) {
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.EXTRACTING_ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, FPBlockEntities.CRATE.get(), CrateBE::getItemHandler);
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, FPBlockEntities.TANK.get(), TankBE::getFluidTank);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.EXTRACTING_ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.CRATE.get(), CrateBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BCBlockEntities.TANK.get(), TankBE::getFluidTank);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), (be, ctx) -> be.getItemHandler());
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), (be, ctx) -> be.getFluidHandler());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.REDSTONE_ENGINE.get(), (be, ctx) -> be.getEnergyStorage());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), (be, ctx) -> be.getEnergyStorage());
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), (be, ctx) -> be.getEnergyStorage());
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

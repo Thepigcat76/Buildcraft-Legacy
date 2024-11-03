@@ -1,10 +1,10 @@
 package com.thepigcat.buildcraft.datagen.data;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
-import com.thepigcat.buildcraft.registries.FPBlocks;
-import com.thepigcat.buildcraft.registries.FPFluids;
-import com.thepigcat.buildcraft.registries.FPItems;
-import com.thepigcat.buildcraft.tags.FPTags;
+import com.thepigcat.buildcraft.registries.BCBlocks;
+import com.thepigcat.buildcraft.registries.BCFluids;
+import com.thepigcat.buildcraft.registries.BCItems;
+import com.thepigcat.buildcraft.tags.BCTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.CompletableFuture;
 
-public class TagProvider {
+public class BCTagProvider {
     public static void createTagProviders(DataGenerator generator, PackOutput packOutput, CompletableFuture<HolderLookup.Provider> lookupProvider, ExistingFileHelper existingFileHelper, boolean isServer) {
         Block provider = new Block(packOutput, lookupProvider, existingFileHelper);
         generator.addProvider(isServer, provider);
@@ -33,9 +33,9 @@ public class TagProvider {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.MINEABLE_WITH_AXE)
-                    .add(FPBlocks.CRATE.get(), FPBlocks.WOODEN_ITEM_PIPE.get());
+                    .add(BCBlocks.CRATE.get(), BCBlocks.WOODEN_ITEM_PIPE.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .add(FPBlocks.TANK.get(), FPBlocks.COBBLESTONE_ITEM_PIPE.get());
+                    .add(BCBlocks.TANK.get(), BCBlocks.COBBLESTONE_ITEM_PIPE.get());
         }
     }
 
@@ -46,18 +46,18 @@ public class TagProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(FPTags.Items.GEARS).add(
-                    FPItems.WOODEN_GEAR.get(),
-                    FPItems.STONE_GEAR.get(),
-                    FPItems.IRON_GEAR.get(),
-                    FPItems.GOLD_GEAR.get(),
-                    FPItems.DIAMOND_GEAR.get()
+            tag(BCTags.Items.GEARS).add(
+                    BCItems.WOODEN_GEAR.get(),
+                    BCItems.STONE_GEAR.get(),
+                    BCItems.IRON_GEAR.get(),
+                    BCItems.GOLD_GEAR.get(),
+                    BCItems.DIAMOND_GEAR.get()
             );
-            tag(FPTags.Items.WOODEN_GEAR).add(FPItems.WOODEN_GEAR.get());
-            tag(FPTags.Items.STONE_GEAR).add(FPItems.STONE_GEAR.get());
-            tag(FPTags.Items.IRON_GEAR).add(FPItems.IRON_GEAR.get());
-            tag(FPTags.Items.GOLD_GEAR).add(FPItems.GOLD_GEAR.get());
-            tag(FPTags.Items.DIAMOND_GEAR).add(FPItems.DIAMOND_GEAR.get());
+            tag(BCTags.Items.WOODEN_GEAR).add(BCItems.WOODEN_GEAR.get());
+            tag(BCTags.Items.STONE_GEAR).add(BCItems.STONE_GEAR.get());
+            tag(BCTags.Items.IRON_GEAR).add(BCItems.IRON_GEAR.get());
+            tag(BCTags.Items.GOLD_GEAR).add(BCItems.GOLD_GEAR.get());
+            tag(BCTags.Items.DIAMOND_GEAR).add(BCItems.DIAMOND_GEAR.get());
         }
     }
 
@@ -68,7 +68,8 @@ public class TagProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(FPTags.Fluids.OIL).add(FPFluids.OIL_SOURCE.get(), FPFluids.OIL_FLOWING.get());
+            tag(BCTags.Fluids.OIL).add(BCFluids.OIL_SOURCE.get(), BCFluids.OIL_FLOWING.get());
+            tag(BCTags.Fluids.COMBUSTION_FUEL).addTag(BCTags.Fluids.OIL);
         }
     }
 

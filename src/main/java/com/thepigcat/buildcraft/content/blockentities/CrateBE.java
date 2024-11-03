@@ -1,7 +1,7 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
 import com.thepigcat.buildcraft.api.capabilties.JumboItemHandler;
-import com.thepigcat.buildcraft.registries.FPBlockEntities;
+import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -20,7 +20,7 @@ public class CrateBE extends BlockEntity {
     private final JumboItemHandler itemHandler;
 
     public CrateBE(BlockPos pos, BlockState blockState) {
-        super(FPBlockEntities.CRATE.get(), pos, blockState);
+        super(BCBlockEntities.CRATE.get(), pos, blockState);
         this.itemHandler = new JumboItemHandler(4096) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
@@ -57,6 +57,10 @@ public class CrateBE extends BlockEntity {
         return itemHandler;
     }
 
+    public JumboItemHandler getItemHandler() {
+        return itemHandler;
+    }
+
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
@@ -66,10 +70,5 @@ public class CrateBE extends BlockEntity {
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         return saveWithoutMetadata(provider);
-    }
-
-    @Override
-    public void onDataPacket(Connection net, ClientboundBlockEntityDataPacket pkt, HolderLookup.Provider lookupProvider) {
-        super.onDataPacket(net, pkt, lookupProvider);
     }
 }

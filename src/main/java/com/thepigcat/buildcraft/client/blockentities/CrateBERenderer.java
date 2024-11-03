@@ -30,6 +30,10 @@ public class CrateBERenderer implements BlockEntityRenderer<CrateBE> {
 
         Direction facing = blockEntity.getBlockState().getValue(CrateBlock.FACING);
 
+        renderItemsAndCount(poseStack, bufferSource, packedOverlay, stack, facing);
+    }
+
+    public static void renderItemsAndCount(PoseStack poseStack, MultiBufferSource bufferSource, int packedOverlay, ItemStack stack, Direction facing) {
         if (!stack.isEmpty()) {
             ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
             Font font = Minecraft.getInstance().font;
@@ -71,7 +75,7 @@ public class CrateBERenderer implements BlockEntityRenderer<CrateBE> {
 
     private static final float[] sideRotationY2D = {0, 0, 2, 0, 3, 1};
 
-    private float getRotationYForSide2D(Direction side) {
+    private static float getRotationYForSide2D(Direction side) {
         return sideRotationY2D[side.ordinal()] * 90 * (float) Math.PI / 180f;
     }
 }

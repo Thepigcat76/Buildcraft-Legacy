@@ -4,7 +4,7 @@ import com.mojang.serialization.MapCodec;
 import com.thepigcat.buildcraft.api.blockentities.PipeBlockEntity;
 import com.thepigcat.buildcraft.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.buildcraft.api.blocks.PipeBlock;
-import com.thepigcat.buildcraft.registries.FPBlockEntities;
+import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -51,6 +51,6 @@ public class ExtractingItemPipeBlock extends ExtractingPipeBlock {
 
     @Override
     protected BlockEntityType<? extends PipeBlockEntity<?>> getBlockEntityType() {
-        return FPBlockEntities.EXTRACTING_ITEM_PIPE.get();
+        return BCBlockEntities.EXTRACTING_ITEM_PIPE.get();
     }
 }

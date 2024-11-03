@@ -4,27 +4,30 @@ import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.buildcraft.api.blocks.PipeBlock;
 import com.thepigcat.buildcraft.content.blocks.TankBlock;
-import com.thepigcat.buildcraft.registries.FPBlocks;
+import com.thepigcat.buildcraft.registries.BCBlocks;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.client.model.generators.*;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 
-public class FPBlockStateProvider extends BlockStateProvider {
-    public FPBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
+public class BCBlockStateProvider extends BlockStateProvider {
+    public BCBlockStateProvider(PackOutput output, ExistingFileHelper exFileHelper) {
         super(output, BuildcraftLegacy.MODID, exFileHelper);
     }
 
     @Override
     protected void registerStatesAndModels() {
-        pillarBlock(FPBlocks.CRATE.get());
-        tankBlock(FPBlocks.TANK.get());
-        simpleBlock(FPBlocks.WOODEN_ENGINE.get(), new ModelFile.UncheckedModelFile(modLoc("block/wooden_engine")));
+        pillarBlock(BCBlocks.CRATE.get());
+        tankBlock(BCBlocks.TANK.get());
+        engineBlock(BCBlocks.REDSTONE_ENGINE.get());
+        engineBlock(BCBlocks.STIRLING_ENGINE.get());
+        engineBlock(BCBlocks.COMBUSTION_ENGINE.get());
 
-        for (Block block : FPBlocks.BLOCKS.getRegistry().get()) {
+        for (Block block : BCBlocks.BLOCKS.getRegistry().get()) {
             if (block instanceof ExtractingPipeBlock) {
                 extractingPipeBlock(block);
             } else if (block instanceof PipeBlock) {
@@ -35,7 +38,28 @@ public class FPBlockStateProvider extends BlockStateProvider {
     }
 
     private void engineBlock(Block block) {
+        ResourceLocation blockLoc = key(block);
+        String path = "block/engine/" + blockLoc.getPath();
+        BlockModelBuilder model = models().withExistingParent(name(block), modLoc("block/engine_base"))
+                .texture("top", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), path + "_top"))
+                .texture("side", ResourceLocation.fromNamespaceAndPath(blockLoc.getNamespace(), path + "_side"));
+        facingBlock(block, model);
+    }
 
+    public void facingBlock(Block block, ModelFile model) {
+        getVariantBuilder(block)
+                .partialState().with(BlockStateProperties.FACING, Direction.UP)
+                .modelForState().modelFile(model).addModel()
+                .partialState().with(BlockStateProperties.FACING, Direction.DOWN)
+                .modelForState().modelFile(model).rotationX(180).addModel()
+                .partialState().with(BlockStateProperties.FACING, Direction.NORTH)
+                .modelForState().modelFile(model).rotationX(90).addModel()
+                .partialState().with(BlockStateProperties.FACING, Direction.SOUTH)
+                .modelForState().modelFile(model).rotationX(90).rotationY(180).addModel()
+                .partialState().with(BlockStateProperties.FACING, Direction.EAST)
+                .modelForState().modelFile(model).rotationX(90).rotationY(90).addModel()
+                .partialState().with(BlockStateProperties.FACING, Direction.WEST)
+                .modelForState().modelFile(model).rotationX(90).rotationY(270).addModel();
     }
 
     private void tankBlock(Block block) {

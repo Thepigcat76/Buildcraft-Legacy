@@ -4,7 +4,7 @@ import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blockentities.PipeBlockEntity;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
-import com.thepigcat.buildcraft.registries.FPBlockEntities;
+import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -33,7 +33,7 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     protected long lastWorldTick;
 
     public ItemPipeBE(BlockPos pos, BlockState blockState) {
-        this(FPBlockEntities.ITEM_PIPE.get(), pos, blockState);
+        this(BCBlockEntities.ITEM_PIPE.get(), pos, blockState);
     }
 
     public ItemPipeBE(BlockEntityType<?> blockEntityType, BlockPos pos, BlockState blockState) {

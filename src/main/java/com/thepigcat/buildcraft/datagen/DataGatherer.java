@@ -1,12 +1,12 @@
 package com.thepigcat.buildcraft.datagen;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
-import com.thepigcat.buildcraft.datagen.assets.EnUSLangProvider;
-import com.thepigcat.buildcraft.datagen.assets.FPBlockStateProvider;
-import com.thepigcat.buildcraft.datagen.assets.FPItemModelProvider;
-import com.thepigcat.buildcraft.datagen.data.BlockLootTableProvider;
-import com.thepigcat.buildcraft.datagen.data.RecipeProvider;
-import com.thepigcat.buildcraft.datagen.data.TagProvider;
+import com.thepigcat.buildcraft.datagen.assets.BCEnUSLangProvider;
+import com.thepigcat.buildcraft.datagen.assets.BCBlockStateProvider;
+import com.thepigcat.buildcraft.datagen.assets.BCItemModelProvider;
+import com.thepigcat.buildcraft.datagen.data.BCBlockLootTableProvider;
+import com.thepigcat.buildcraft.datagen.data.BCRecipeProvider;
+import com.thepigcat.buildcraft.datagen.data.BCTagProvider;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
@@ -30,14 +30,14 @@ public class DataGatherer {
         ExistingFileHelper existingFileHelper = event.getExistingFileHelper();
         CompletableFuture<HolderLookup.Provider> lookupProvider = event.getLookupProvider();
 
-        generator.addProvider(event.includeClient(), new FPItemModelProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new FPBlockStateProvider(packOutput, existingFileHelper));
-        generator.addProvider(event.includeClient(), new EnUSLangProvider(packOutput));
+        generator.addProvider(event.includeClient(), new BCItemModelProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new BCBlockStateProvider(packOutput, existingFileHelper));
+        generator.addProvider(event.includeClient(), new BCEnUSLangProvider(packOutput));
 
-        TagProvider.createTagProviders(generator, packOutput, lookupProvider, existingFileHelper, event.includeServer());
-        generator.addProvider(event.includeServer(), new RecipeProvider(packOutput, lookupProvider));
+        BCTagProvider.createTagProviders(generator, packOutput, lookupProvider, existingFileHelper, event.includeServer());
+        generator.addProvider(event.includeServer(), new BCRecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Collections.emptySet(), List.of(
-                new LootTableProvider.SubProviderEntry(BlockLootTableProvider::new, LootContextParamSets.BLOCK)
+                new LootTableProvider.SubProviderEntry(BCBlockLootTableProvider::new, LootContextParamSets.BLOCK)
         ), lookupProvider));
     }
 }

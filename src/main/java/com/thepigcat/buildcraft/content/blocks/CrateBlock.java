@@ -1,15 +1,18 @@
 package com.thepigcat.buildcraft.content.blocks;
 
 import com.mojang.serialization.MapCodec;
+import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
-import com.thepigcat.buildcraft.registries.FPBlockEntities;
+import com.thepigcat.buildcraft.data.BCDataComponents;
+import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -43,7 +46,7 @@ public class CrateBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-        return FPBlockEntities.CRATE.get().create(pos, state);
+        return BCBlockEntities.CRATE.get().create(pos, state);
     }
 
     @Override
@@ -68,10 +71,10 @@ public class CrateBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-        if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof CrateBE be) {
+        if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof CrateBE be && BCConfig.crateRetainItems) {
             ItemStack stack = new ItemStack(this);
             if (!be.getItemHandler(null).getStackInSlot(0).isEmpty()) {
-                be.saveToItem(stack, params.getLevel().registryAccess());
+                stack.set(BCDataComponents.CRATE_CONTENT, ItemContainerContents.fromItems(List.of(be.getItemHandler().getStackInSlot(0))));
             }
             return List.of(stack);
         }

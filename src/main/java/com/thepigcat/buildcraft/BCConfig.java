@@ -16,14 +16,20 @@ public final class BCConfig {
             .comment("Whether the tank should keep its fluid after being broken")
             .define("tankRetainFluid", true);
 
+    private static final ModConfigSpec.BooleanValue CRATE_RETAIN_ITEMS = BUILDER
+            .comment("Whether the crate should keep its items after being broken instead of them dropping on the ground")
+            .define("crateRetainItems", true);
+
     static final ModConfigSpec SPEC = BUILDER.build();
 
     public static int tankCapacity;
     public static boolean tankRetainFluids;
+    public static boolean crateRetainItems;
 
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
-        tankCapacity = TANK_CAPACITY.getAsInt();
+        tankCapacity = TANK_CAPACITY.get();
         tankRetainFluids = TANK_RETAIN_FLUIDS.get();
+        crateRetainItems = CRATE_RETAIN_ITEMS.get();
     }
 }

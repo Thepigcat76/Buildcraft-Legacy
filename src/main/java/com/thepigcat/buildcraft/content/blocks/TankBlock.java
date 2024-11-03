@@ -3,7 +3,8 @@ package com.thepigcat.buildcraft.content.blocks;
 import com.mojang.serialization.MapCodec;
 import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
-import com.thepigcat.buildcraft.registries.FPBlockEntities;
+import com.thepigcat.buildcraft.data.BCDataComponents;
+import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -31,6 +32,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -89,7 +91,7 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
-        return createTickerHelper(blockEntityType, FPBlockEntities.TANK.get(), (level1, pos, blockState, be) -> be.tick());
+        return createTickerHelper(blockEntityType, BCBlockEntities.TANK.get(), (level1, pos, blockState, be) -> be.tick());
     }
 
     @Override
@@ -124,10 +126,10 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     protected @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
-        if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TankBE be) {
+        if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TankBE be && BCConfig.tankRetainFluids) {
             ItemStack stack = new ItemStack(this);
-            if (!be.getFluidTank().isEmpty() && BCConfig.tankRetainFluids) {
-                be.saveToItem(stack, params.getLevel().registryAccess());
+            if (!be.getFluidTank().isEmpty()) {
+                stack.set(BCDataComponents.TANK_CONTENT, SimpleFluidContent.copyOf(be.getFluidTank().getFluid()));
             }
             return List.of(stack);
         }

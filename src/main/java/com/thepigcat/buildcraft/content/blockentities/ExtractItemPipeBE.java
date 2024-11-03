@@ -1,7 +1,7 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
-import com.thepigcat.buildcraft.registries.FPBlockEntities;
+import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.ItemStack;
@@ -16,7 +16,7 @@ import java.util.Optional;
 
 public class ExtractItemPipeBE extends ItemPipeBE {
     public ExtractItemPipeBE(BlockPos pos, BlockState blockState) {
-        super(FPBlockEntities.EXTRACTING_ITEM_PIPE.get(), pos, blockState);
+        super(BCBlockEntities.EXTRACTING_ITEM_PIPE.get(), pos, blockState);
     }
 
     @Override

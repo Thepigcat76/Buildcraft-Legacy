@@ -7,7 +7,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.material.Fluid;
 
-public final class FPTags {
+public final class BCTags {
     public static final class Items {
         public static final TagKey<Item> GEARS = cTag("gears");
         public static final TagKey<Item> WOODEN_GEAR = cTag("gears/wooden");
@@ -26,6 +26,7 @@ public final class FPTags {
     }
 
     public static final class Fluids {
+        public static final TagKey<Fluid> COMBUSTION_FUEL = modTag("combustion_fuel");
         public static final TagKey<Fluid> OIL = cTag("oil");
 
         private static TagKey<Fluid> modTag(String name) {
