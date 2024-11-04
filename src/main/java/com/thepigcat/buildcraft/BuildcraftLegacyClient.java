@@ -65,7 +65,7 @@ public final class BuildcraftLegacyClient {
     private static final CrateItemRenderer CRATE_ITEM_RENDERER = new CrateItemRenderer();
 
     private static final EngineItemRenderer[] ENGINE_ITEM_RENDERERS = new EngineItemRenderer[]{
-            new EngineItemRenderer(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "entity/wodden_engine_piston"), BCBlocks.REDSTONE_ENGINE),
+            new EngineItemRenderer(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "entity/wooden_engine_piston"), BCBlocks.REDSTONE_ENGINE),
             new EngineItemRenderer(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "entity/cobblestone_engine_piston"), BCBlocks.STIRLING_ENGINE),
             new EngineItemRenderer(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "entity/iron_engine_piston"), BCBlocks.COMBUSTION_ENGINE),
     };

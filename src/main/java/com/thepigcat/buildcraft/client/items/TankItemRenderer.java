@@ -3,13 +3,16 @@ package com.thepigcat.buildcraft.client.items;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
+import com.thepigcat.buildcraft.api.blocks.EngineBlock;
 import com.thepigcat.buildcraft.client.blockentities.TankBERenderer;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.registries.BCBlocks;
+import com.thepigcat.buildcraft.util.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
+import net.minecraft.core.Direction;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
@@ -31,6 +34,6 @@ public class TankItemRenderer extends BlockEntityWithoutLevelRenderer {
         if (!fluidStack.isEmpty()) {
             TankBERenderer.renderTankContents(fluidStack, BCConfig.tankCapacity, poseStack, buffer, packedLight);
         }
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(BCBlocks.TANK.get().defaultBlockState(), poseStack, buffer, packedLight, packedOverlay, ModelData.EMPTY, RenderType.CUTOUT);
+        RenderUtils.renderBlockModel(BCBlocks.TANK.get().defaultBlockState(), poseStack, buffer, packedLight, packedOverlay);
     }
 }

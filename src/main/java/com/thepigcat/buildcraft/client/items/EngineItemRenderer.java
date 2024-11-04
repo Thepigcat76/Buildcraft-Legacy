@@ -1,26 +1,27 @@
 package com.thepigcat.buildcraft.client.items;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
 import com.thepigcat.buildcraft.client.blockentities.EngineBERenderer;
 import com.thepigcat.buildcraft.client.models.EnginePistonModel;
-import com.thepigcat.buildcraft.content.blocks.RedstoneEngineBlock;
+import com.thepigcat.buildcraft.util.RenderUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.LightTexture;
-import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
 import net.neoforged.neoforge.registries.DeferredBlock;
-
-import java.util.function.Supplier;
 
 public class EngineItemRenderer extends BlockEntityWithoutLevelRenderer {
     private final DeferredBlock<?> engineBlock;
@@ -35,7 +36,8 @@ public class EngineItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         EnginePistonModel model = new EnginePistonModel(Minecraft.getInstance().getEntityModels().bakeLayer(EnginePistonModel.LAYER_LOCATION));
-        Minecraft.getInstance().getBlockRenderer().renderSingleBlock(engineBlock.get().defaultBlockState().setValue(EngineBlock.FACING, Direction.UP), poseStack, buffer, packedLight, packedOverlay, ModelData.EMPTY, RenderType.CUTOUT);
-        EngineBERenderer.renderPiston(model, material, poseStack, buffer, LightTexture.FULL_BRIGHT, 0.3f);
+        RenderUtils.renderBlockModel(engineBlock.get().defaultBlockState().setValue(EngineBlock.FACING, Direction.UP), poseStack, buffer, packedLight, packedOverlay);
+        EngineBERenderer.renderPiston(model, material, poseStack, buffer, packedLight, packedOverlay, 0.3f);
     }
+
 }

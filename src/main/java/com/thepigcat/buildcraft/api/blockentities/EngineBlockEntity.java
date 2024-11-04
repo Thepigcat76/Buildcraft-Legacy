@@ -1,6 +1,7 @@
 package com.thepigcat.buildcraft.api.blockentities;
 
 import com.google.common.collect.ImmutableMap;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
 import com.thepigcat.buildcraft.api.capabilties.IOActions;
 import it.unimi.dsi.fastutil.Pair;
@@ -9,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
@@ -42,9 +44,14 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
             this.lastMovement = movementData.getFloat("lastMovement");
         }
 
+        Direction facing = getBlockState().getValue(EngineBlock.FACING);
+        initCaches(facing);
+    }
+
+    public void initCaches(Direction facing) {
         if (level instanceof ServerLevel serverLevel) {
-            Direction facing = getBlockState().getValue(EngineBlock.FACING);
-            exportCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, serverLevel, worldPosition, facing);
+            BuildcraftLegacy.LOGGER.debug("Facing: {}", facing);
+            this.exportCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, serverLevel, worldPosition.relative(facing), facing);
         }
     }
 
@@ -68,7 +75,11 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
 
         if (!level.isClientSide()) {
             int extractedEnergy = getEnergyStorage().extractEnergy(5, false);
-            exportCache.getCapability().receiveEnergy(extractedEnergy, false);
+            IEnergyStorage energyStorage = exportCache.getCapability();
+            if (energyStorage != null) {
+                int received = energyStorage.receiveEnergy(extractedEnergy, false);
+                getEnergyStorage().receiveEnergy(extractedEnergy - received, false);
+            }
         }
     }
 
