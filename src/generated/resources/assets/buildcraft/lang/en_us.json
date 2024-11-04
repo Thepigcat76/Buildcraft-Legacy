@@ -14,5 +14,6 @@
   "item.buildcraft.oil_bucket": "Oil Bucket",
   "item.buildcraft.stone_gear": "Stone Gear",
   "item.buildcraft.wooden_gear": "Wooden Gear",
-  "item.buildcraft.wrench": "Wrench"
+  "item.buildcraft.wrench": "Wrench",
+  "itemGroup.buildcraft.bc_tab": "Buildcraft"
 }

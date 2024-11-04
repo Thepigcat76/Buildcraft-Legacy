@@ -38,6 +38,8 @@ public class BCEnUSLangProvider extends LanguageProvider {
         addBlock(BCBlocks.COMBUSTION_ENGINE, "Combustion Engine");
 
         addFluidType(BCFluidTypes.OIL_FLUID_TYPE, "Oil");
+
+        add("itemGroup.buildcraft.bc_tab", "Buildcraft");
     }
 
     private void addFluidType(Supplier<FluidType> fluidTypeSupplier, String translation) {

@@ -35,8 +35,8 @@ public final class BuildcraftLegacy {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(BuiltInRegistries.CREATIVE_MODE_TAB, MODID);
 
     static {
-        CREATIVE_MODE_TABS.register("example_tab", () -> CreativeModeTab.builder()
-                .title(Component.translatable("itemGroup.examplemod"))
+        CREATIVE_MODE_TABS.register("bc_tab", () -> CreativeModeTab.builder()
+                .title(Component.translatable("itemGroup.buildcraft.bc_tab"))
                 .icon(BCBlocks.COBBLESTONE_ITEM_PIPE::toStack)
                 .displayItems((parameters, output) -> {
                     for (DeferredItem<?> item : BCItems.TAB_ITEMS) {
