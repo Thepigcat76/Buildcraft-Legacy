@@ -2,7 +2,6 @@ package com.thepigcat.buildcraft;
 
 import com.mojang.blaze3d.shaders.FogShape;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.thepigcat.buildcraft.api.blockentities.EngineBlockEntity;
 import com.thepigcat.buildcraft.api.fluids.BaseFluidType;
 import com.thepigcat.buildcraft.client.blockentities.CrateBERenderer;
 import com.thepigcat.buildcraft.client.blockentities.EngineBERenderer;
@@ -14,7 +13,6 @@ import com.thepigcat.buildcraft.client.items.TankItemRenderer;
 import com.thepigcat.buildcraft.client.models.EnginePistonModel;
 import com.thepigcat.buildcraft.client.screens.CombustionEngineScreen;
 import com.thepigcat.buildcraft.client.screens.StirlingEngineScreen;
-import com.thepigcat.buildcraft.content.menus.StirlingEngineMenu;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.registries.BCBlocks;
 import com.thepigcat.buildcraft.registries.BCFluidTypes;
@@ -26,6 +24,7 @@ import net.minecraft.client.renderer.FogRenderer;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
+import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
@@ -40,7 +39,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joml.Vector3f;
 
-@Mod(BuildcraftLegacyClient.MODID)
+@Mod(value = BuildcraftLegacyClient.MODID, dist = Dist.CLIENT)
 public final class BuildcraftLegacyClient {
     public static final String MODID = "buildcraft";
 
