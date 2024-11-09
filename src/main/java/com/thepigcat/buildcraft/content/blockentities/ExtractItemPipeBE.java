@@ -1,5 +1,6 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -26,10 +27,23 @@ public class ExtractItemPipeBE extends ItemPipeBE {
             BlockCapabilityCache<IItemHandler, Direction> cache = capabilityCaches.get(this.extracting);
             if (cache != null) {
                 IItemHandler extractingHandler = cache.getCapability();
+
                 if (extractingHandler != null) {
-                    ItemStack stack = extractingHandler.extractItem(0, 64, false);
-                    if (!stack.isEmpty()) {
-                        this.itemHandler.insertItem(0, stack, false);
+                    ItemStack extractedStack = ItemStack.EMPTY;
+                    int extractedSlot = 0;
+
+                    for (int i = 0; i < extractingHandler.getSlots(); i++) {
+                        ItemStack stack = extractingHandler.extractItem(i, 64, false);
+                        if (!stack.isEmpty()) {
+                            extractedStack = stack;
+                            extractedSlot = i;
+                            break;
+                        }
+                    }
+
+                    if (!extractedStack.isEmpty()) {
+                        ItemStack insertRemainder = itemHandler.insertItem(0, extractedStack, false);
+                        extractingHandler.insertItem(extractedSlot, insertRemainder, false);
 
                         this.from = this.extracting;
 
@@ -40,8 +54,9 @@ public class ExtractItemPipeBE extends ItemPipeBE {
                             this.to = directions.getFirst();
                         }
 
-                        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(this.getBlockPos(), Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
+                        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
                     }
+
                 }
             }
         }

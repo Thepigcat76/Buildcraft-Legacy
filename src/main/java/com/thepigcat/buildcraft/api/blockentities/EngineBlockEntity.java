@@ -10,6 +10,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.packs.repository.Pack;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -19,6 +20,8 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 public abstract class EngineBlockEntity extends ContainerBlockEntity {
@@ -29,10 +32,19 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
     public float lastMovement;
     private boolean backward;
 
+    private Map<Direction, Pair<IOActions, int[]>> sidedInteractions;
+
     public EngineBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
         addEnergyStorage(1000);
         this.movement = 0.5f;
+        this.sidedInteractions = new HashMap<>();
+        Direction facing = getBlockState().getValue(EngineBlock.FACING);
+        for (Direction dir : Direction.values()) {
+            if (dir != facing) {
+                this.sidedInteractions.put(dir, Pair.of(IOActions.INSERT, new int[]{0}));
+            }
+        }
     }
 
     @Override
@@ -50,8 +62,13 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
 
     public void initCaches(Direction facing) {
         if (level instanceof ServerLevel serverLevel) {
-            BuildcraftLegacy.LOGGER.debug("Facing: {}", facing);
-            this.exportCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, serverLevel, worldPosition.relative(facing), facing);
+            this.sidedInteractions = new HashMap<>();
+            for (Direction dir : Direction.values()) {
+                if (dir != facing) {
+                    this.sidedInteractions.put(dir, Pair.of(IOActions.INSERT, new int[]{0}));
+                }
+            }
+            this.exportCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, serverLevel, worldPosition.relative(facing), facing.getOpposite());
         }
     }
 
@@ -93,44 +110,12 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
 
     @Override
     public <T> Map<Direction, Pair<IOActions, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> capability) {
+        Direction facing = getBlockState().getValue(EngineBlock.FACING);
         if (capability == Capabilities.EnergyStorage.BLOCK) {
-            Direction facing = getBlockState().getValue(EngineBlock.FACING);
-            return Map.of(facing, Pair.of(IOActions.EXTRACT, new int[]{0}));
+            return Map.of(facing, Pair.of(IOActions.EXTRACT, new int[0]));
         }
-        return Map.of();
-    }
-
-    public static ImmutableMap<Direction, Pair<IOActions, int[]>> allBoth(int ...slots) {
-        return ImmutableMap.of(
-                Direction.NORTH, Pair.of(IOActions.BOTH, slots),
-                Direction.EAST, Pair.of(IOActions.BOTH, slots),
-                Direction.SOUTH, Pair.of(IOActions.BOTH, slots),
-                Direction.WEST, Pair.of(IOActions.BOTH, slots),
-                Direction.UP, Pair.of(IOActions.BOTH, slots),
-                Direction.DOWN, Pair.of(IOActions.BOTH, slots)
-        );
-    }
-
-    public static ImmutableMap<Direction, Pair<IOActions, int[]>> allInsert(int ...slots) {
-        return ImmutableMap.of(
-                Direction.NORTH, Pair.of(IOActions.INSERT, slots),
-                Direction.EAST, Pair.of(IOActions.INSERT, slots),
-                Direction.SOUTH, Pair.of(IOActions.INSERT, slots),
-                Direction.WEST, Pair.of(IOActions.INSERT, slots),
-                Direction.UP, Pair.of(IOActions.INSERT, slots),
-                Direction.DOWN, Pair.of(IOActions.INSERT, slots)
-        );
-    }
-
-    public static ImmutableMap<Direction, Pair<IOActions, int[]>> allExtract(int ...slots) {
-        return ImmutableMap.of(
-                Direction.NORTH, Pair.of(IOActions.EXTRACT, slots),
-                Direction.EAST, Pair.of(IOActions.EXTRACT, slots),
-                Direction.SOUTH, Pair.of(IOActions.EXTRACT, slots),
-                Direction.WEST, Pair.of(IOActions.EXTRACT, slots),
-                Direction.UP, Pair.of(IOActions.EXTRACT, slots),
-                Direction.DOWN, Pair.of(IOActions.EXTRACT, slots)
-        );
+        BuildcraftLegacy.LOGGER.debug("Sided interactions: {}", sidedInteractions);
+        return sidedInteractions;
     }
 
     @Override

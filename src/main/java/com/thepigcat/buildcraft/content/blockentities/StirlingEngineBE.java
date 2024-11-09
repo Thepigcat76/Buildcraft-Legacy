@@ -1,13 +1,10 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
 import com.thepigcat.buildcraft.api.blockentities.EngineBlockEntity;
-import com.thepigcat.buildcraft.api.capabilties.IOActions;
 import com.thepigcat.buildcraft.content.menus.StirlingEngineMenu;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
-import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -17,15 +14,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
-import net.neoforged.neoforge.capabilities.BlockCapability;
-import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.Map;
 
 public class StirlingEngineBE extends EngineBlockEntity implements MenuProvider {
     private int burnTime;
@@ -67,7 +59,7 @@ public class StirlingEngineBE extends EngineBlockEntity implements MenuProvider 
     @Override
     public void commonTick() {
         super.commonTick();
-        IItemHandler itemHandler = CapabilityUtils.itemHandlerCapability(this);
+        IItemHandler itemHandler = getItemHandler();
         if (this.burnProgress > 0) {
             burnProgress--;
             getEnergyStorage().receiveEnergy(1, false);
@@ -82,14 +74,6 @@ public class StirlingEngineBE extends EngineBlockEntity implements MenuProvider 
             }
         }
 
-    }
-
-    @Override
-    public <T> Map<Direction, Pair<IOActions, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> capability) {
-        if (capability == Capabilities.EnergyStorage.BLOCK) {
-            return super.getSidedInteractions(capability);
-        }
-        return allBoth(0);
     }
 
     @Override

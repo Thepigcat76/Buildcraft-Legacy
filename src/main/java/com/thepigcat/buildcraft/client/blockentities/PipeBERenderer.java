@@ -39,11 +39,11 @@ public class PipeBERenderer implements BlockEntityRenderer<ItemPipeBE> {
                 double y1 = y - normal.getY() * scalar;
                 double z1 = z - normal.getZ() * scalar;
                 poseStack.translate(x1, y1, z1);
-                poseStack.scale(0.5f, 0.5f, 0.5f);
-                Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
-            } else if (pipeBlockEntity.getBlockPos().equals(new BlockPos(-368, 82, 121))) {
-                BuildcraftLegacy.LOGGER.debug("from: {}, to: {}", from, to);
+            } else {
+                poseStack.translate(0.5, 0.5, 0.5);
             }
+            poseStack.scale(0.5f, 0.5f, 0.5f);
+            Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
         }
         poseStack.popPose();
     }

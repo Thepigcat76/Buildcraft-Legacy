@@ -7,11 +7,18 @@ import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.CustomData;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.HitResult;
 
 public class ItemPipeBlock extends PipeBlock {
     public ItemPipeBlock(Properties properties) {
@@ -21,10 +28,7 @@ public class ItemPipeBlock extends PipeBlock {
     @Override
     public PipeState getConnectionType(LevelAccessor level, BlockPos pipePos, BlockState pipeState, Direction connectionDirection, BlockPos connectPos) {
         BlockEntity be = level.getBlockEntity(connectPos);
-        BlockState blockState = level.getBlockState(connectPos);
-        if (be != null
-                && CapabilityUtils.itemHandlerCapability(be, connectionDirection) != null
-                || blockState.is(this)) {
+        if (be != null && CapabilityUtils.itemHandlerCapability(be, connectionDirection.getOpposite()) != null) {
             return PipeState.CONNECTED;
         }
         return PipeState.NONE;

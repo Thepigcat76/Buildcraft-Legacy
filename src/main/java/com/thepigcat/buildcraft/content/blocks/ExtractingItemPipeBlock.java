@@ -23,7 +23,7 @@ public class ExtractingItemPipeBlock extends ExtractingPipeBlock {
     public PipeState getConnectionType(LevelAccessor level, BlockPos pipePos, BlockState pipeState, Direction connectionDirection, BlockPos connectPos) {
         BlockEntity be = level.getBlockEntity(connectPos);
         BlockState connectState = level.getBlockState(connectPos);
-        if (be != null && !connectState.is(this) && CapabilityUtils.itemHandlerCapability(be, connectionDirection) != null) {
+        if (be != null && !connectState.is(this) && CapabilityUtils.itemHandlerCapability(be, connectionDirection.getOpposite()) != null) {
             // Check that pipe is only extracting on one side and that pipe is not extracting from a pipe
             if (!isExtracting(pipeState) && !(connectState.getBlock() instanceof PipeBlock)) {
                 return PipeState.EXTRACTING;

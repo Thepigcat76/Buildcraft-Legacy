@@ -148,7 +148,7 @@ public abstract class PipeBlock extends BaseEntityBlock {
     @Override
     public @NotNull BlockState updateShape(BlockState blockState, Direction facingDirection, BlockState facingBlockState, LevelAccessor level, BlockPos blockPos, BlockPos facingBlockPos) {
         int connectionIndex = facingDirection.get3DDataValue();
-        PipeBlockEntity<?> pipeBE = BlockUtils.getBe(PipeBlockEntity.class, level, blockPos);
+        PipeBlockEntity<?> pipeBE = BlockUtils.getBE(PipeBlockEntity.class, level, blockPos);
         PipeState connectionType = getConnectionType(level, blockPos, blockState, facingDirection, facingBlockPos);
         if (connectionType != PipeState.NONE) {
             pipeBE.getDirections().add(facingDirection);
@@ -183,8 +183,9 @@ public abstract class PipeBlock extends BaseEntityBlock {
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
-        PipeBlockEntity<?> be = BlockUtils.getBe(PipeBlockEntity.class, level, pos);
+        PipeBlockEntity<?> be = BlockUtils.getBE(PipeBlockEntity.class, level, pos);
         setPipeProperties(be, state);
+        level.invalidateCapabilities(pos);
     }
 
     public static void setPipeProperties(PipeBlockEntity<?> be) {
@@ -209,16 +210,8 @@ public abstract class PipeBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         if (!level.isClientSide) {
-            ItemPipeBE be = BlockUtils.getBe(ItemPipeBE.class, level, pos);
-            Direction direction = be.to;
-            if (direction != null) {
-                player.sendSystemMessage(Component.literal("Pos: " + pos.relative(direction)));
-            } else {
-                player.sendSystemMessage(Component.literal(":skull:"));
-            }
-
-            player.sendSystemMessage(Component.literal("dirs: "+be.getDirections()));
-            player.sendSystemMessage(Component.literal("------"));
+            ItemPipeBE be = BlockUtils.getBE(ItemPipeBE.class, level, pos);
+            player.sendSystemMessage(Component.literal("Item: " + be.getItemHandler().getStackInSlot(0)));
         }
         return ItemInteractionResult.SUCCESS;
     }

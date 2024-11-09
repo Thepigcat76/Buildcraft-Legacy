@@ -35,10 +35,6 @@ public abstract class PipeBlockEntity<CAP> extends BlockEntity {
 
     protected abstract BlockCapability<CAP, Direction> getCapType();
 
-    public Map<Direction, BlockCapabilityCache<CAP, Direction>> getCapabilityCaches() {
-        return capabilityCaches;
-    }
-
     @Override
     public void onLoad() {
         super.onLoad();
@@ -46,7 +42,7 @@ public abstract class PipeBlockEntity<CAP> extends BlockEntity {
             PipeBlock.setPipeProperties(this);
             Direction[] directions = Direction.values();
             for (Direction direction : directions) {
-                capabilityCaches.put(direction, BlockCapabilityCache.create(getCapType(), serverLevel, worldPosition.relative(direction), direction));
+                capabilityCaches.put(direction, BlockCapabilityCache.create(getCapType(), serverLevel, worldPosition.relative(direction), direction.getOpposite()));
             }
         }
     }

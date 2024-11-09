@@ -7,7 +7,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class BlockUtils {
     @SuppressWarnings("unchecked")
-    public static <T extends BlockEntity> @Nullable T getBe(Class<T> blockEntity, BlockGetter level, BlockPos pos) {
+    public static <T extends BlockEntity> @Nullable T getBE(Class<T> blockEntity, BlockGetter level, BlockPos pos) {
         BlockEntity blockEntity1 = level.getBlockEntity(pos);
         return blockEntity.isInstance(blockEntity1) ? (T) blockEntity1 : null;
     }

@@ -11,7 +11,9 @@ import net.minecraft.core.Direction;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.ItemUtils;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -66,16 +68,16 @@ public class TankBlock extends BaseEntityBlock {
 
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
+        TankBE be = BlockUtils.getBE(TankBE.class, level, pos);
         IFluidHandler itemFluidHandler = stack.getCapability(Capabilities.FluidHandler.ITEM);
+        IFluidHandler tankFluidHandler = be.getFluidTank();
 
-        if (itemFluidHandler != null) {
-            TankBE be = BlockUtils.getBe(TankBE.class, level, pos);
-            IFluidHandler tankFluidHandler = be.getFluidTank();
-
+        if (itemFluidHandler != null && !(stack.getItem() instanceof BucketItem)) {
+            FluidStack fluidInItemTank = itemFluidHandler.getFluidInTank(0);
             IFluidHandler fluidHandler0 = tankFluidHandler;
             IFluidHandler fluidHandler1 = itemFluidHandler;
 
-            if (!itemFluidHandler.getFluidInTank(0).isEmpty()) {
+            if (!fluidInItemTank.isEmpty()) {
                 fluidHandler0 = itemFluidHandler;
                 fluidHandler1 = tankFluidHandler;
             }
@@ -85,6 +87,18 @@ public class TankBlock extends BaseEntityBlock {
             fluidHandler0.fill(drained.copyWithAmount(drained.getAmount() - filled), IFluidHandler.FluidAction.EXECUTE);
 
             return ItemInteractionResult.SUCCESS;
+        } else if (itemFluidHandler != null && stack.getItem() instanceof BucketItem) {
+            FluidStack fluidInItemTank = itemFluidHandler.getFluidInTank(0);
+            if (fluidInItemTank.isEmpty() && tankFluidHandler.drain(1000, IFluidHandler.FluidAction.SIMULATE).getAmount() == 1000) {
+                ItemStack filledBucket = ItemUtils.createFilledResult(stack, player, tankFluidHandler.drain(1000, IFluidHandler.FluidAction.EXECUTE).getFluid().getBucket().getDefaultInstance());
+                player.setItemInHand(hand, filledBucket);
+                return ItemInteractionResult.SUCCESS;
+            } else if (!fluidInItemTank.isEmpty() && tankFluidHandler.fill(fluidInItemTank.copyWithAmount(1000), IFluidHandler.FluidAction.SIMULATE) == 1000) {
+                tankFluidHandler.fill(fluidInItemTank.copyWithAmount(1000), IFluidHandler.FluidAction.EXECUTE);
+                ItemStack emptyBucket = ItemUtils.createFilledResult(stack, player, BucketItem.getEmptySuccessItem(stack, player));
+                player.setItemInHand(hand, emptyBucket);
+                return ItemInteractionResult.SUCCESS;
+            }
         }
         return ItemInteractionResult.FAIL;
     }

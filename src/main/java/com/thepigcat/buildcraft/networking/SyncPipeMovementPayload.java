@@ -31,9 +31,11 @@ public record SyncPipeMovementPayload(BlockPos pos, float movement, float lastMo
 
     public static void sync(SyncPipeMovementPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
-            ItemPipeBE be = BlockUtils.getBe(ItemPipeBE.class, context.player().level(), payload.pos());
-            be.lastMovement = payload.lastMovement;
-            be.movement = payload.movement;
+            ItemPipeBE be = BlockUtils.getBE(ItemPipeBE.class, context.player().level(), payload.pos());
+            if (be != null) {
+                be.lastMovement = payload.lastMovement;
+                be.movement = payload.movement;
+            }
         });
     }
 }

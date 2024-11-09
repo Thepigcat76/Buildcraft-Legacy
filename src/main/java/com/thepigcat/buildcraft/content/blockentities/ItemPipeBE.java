@@ -14,8 +14,10 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
+import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
@@ -30,7 +32,6 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     public Direction to;
     public float movement;
     public float lastMovement;
-    protected long lastWorldTick;
 
     public ItemPipeBE(BlockPos pos, BlockState blockState) {
         this(BCBlockEntities.ITEM_PIPE.get(), pos, blockState);
@@ -55,11 +56,6 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     }
 
     public void tick() {
-        long worldTick = level.getGameTime();
-        if (this.lastWorldTick == worldTick)
-            return;
-        this.lastWorldTick = worldTick;
-
         // handle item transmission
         if (!level.isClientSide() && this.movement >= 1f) {
             if (this.to != null) {
@@ -67,16 +63,23 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
                 if (insertingHandler != null) {
                     ItemStack pipeContent = insertingHandler.getStackInSlot(0);
 
-                    ItemStack extractedStack = insertingHandler.extractItem(0, pipeContent.getCount(), true);
-                    ItemStack remainder = this.itemHandler.insertItem(0, extractedStack, true);
+                    if (!(level.getBlockEntity(worldPosition.relative(this.to)) instanceof ItemPipeBE)) {
+                        pipeContent = ItemStack.EMPTY;
+                    }
 
                     if (pipeContent.isEmpty()) {
-                        insertItems(insertingHandler);
+                        ItemStack remainder = insertItems(insertingHandler);
+                        BuildcraftLegacy.LOGGER.debug("remainder: {}", remainder);
+                        this.itemHandler.insertItem(0, remainder, false);
 
-                        ItemPipeBE blockEntity = BlockUtils.getBe(ItemPipeBE.class, level, worldPosition.relative(this.to));
+                        ItemPipeBE blockEntity = BlockUtils.getBE(ItemPipeBE.class, level, worldPosition.relative(this.to));
 
                         if (blockEntity != null) {
                             moveItemForward(blockEntity);
+                        }
+
+                        if (!remainder.isEmpty()) {
+                            moveItemBackward();
                         }
                     } else {
                         moveItemBackward();
@@ -88,8 +91,27 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
         }
 
         if (!this.itemHandler.getStackInSlot(0).isEmpty()) {
-            this.lastMovement = this.movement;
-            this.movement += 0.01f;
+                this.lastMovement = this.movement;
+                this.movement += 0.01f;
+
+                if (!level.isClientSide()) {
+                    BlockCapabilityCache<IItemHandler, Direction> fromCache = this.capabilityCaches.get(this.from);
+                    BlockCapabilityCache<IItemHandler, Direction> toCache = this.capabilityCaches.get(this.to);
+                    if (toCache == null || toCache.getCapability() == null) {
+                        if (fromCache == null || fromCache.getCapability() == null) {
+                            this.lastMovement = 0;
+                            this.movement = 0;
+                            this.to = null;
+                            this.from = null;
+
+                            PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.empty(), Optional.empty()));
+                            PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(worldPosition, this.movement, this.lastMovement));
+                        } else {
+                            moveItemBackward(1 - this.lastMovement, 1 - this.movement);
+                        }
+                    }
+                }
+
         } else {
             lastMovement = 0;
             movement = 0;
@@ -111,39 +133,38 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
 
         blockEntity.lastMovement = Math.abs(1 - this.lastMovement);
         blockEntity.movement = Math.abs(1 - this.movement);
-        PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(blockEntity.getBlockPos(), blockEntity.movement, blockEntity.lastMovement));
 
+        PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(blockEntity.getBlockPos(), blockEntity.movement, blockEntity.lastMovement));
         PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(blockEntity.getBlockPos(), Optional.ofNullable(blockEntity.from), Optional.ofNullable(blockEntity.to)));
     }
 
     private void moveItemBackward() {
+        moveItemBackward(0, 0);
+    }
+
+    private void moveItemBackward(float lastMovement, float movement) {
         Direction to = this.to;
         this.to = this.from;
         this.from = to;
-        this.lastMovement = 0;
-        this.movement = 0;
-
-        BuildcraftLegacy.LOGGER.debug("Movment when going back: {}", this.movement);
+        this.lastMovement = lastMovement;
+        this.movement = movement;
 
         PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(worldPosition, this.movement, this.lastMovement));
 
         PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
-
     }
 
     /**
-     * @return whether all items were inserted
+     * @return remainder
      */
-    private boolean insertItems(IItemHandler insertingHandler) {
+    private ItemStack insertItems(IItemHandler insertingHandler) {
         // Get stack in pipe (only simulated)
         ItemStack toInsert = itemHandler.extractItem(0, this.itemHandler.getSlotLimit(0), false);
-        insertingHandler.insertItem(0, toInsert, false);
 
-        return itemHandler.getStackInSlot(0).isEmpty();
+        return ItemHandlerHelper.insertItem(insertingHandler, toInsert, false);
     }
 
-    // TODO: Use parameter
-    public ItemStackHandler getItemHandler(Direction direction) {
+    public IItemHandler getItemHandler(Direction direction) {
         return itemHandler;
     }
 

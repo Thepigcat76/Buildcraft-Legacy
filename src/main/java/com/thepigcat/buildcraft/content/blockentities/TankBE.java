@@ -1,6 +1,7 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
 import com.thepigcat.buildcraft.BCConfig;
+import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -10,12 +11,19 @@ import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
+import net.neoforged.neoforge.fluids.capability.IFluidHandlerItem;
 import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -91,5 +99,20 @@ public class TankBE extends BlockEntity {
     @Override
     public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
         return saveWithoutMetadata(provider);
+    }
+
+    @Override
+    public void removeComponentsFromTag(CompoundTag tag) {
+        super.removeComponentsFromTag(tag);
+        tag.remove("fluidTank");
+    }
+
+    @Override
+    public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
+        CompoundTag compoundtag = this.saveCustomOnly(registries);
+        this.removeComponentsFromTag(compoundtag);
+        BlockItem.setBlockEntityData(stack, this.getType(), compoundtag);
+        stack.applyComponents(this.collectComponents());
+        stack.set(BCDataComponents.TANK_CONTENT.get(), SimpleFluidContent.copyOf(this.fluidTank.getFluid()));
     }
 }

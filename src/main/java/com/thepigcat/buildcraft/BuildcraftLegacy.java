@@ -1,8 +1,8 @@
 package com.thepigcat.buildcraft;
 
+import com.thepigcat.buildcraft.api.blockentities.ContainerBlockEntity;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
-import com.thepigcat.buildcraft.content.blockentities.StirlingEngineBE;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
@@ -26,7 +26,6 @@ import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-// The value here should match an entry in the META-INF/neoforge.mods.toml file
 @Mod(BuildcraftLegacy.MODID)
 public final class BuildcraftLegacy {
     public static final String MODID = "buildcraft";
@@ -62,15 +61,18 @@ public final class BuildcraftLegacy {
     }
 
     private void attachCaps(RegisterCapabilitiesEvent event) {
+        // ITEMS
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.EXTRACTING_ITEM_PIPE.get(), ItemPipeBE::getItemHandler);
         event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.CRATE.get(), CrateBE::getItemHandler);
+        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), ContainerBlockEntity::getItemHandlerOnSide);
+        // FLUID
+        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), ContainerBlockEntity::getFluidHandlerOnSide);
         event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BCBlockEntities.TANK.get(), TankBE::getFluidTank);
-        event.registerBlockEntity(Capabilities.ItemHandler.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), (be, ctx) -> be.getItemHandler());
-        event.registerBlockEntity(Capabilities.FluidHandler.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), (be, ctx) -> be.getFluidHandler());
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.REDSTONE_ENGINE.get(), (be, ctx) -> be.getEnergyStorage());
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), (be, ctx) -> be.getEnergyStorage());
-        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), (be, ctx) -> be.getEnergyStorage());
+        // ENERGY
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.REDSTONE_ENGINE.get(), ContainerBlockEntity::getEnergyStorageOnSide);
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), ContainerBlockEntity::getEnergyStorageOnSide);
+        event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), ContainerBlockEntity::getEnergyStorageOnSide);
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

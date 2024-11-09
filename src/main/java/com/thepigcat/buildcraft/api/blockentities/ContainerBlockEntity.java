@@ -2,6 +2,7 @@ package com.thepigcat.buildcraft.api.blockentities;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.capabilties.IOActions;
+import com.thepigcat.buildcraft.api.capabilties.SidedEnergyStorage;
 import com.thepigcat.buildcraft.api.capabilties.SidedFluidHandler;
 import com.thepigcat.buildcraft.api.capabilties.SidedItemHandler;
 import it.unimi.dsi.fastutil.Pair;
@@ -42,7 +43,6 @@ import java.util.function.Predicate;
 public abstract class ContainerBlockEntity extends BlockEntity {
     private @Nullable ItemStackHandler itemHandler;
     private @Nullable FluidTank fluidTank;
-    private @Nullable FluidTank secondaryFluidTank;
     private @Nullable EnergyStorage energyStorage;
 
     public ContainerBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
@@ -60,10 +60,6 @@ public abstract class ContainerBlockEntity extends BlockEntity {
         return fluidTank;
     }
 
-    public IFluidHandler getSecondaryFluidHandler() {
-        return secondaryFluidTank;
-    }
-
     public IEnergyStorage getEnergyStorage() {
         return energyStorage;
     }
@@ -72,12 +68,8 @@ public abstract class ContainerBlockEntity extends BlockEntity {
         return itemHandler;
     }
 
-    protected FluidTank getFluidTank() {
+    protected @Nullable FluidTank getFluidTank() {
         return fluidTank;
-    }
-
-    protected FluidTank getSecondaryFluidTank() {
-        return secondaryFluidTank;
     }
 
     protected EnergyStorage getEnergyStorageImpl() {
@@ -89,8 +81,6 @@ public abstract class ContainerBlockEntity extends BlockEntity {
         super.loadAdditional(nbt, provider);
         if (this.getFluidTank() != null)
             this.getFluidTank().readFromNBT(provider, nbt.getCompound("fluid_tank"));
-        if (this.getSecondaryFluidTank() != null)
-            this.getSecondaryFluidTank().readFromNBT(provider, nbt.getCompound("secondary_fluid"));
         if (this.getItemStackHandler() != null)
             this.getItemStackHandler().deserializeNBT(provider, nbt.getCompound("itemhandler"));
         if (this.getEnergyStorageImpl() != null)
@@ -105,11 +95,6 @@ public abstract class ContainerBlockEntity extends BlockEntity {
             CompoundTag tag = new CompoundTag();
             getFluidTank().writeToNBT(provider, tag);
             nbt.put("fluid_tank", tag);
-        }
-        if (getSecondaryFluidTank() != null) {
-            CompoundTag tag = new CompoundTag();
-            getSecondaryFluidTank().writeToNBT(provider, tag);
-            nbt.put("secondary_fluid", tag);
         }
         if (getItemStackHandler() != null)
             nbt.put("itemhandler", getItemStackHandler().serializeNBT(provider));
@@ -167,20 +152,8 @@ public abstract class ContainerBlockEntity extends BlockEntity {
         addFluidTank(capacityInMb, ignored -> true);
     }
 
-    protected final void addSecondaryFluidTank(int capacityInMb) {
-        addSecondaryFluidTank(capacityInMb, ignored -> true);
-    }
-
-    protected final void addSecondaryFluidTank(int capacityInMb, Predicate<FluidStack> validation) {
-        addFluidTank(capacityInMb, validation, true);
-    }
-
-    protected final void addFluidTank(int capacityInMn, Predicate<FluidStack> validation) {
-        addFluidTank(capacityInMn, validation, false);
-    }
-
-    protected final void addFluidTank(int capacityInMb, Predicate<FluidStack> validation, boolean secondary) {
-        FluidTank tank = new FluidTank(capacityInMb) {
+    protected final void addFluidTank(int capacityInMb, Predicate<FluidStack> validation) {
+        this.fluidTank = new FluidTank(capacityInMb) {
             @Override
             protected void onContentsChanged() {
                 update();
@@ -193,11 +166,6 @@ public abstract class ContainerBlockEntity extends BlockEntity {
                 return validation.test(stack);
             }
         };
-        if (!secondary) {
-            this.fluidTank = tank;
-        } else {
-            this.secondaryFluidTank = tank;
-        }
     }
 
     protected final void addEnergyStorage(int energyCapacity) {
@@ -208,7 +176,7 @@ public abstract class ContainerBlockEntity extends BlockEntity {
                 if (receivedEnergy > 0) {
                     update();
                     setChanged();
-                    ContainerBlockEntity.this.onPowerChanged();
+                    ContainerBlockEntity.this.onEnergyChanged();
                 }
                 return receivedEnergy;
             }
@@ -219,7 +187,7 @@ public abstract class ContainerBlockEntity extends BlockEntity {
                 if (extractedEnergy > 0) {
                     update();
                     setChanged();
-                    ContainerBlockEntity.this.onPowerChanged();
+                    ContainerBlockEntity.this.onEnergyChanged();
                 }
                 return extractedEnergy;
             }
@@ -238,10 +206,7 @@ public abstract class ContainerBlockEntity extends BlockEntity {
     protected void onFluidChanged() {
     }
 
-    public void onPowerChanged() {
-    }
-
-    public void onHeatChanged() {
+    public void onEnergyChanged() {
     }
 
     public void drop() {
@@ -287,19 +252,18 @@ public abstract class ContainerBlockEntity extends BlockEntity {
 
         Map<Direction, Pair<IOActions, int[]>> ioPorts = getSidedInteractions(capability);
         if (ioPorts.containsKey(direction)) {
-
             if (direction == Direction.UP || direction == Direction.DOWN) {
                 return handlerSupplier.get(baseHandler, ioPorts.get(direction));
             }
 
-            if (this.getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
-                Direction localDir = this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+            if (this.getBlockState().hasProperty(BlockStateProperties.FACING)) {
+                Direction localDir = this.getBlockState().getValue(BlockStateProperties.FACING);
 
                 return getCapOnSide(handlerSupplier, direction, baseHandler, ioPorts, localDir);
             }
 
-            if (getBlockState().hasProperty(BlockStateProperties.FACING)) {
-                Direction localDir = this.getBlockState().getValue(BlockStateProperties.FACING);
+            if (this.getBlockState().hasProperty(BlockStateProperties.HORIZONTAL_FACING)) {
+                Direction localDir = this.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
 
                 return getCapOnSide(handlerSupplier, direction, baseHandler, ioPorts, localDir);
             }
@@ -315,9 +279,8 @@ public abstract class ContainerBlockEntity extends BlockEntity {
         return switch (localDir) {
             case NORTH -> handlerSupplier.get(baseHandler, ioPorts.get(direction.getOpposite()));
             case EAST -> handlerSupplier.get(baseHandler, ioPorts.get(direction.getClockWise()));
-            case SOUTH -> handlerSupplier.get(baseHandler, ioPorts.get(direction));
+            case SOUTH, DOWN, UP -> handlerSupplier.get(baseHandler, ioPorts.get(direction));
             case WEST -> handlerSupplier.get(baseHandler, ioPorts.get(direction.getCounterClockWise()));
-            default -> null;
         };
     }
 
@@ -336,6 +299,15 @@ public abstract class ContainerBlockEntity extends BlockEntity {
                 SidedFluidHandler::new,
                 direction,
                 getFluidHandler()
+        );
+    }
+
+    public IEnergyStorage getEnergyStorageOnSide(Direction direction) {
+        return getHandlerOnSide(
+                Capabilities.EnergyStorage.BLOCK,
+                SidedEnergyStorage::new,
+                direction,
+                getEnergyStorage()
         );
     }
 

@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.core.Direction;
 import net.minecraft.world.inventory.InventoryMenu;
+import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import org.joml.Matrix4f;
@@ -19,7 +20,6 @@ import org.joml.Matrix4f;
 public class TankBERenderer implements BlockEntityRenderer<TankBE> {
     private static final float SIDE_MARGIN = (float) TankBlock.SHAPE.min(Direction.Axis.X) + 0.01f;
     private static final float MIN_Y = 0;
-    private static final float MAX_Y = 1;
 
     public TankBERenderer(BlockEntityRendererProvider.Context context) {
     }
@@ -78,7 +78,7 @@ public class TankBERenderer implements BlockEntityRenderer<TankBE> {
         buffer.addVertex(matrix, 1 - SIDE_MARGIN, height, SIDE_MARGIN).setColor(r, g, b, alpha).setUv(minU, maxV).setLight(light).setNormal(1, 0, 0);
         buffer.addVertex(matrix, 1 - SIDE_MARGIN, height, 1 - SIDE_MARGIN).setColor(r, g, b, alpha).setUv(maxU, maxV).setLight(light).setNormal(1, 0, 0);
         buffer.addVertex(matrix, 1 - SIDE_MARGIN, MIN_Y, 1 - SIDE_MARGIN).setColor(r, g, b, alpha).setUv(maxU, minV).setLight(light).setNormal(1, 0, 0);
-        // top
+        // topJoined
 
         if (heightPercentage == 1) {
             heightPercentage = 0.99f;
