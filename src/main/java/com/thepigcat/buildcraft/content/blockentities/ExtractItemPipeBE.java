@@ -1,6 +1,5 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
-import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -45,16 +44,16 @@ public class ExtractItemPipeBE extends ItemPipeBE {
                         ItemStack insertRemainder = itemHandler.insertItem(0, extractedStack, false);
                         extractingHandler.insertItem(extractedSlot, insertRemainder, false);
 
-                        this.from = this.extracting;
+                        this.setFrom(this.extracting);
 
                         List<Direction> directions = new ArrayList<>(this.directions);
                         directions.remove(this.extracting);
 
                         if (!directions.isEmpty()) {
-                            this.to = directions.getFirst();
+                            this.setTo(directions.getFirst());
                         }
 
-                        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
+                        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(from), Optional.ofNullable(to)));
                     }
 
                 }

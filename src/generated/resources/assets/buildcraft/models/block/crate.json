@@ -2,11 +2,11 @@
   "parent": "minecraft:block/cube",
   "textures": {
     "down": "buildcraft:block/crate_top",
-    "east": "buildcraft:block/crate",
-    "north": "buildcraft:block/crate",
-    "particle": "buildcraft:block/crate",
-    "south": "buildcraft:block/crate",
+    "east": "buildcraft:block/crate_side",
+    "north": "buildcraft:block/crate_side",
+    "particle": "buildcraft:block/crate_side",
+    "south": "buildcraft:block/crate_side",
     "up": "buildcraft:block/crate_top",
-    "west": "buildcraft:block/crate"
+    "west": "buildcraft:block/crate_side"
   }
 }

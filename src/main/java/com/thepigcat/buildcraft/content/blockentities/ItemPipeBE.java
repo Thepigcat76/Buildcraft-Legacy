@@ -21,15 +21,14 @@ import net.neoforged.neoforge.items.ItemHandlerHelper;
 import net.neoforged.neoforge.items.ItemStackHandler;
 import net.neoforged.neoforge.network.PacketDistributor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     protected final ItemStackHandler itemHandler;
 
-    public Direction from;
-    public Direction to;
+    protected Direction from;
+    protected Direction to;
+    private Direction prevFrom;
     public float movement;
     public float lastMovement;
 
@@ -58,12 +57,12 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
     public void tick() {
         // handle item transmission
         if (!level.isClientSide() && this.movement >= 1f) {
-            if (this.to != null) {
-                IItemHandler insertingHandler = capabilityCaches.get(this.to).getCapability();
+            if (to != null) {
+                IItemHandler insertingHandler = capabilityCaches.get(to).getCapability();
                 if (insertingHandler != null) {
                     ItemStack pipeContent = insertingHandler.getStackInSlot(0);
 
-                    if (!(level.getBlockEntity(worldPosition.relative(this.to)) instanceof ItemPipeBE)) {
+                    if (!(level.getBlockEntity(worldPosition.relative(to)) instanceof ItemPipeBE)) {
                         pipeContent = ItemStack.EMPTY;
                     }
 
@@ -95,14 +94,14 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
                 this.movement += 0.01f;
 
                 if (!level.isClientSide()) {
-                    BlockCapabilityCache<IItemHandler, Direction> fromCache = this.capabilityCaches.get(this.from);
-                    BlockCapabilityCache<IItemHandler, Direction> toCache = this.capabilityCaches.get(this.to);
+                    BlockCapabilityCache<IItemHandler, Direction> fromCache = this.capabilityCaches.get(from);
+                    BlockCapabilityCache<IItemHandler, Direction> toCache = this.capabilityCaches.get(to);
                     if (toCache == null || toCache.getCapability() == null) {
                         if (fromCache == null || fromCache.getCapability() == null) {
                             this.lastMovement = 0;
                             this.movement = 0;
-                            this.to = null;
-                            this.from = null;
+                            this.setTo(null);
+                            this.setFrom(null);
 
                             PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.empty(), Optional.empty()));
                             PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(worldPosition, this.movement, this.lastMovement));
@@ -118,17 +117,34 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
         }
     }
 
-    private void moveItemForward(ItemPipeBE blockEntity) {
-        List<Direction> directions = new ArrayList<>(blockEntity.directions);
-        directions.remove(this.to.getOpposite());
+    public void setFrom(Direction from) {
+        this.prevFrom = this.from;
+        this.from = from;
+    }
 
-        blockEntity.from = this.to.getOpposite();
+    public void setTo(Direction to) {
+        this.to = to;
+    }
+
+    public Direction getFrom() {
+        return from;
+    }
+
+    public Direction getTo() {
+        return to;
+    }
+
+    private void moveItemForward(ItemPipeBE blockEntity) {
+        Set<Direction> directions = new HashSet<>(blockEntity.directions);
+        directions.remove(to.getOpposite());
+
+        blockEntity.setFrom(to.getOpposite());
 
         if (!directions.isEmpty()) {
             int dirIndex = level.random.nextInt(0, directions.size());
-            blockEntity.to = directions.get(dirIndex);
+            blockEntity.setTo(directions.stream().toList().get(dirIndex));
         } else {
-            blockEntity.to = blockEntity.from;
+            blockEntity.setTo(blockEntity.from);
         }
 
         blockEntity.lastMovement = Math.abs(1 - this.lastMovement);
@@ -144,14 +160,14 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
 
     private void moveItemBackward(float lastMovement, float movement) {
         Direction to = this.to;
-        this.to = this.from;
-        this.from = to;
+        this.setTo(from);
+        this.setFrom(to);
         this.lastMovement = lastMovement;
         this.movement = movement;
 
         PacketDistributor.sendToAllPlayers(new SyncPipeMovementPayload(worldPosition, this.movement, this.lastMovement));
 
-        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(this.from), Optional.ofNullable(this.to)));
+        PacketDistributor.sendToAllPlayers(new SyncPipeDirectionPayload(worldPosition, Optional.ofNullable(from), Optional.ofNullable(this.to)));
     }
 
     /**
@@ -180,11 +196,11 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
 
         int toIndex = tag.getInt("to");
         if (toIndex != -1) {
-            this.to = Direction.values()[toIndex];
+            this.setTo(Direction.values()[toIndex]);
         }
         int fromIndex = tag.getInt("from");
         if (fromIndex != -1) {
-            this.from = Direction.values()[fromIndex];
+            this.setFrom(Direction.values()[fromIndex]);
         }
     }
 
@@ -194,7 +210,7 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
 
         tag.put("item_handler", this.itemHandler.serializeNBT(registries));
 
-        tag.putInt("to", this.to != null ? this.to.ordinal() : -1);
-        tag.putInt("from", this.from != null ? this.from.ordinal() : -1);
+        tag.putInt("to", to != null ? to.ordinal() : -1);
+        tag.putInt("from", from != null ? from.ordinal() : -1);
     }
 }

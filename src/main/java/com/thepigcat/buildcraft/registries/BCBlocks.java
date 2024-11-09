@@ -7,7 +7,6 @@ import com.thepigcat.buildcraft.content.items.blocks.TankBlockItem;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemContainerContents;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.block.LiquidBlock;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
-import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -49,6 +47,8 @@ public final class BCBlocks {
     public static final DeferredBlock<TankBlock> TANK = registerBlockAndItem("tank", TankBlock::new,
             BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS),
             () -> new TankBlockItem(new Item.Properties().component(BCDataComponents.TANK_CONTENT, SimpleFluidContent.EMPTY)));
+//    public static final DeferredBlock<Block> QUARRY = registerBlockAndItem("quarry", Block::new,
+//            BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
 
     // Fluids
     public static final DeferredBlock<LiquidBlock> OIL_FLUID = BLOCKS.register("oil_block",

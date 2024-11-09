@@ -22,6 +22,7 @@ public class BCBlockStateProvider extends BlockStateProvider {
     @Override
     protected void registerStatesAndModels() {
         pillarBlock(BCBlocks.CRATE.get());
+//        pillarBlock(BCBlocks.QUARRY.get(), inDir(blockTexture(BCBlocks.QUARRY.get()), "machine"));
         tankBlock(BCBlocks.TANK.get());
         engineBlock(BCBlocks.REDSTONE_ENGINE.get());
         engineBlock(BCBlocks.STIRLING_ENGINE.get());
@@ -64,25 +65,29 @@ public class BCBlockStateProvider extends BlockStateProvider {
 
     private void tankBlock(Block block) {
         ResourceLocation blockTexture = blockTexture(block);
-        ResourceLocation topTexture = extend(blockTexture, "_top");
-        ResourceLocation topJoinedTexture = extend(blockTexture, "_top_joined");
-        ResourceLocation sideTexture = extend(blockTexture, "_side");
-        ResourceLocation sideJoinedTexture = extend(blockTexture, "_side_joined");
+        ResourceLocation topTexture = suffix(blockTexture, "_top");
+        ResourceLocation topJoinedTexture = suffix(blockTexture, "_top_joined");
+        ResourceLocation sideTexture = suffix(blockTexture, "_side");
+        ResourceLocation sideJoinedTexture = suffix(blockTexture, "_side_joined");
 
         getVariantBuilder(block)
                 .partialState().with(TankBlock.TOP_JOINED, true).with(TankBlock.BOTTOM_JOINED, true)
-                .modelForState().modelFile(tankModel(extend(blockTexture, "_top_and_bottom_joined"), topJoinedTexture, sideJoinedTexture, topJoinedTexture)).addModel()
+                .modelForState().modelFile(tankModel(suffix(blockTexture, "_top_and_bottom_joined"), topJoinedTexture, sideJoinedTexture, topJoinedTexture)).addModel()
                 .partialState().with(TankBlock.TOP_JOINED, true).with(TankBlock.BOTTOM_JOINED, false)
-                .modelForState().modelFile(tankModel(extend(blockTexture, "_top_joined"), topJoinedTexture, sideTexture, topTexture)).addModel()
+                .modelForState().modelFile(tankModel(suffix(blockTexture, "_top_joined"), topJoinedTexture, sideTexture, topTexture)).addModel()
                 .partialState().with(TankBlock.TOP_JOINED, false).with(TankBlock.BOTTOM_JOINED, true)
-                .modelForState().modelFile(tankModel(extend(blockTexture, "_bottom_joined"), topTexture, sideJoinedTexture, topJoinedTexture)).addModel()
+                .modelForState().modelFile(tankModel(suffix(blockTexture, "_bottom_joined"), topTexture, sideJoinedTexture, topJoinedTexture)).addModel()
                 .partialState().with(TankBlock.TOP_JOINED, false).with(TankBlock.BOTTOM_JOINED, false)
                 .modelForState().modelFile(tankModel(blockTexture, topTexture, sideTexture, topTexture)).addModel();
     }
 
     private void pillarBlock(Block block) {
-        ResourceLocation side = blockTexture(block);
-        ResourceLocation top = extend(side, "_top");
+        pillarBlock(block, blockTexture(block));
+    }
+
+    private void pillarBlock(Block block, ResourceLocation base) {
+        ResourceLocation side = suffix(base, "_side");
+        ResourceLocation top = suffix(base, "_top");
         simpleBlock(
                 block,
                 models().cube(
@@ -168,8 +173,24 @@ public class BCBlockStateProvider extends BlockStateProvider {
         return ResourceLocation.fromNamespaceAndPath(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath());
     }
 
-    private ResourceLocation extend(ResourceLocation rl, String suffix) {
-        return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), rl.getPath() + suffix);
+    private ResourceLocation suffix(ResourceLocation rl, String suffix) {
+        return rl.withSuffix(suffix);
+    }
+
+    private ResourceLocation prefix(String prefix, ResourceLocation rl) {
+        return rl.withPrefix(prefix);
+    }
+
+    private ResourceLocation inDir(ResourceLocation rl, String directory) {
+        StringBuilder path = new StringBuilder();
+        String[] dirs = rl.getPath().split("/");
+        for (int i = 0; i < dirs.length; i++) {
+            if (i == dirs.length - 1) {
+                path.append(directory).append("/");
+            }
+            path.append(dirs[i]).append(i != dirs.length - 1 ? "/" : "");
+        }
+        return ResourceLocation.fromNamespaceAndPath(rl.getNamespace(), path.toString());
     }
 
 }

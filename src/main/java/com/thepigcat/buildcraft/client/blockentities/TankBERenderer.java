@@ -91,5 +91,10 @@ public class TankBERenderer implements BlockEntityRenderer<TankBE> {
         buffer.addVertex(matrix, SIDE_MARGIN, height, 1 - SIDE_MARGIN).setColor(r, g, b, alpha).setUv(minU, maxV).setLight(light).setNormal(0, 1, 0);
         buffer.addVertex(matrix, 1 - SIDE_MARGIN, height, 1 - SIDE_MARGIN).setColor(r, g, b, alpha).setUv(maxU, maxV).setLight(light).setNormal(0, 1, 0);
         buffer.addVertex(matrix, 1 - SIDE_MARGIN, height, SIDE_MARGIN).setColor(r, g, b, alpha).setUv(maxU, minV).setLight(light).setNormal(0, 1, 0);
+
+        buffer.addVertex(matrix, SIDE_MARGIN, 0.01f, SIDE_MARGIN).setColor(r, g, b, alpha).setUv(minU, minV).setLight(light).setNormal(0, -1, 0);
+        buffer.addVertex(matrix, 1 - SIDE_MARGIN, 0.01f, SIDE_MARGIN).setColor(r, g, b, alpha).setUv(maxU, minV).setLight(light).setNormal(0, -1, 0);
+        buffer.addVertex(matrix, 1 - SIDE_MARGIN, 0.1f, 1 - SIDE_MARGIN).setColor(r, g, b, alpha).setUv(maxU, maxV).setLight(light).setNormal(0, -1, 0);
+        buffer.addVertex(matrix, SIDE_MARGIN, 0.01f, 1 - SIDE_MARGIN).setColor(r, g, b, alpha).setUv(minU, maxV).setLight(light).setNormal(0, -1, 0);
     }
 }

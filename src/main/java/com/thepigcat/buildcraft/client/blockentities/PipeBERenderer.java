@@ -1,13 +1,11 @@
 package com.thepigcat.buildcraft.client.blockentities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
@@ -22,8 +20,8 @@ public class PipeBERenderer implements BlockEntityRenderer<ItemPipeBE> {
     public void render(ItemPipeBE pipeBlockEntity, float partialTicks, PoseStack poseStack, MultiBufferSource multiBufferSource, int i, int i1) {
         ItemStack stack = pipeBlockEntity.getItemHandler().getStackInSlot(0);
 
-        Direction from = pipeBlockEntity.from;
-        Direction to = pipeBlockEntity.to;
+        Direction from = pipeBlockEntity.getFrom();
+        Direction to = pipeBlockEntity.getTo();
 
         float v = Mth.lerp(partialTicks, pipeBlockEntity.lastMovement, pipeBlockEntity.movement);
         float scalar = 1.5f - v;

@@ -5,11 +5,15 @@
 
 package com.thepigcat.buildcraft.api.capabilties;
 
+import com.mojang.datafixers.util.Pair;
 import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -18,19 +22,14 @@ import net.neoforged.neoforge.items.IItemHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class JumboItemHandler implements IItemHandler, INBTSerializable<CompoundTag> {
+public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
     public static final Codec<JumboItemHandler> CODEC = RecordCodecBuilder.create(builder -> builder.group(
             BigStack.CODEC.listOf().fieldOf("items").forGetter(JumboItemHandler::getItems),
             Codec.INT.fieldOf("slotLimit").forGetter(JumboItemHandler::getSlotLimit)
     ).apply(builder, JumboItemHandler::new));
 
-    public static final String BIG_ITEMHANDLER = "big_itemhandler";
-    public static String BIG_ITEMS = "BigItems";
-    public static String STACK = "Stack";
-    public static String AMOUNT = "Amount";
-
-    private final List<BigStack> items;
-    private final int slotLimit;
+    private List<BigStack> items;
+    private int slotLimit;
 
     public JumboItemHandler(int slotLimit) {
         this(1, slotLimit);
@@ -95,6 +94,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
             int newAmount = bigStack.getAmount();
             if (!simulate) {
                 bigStack.setAmount(0);
+                bigStack.clear();
                 onChanged();
             }
             out.setCount(newAmount);
@@ -128,24 +128,22 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
     }
 
     @Override
-    public CompoundTag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
-        CompoundTag compoundTag = new CompoundTag();
-        CompoundTag items = new CompoundTag();
-        for (int i = 0; i < this.items.size(); i++) {
-            CompoundTag bigStack = new CompoundTag();
-            bigStack.put(STACK, this.items.get(i).getStack().saveOptional(provider));
-            bigStack.putInt(AMOUNT, this.items.get(i).getAmount());
-            items.put(i + "", bigStack);
+    public Tag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
+        DataResult<Tag> tagDataResult = CODEC.encodeStart(NbtOps.INSTANCE, this);
+        if (tagDataResult.isSuccess()) {
+            return tagDataResult.getOrThrow();
         }
-        compoundTag.put(BIG_ITEMS, items);
-        return compoundTag;
+        BuildcraftLegacy.LOGGER.debug("Error encoding jumbo item handler: {}", tagDataResult.error().get().message());
+        return new CompoundTag();
     }
 
     @Override
-    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, CompoundTag nbt) {
-        for (String allKey : nbt.getCompound(BIG_ITEMS).getAllKeys()) {
-            this.items.get(Integer.parseInt(allKey)).setStack(deserialize(provider, nbt.getCompound(BIG_ITEMS).getCompound(allKey).getCompound(STACK)));
-            this.items.get(Integer.parseInt(allKey)).setAmount(nbt.getCompound(BIG_ITEMS).getCompound(allKey).getInt(AMOUNT));
+    public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, Tag nbt) {
+        DataResult<Pair<JumboItemHandler, Tag>> pairDataResult = CODEC.decode(NbtOps.INSTANCE, nbt);
+        if (pairDataResult.isSuccess()) {
+            JumboItemHandler jumboItemHandler = pairDataResult.getOrThrow().getFirst();
+            this.items = jumboItemHandler.items;
+            this.slotLimit = jumboItemHandler.slotLimit;
         }
     }
 
@@ -155,7 +153,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
 
     public static class BigStack {
         public static final Codec<BigStack> CODEC = RecordCodecBuilder.create(builder -> builder.group(
-                        ItemStack.CODEC.fieldOf("stack").forGetter(BigStack::getStack),
+                        ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(BigStack::getEncodeStack),
                         Codec.INT.fieldOf("amount").forGetter(BigStack::getAmount)
                 ).apply(builder, BigStack::new)
         );
@@ -175,6 +173,10 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
             return stack;
         }
 
+        public ItemStack getEncodeStack() {
+            return stack.copyWithCount(1);
+        }
+
         public void setStack(ItemStack stack) {
             this.stack = stack.copy();
             this.slotStack = stack.copyWithCount(amount);
@@ -187,6 +189,12 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Compound
         public void setAmount(int amount) {
             this.amount = amount;
             this.slotStack.setCount(amount);
+        }
+
+        public void clear() {
+            this.amount = 0;
+            this.slotStack = ItemStack.EMPTY;
+            this.stack = ItemStack.EMPTY;
         }
     }
 }

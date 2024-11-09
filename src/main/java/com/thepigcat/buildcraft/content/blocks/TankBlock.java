@@ -8,6 +8,7 @@ import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -33,6 +34,7 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
@@ -78,8 +80,14 @@ public class TankBlock extends BaseEntityBlock {
             IFluidHandler fluidHandler1 = itemFluidHandler;
 
             if (!fluidInItemTank.isEmpty()) {
+                fluidInItemTank.getFluid().getPickupSound().ifPresent(player::playSound);
                 fluidHandler0 = itemFluidHandler;
                 fluidHandler1 = tankFluidHandler;
+            } else {
+                SoundEvent sound = tankFluidHandler.getFluidInTank(0).getFluidType().getSound(SoundActions.BUCKET_EMPTY);
+                if (sound != null) {
+                    player.playSound(sound);
+                }
             }
 
             FluidStack drained = fluidHandler0.drain(fluidHandler0.getFluidInTank(0), IFluidHandler.FluidAction.EXECUTE);
@@ -92,11 +100,16 @@ public class TankBlock extends BaseEntityBlock {
             if (fluidInItemTank.isEmpty() && tankFluidHandler.drain(1000, IFluidHandler.FluidAction.SIMULATE).getAmount() == 1000) {
                 ItemStack filledBucket = ItemUtils.createFilledResult(stack, player, tankFluidHandler.drain(1000, IFluidHandler.FluidAction.EXECUTE).getFluid().getBucket().getDefaultInstance());
                 player.setItemInHand(hand, filledBucket);
+                tankFluidHandler.getFluidInTank(0).getFluid().getPickupSound().ifPresent(player::playSound);
                 return ItemInteractionResult.SUCCESS;
             } else if (!fluidInItemTank.isEmpty() && tankFluidHandler.fill(fluidInItemTank.copyWithAmount(1000), IFluidHandler.FluidAction.SIMULATE) == 1000) {
                 tankFluidHandler.fill(fluidInItemTank.copyWithAmount(1000), IFluidHandler.FluidAction.EXECUTE);
                 ItemStack emptyBucket = ItemUtils.createFilledResult(stack, player, BucketItem.getEmptySuccessItem(stack, player));
                 player.setItemInHand(hand, emptyBucket);
+                SoundEvent sound = tankFluidHandler.getFluidInTank(0).getFluidType().getSound(SoundActions.BUCKET_EMPTY);
+                if (sound != null) {
+                    player.playSound(sound);
+                }
                 return ItemInteractionResult.SUCCESS;
             }
         }

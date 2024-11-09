@@ -1,5 +1,6 @@
 package com.thepigcat.buildcraft.api.blockentities;
 
+import com.google.common.collect.ImmutableMap;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.capabilties.IOActions;
 import com.thepigcat.buildcraft.api.capabilties.SidedEnergyStorage;
@@ -318,6 +319,37 @@ public abstract class ContainerBlockEntity extends BlockEntity {
      * @return Map of directions that each map to a pair that defines the IOAction as well as the tanks that are affected. Return an empty map if you do not have an itemhandler
      */
     public abstract <T> Map<Direction, Pair<IOActions, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> capability);
+
+    public static ImmutableMap<Direction, Pair<IOActions, int[]>> allBoth(int ...slots) {
+        return ImmutableMap.of(
+                Direction.NORTH, Pair.of(IOActions.BOTH, slots),
+                Direction.EAST, Pair.of(IOActions.BOTH, slots),
+                Direction.SOUTH, Pair.of(IOActions.BOTH, slots),
+                Direction.WEST, Pair.of(IOActions.BOTH, slots),
+                Direction.UP, Pair.of(IOActions.BOTH, slots),
+                Direction.DOWN, Pair.of(IOActions.BOTH, slots)
+        );
+    }
+    public static ImmutableMap<Direction, Pair<IOActions, int[]>> allInsert(int ...slots) {
+        return ImmutableMap.of(
+                Direction.NORTH, Pair.of(IOActions.INSERT, slots),
+                Direction.EAST, Pair.of(IOActions.INSERT, slots),
+                Direction.SOUTH, Pair.of(IOActions.INSERT, slots),
+                Direction.WEST, Pair.of(IOActions.INSERT, slots),
+                Direction.UP, Pair.of(IOActions.INSERT, slots),
+                Direction.DOWN, Pair.of(IOActions.INSERT, slots)
+        );
+    }
+    public static ImmutableMap<Direction, Pair<IOActions, int[]>> allExtract(int ...slots) {
+        return ImmutableMap.of(
+                Direction.NORTH, Pair.of(IOActions.EXTRACT, slots),
+                Direction.EAST, Pair.of(IOActions.EXTRACT, slots),
+                Direction.SOUTH, Pair.of(IOActions.EXTRACT, slots),
+                Direction.WEST, Pair.of(IOActions.EXTRACT, slots),
+                Direction.UP, Pair.of(IOActions.EXTRACT, slots),
+                Direction.DOWN, Pair.of(IOActions.EXTRACT, slots)
+        );
+    }
 
     @Nullable
     @Override
