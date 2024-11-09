@@ -147,10 +147,6 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
         }
     }
 
-    public static ItemStack deserialize(HolderLookup.Provider provider, CompoundTag tag) {
-        return ItemStack.OPTIONAL_CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), tag).getOrThrow().getFirst();
-    }
-
     public static class BigStack {
         public static final Codec<BigStack> CODEC = RecordCodecBuilder.create(builder -> builder.group(
                         ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(BigStack::getEncodeStack),

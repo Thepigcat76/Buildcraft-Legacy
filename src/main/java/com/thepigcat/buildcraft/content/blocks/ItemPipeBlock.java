@@ -3,15 +3,21 @@ package com.thepigcat.buildcraft.content.blocks;
 import com.mojang.serialization.MapCodec;
 import com.thepigcat.buildcraft.api.blockentities.PipeBlockEntity;
 import com.thepigcat.buildcraft.api.blocks.PipeBlock;
+import com.thepigcat.buildcraft.content.blockentities.CrateBE;
+import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
+import com.thepigcat.buildcraft.util.BlockUtils;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.NonNullList;
 import net.minecraft.core.component.DataComponents;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Containers;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.CustomData;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -32,6 +38,16 @@ public class ItemPipeBlock extends PipeBlock {
             return PipeState.CONNECTED;
         }
         return PipeState.NONE;
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            ItemPipeBE crateBE = BlockUtils.getBE(ItemPipeBE.class, level, pos);
+            Containers.dropContents(level, pos, NonNullList.of(ItemStack.EMPTY, crateBE.getItemHandler().getStackInSlot(0)));
+        }
+
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override

@@ -6,8 +6,12 @@ import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
+import com.thepigcat.buildcraft.util.BlockUtils;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
+import net.minecraft.BlockUtil;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -69,6 +73,16 @@ public class CrateBlock extends BaseEntityBlock {
 
     public static BlockState stateForFacingPlacement(Block block, BlockPlaceContext ctx) {
         return block.defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, ctx.getPlayer().getDirection().getOpposite());
+    }
+
+    @Override
+    protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            CrateBE crateBE = BlockUtils.getBE(CrateBE.class, level, pos);
+            Containers.dropContents(level, pos, NonNullList.of(ItemStack.EMPTY, crateBE.getItemHandler().getStackInSlot(0)));
+        }
+
+        super.onRemove(state, level, pos, newState, movedByPiston);
     }
 
     @Override
