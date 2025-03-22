@@ -3,8 +3,7 @@
   "textures": {
     "down": "buildcraft:block/crate_top",
     "east": "buildcraft:block/crate_side",
-    "north": "buildcraft:block/crate_side",
-    "particle": "buildcraft:block/crate_side",
+    "north": "buildcraft:block/crate_front",
     "south": "buildcraft:block/crate_side",
     "up": "buildcraft:block/crate_top",
     "west": "buildcraft:block/crate_side"

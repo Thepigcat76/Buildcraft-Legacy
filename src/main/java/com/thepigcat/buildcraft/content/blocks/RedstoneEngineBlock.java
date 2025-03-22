@@ -1,24 +1,19 @@
 package com.thepigcat.buildcraft.content.blocks;
 
 import com.mojang.serialization.MapCodec;
-import com.thepigcat.buildcraft.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
 import com.thepigcat.buildcraft.content.blockentities.RedstoneEngineBE;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
-import net.minecraft.world.level.block.state.properties.DoubleBlockHalf;
-import net.minecraft.world.level.gameevent.GameEvent;
 
 public class RedstoneEngineBlock extends EngineBlock {
     public static final BooleanProperty ACTIVE = BooleanProperty.create("active");

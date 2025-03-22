@@ -3,6 +3,7 @@ package com.thepigcat.buildcraft.datagen.assets;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.ExtractingPipeBlock;
 import com.thepigcat.buildcraft.api.blocks.PipeBlock;
+import com.thepigcat.buildcraft.content.blocks.CrateBlock;
 import com.thepigcat.buildcraft.content.blocks.TankBlock;
 import com.thepigcat.buildcraft.registries.BCBlocks;
 import net.minecraft.core.Direction;
@@ -21,7 +22,7 @@ public class BCBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        pillarBlock(BCBlocks.CRATE.get());
+        crateBlock(BCBlocks.CRATE.get());
 //        pillarBlock(BCBlocks.QUARRY.get(), inDir(blockTexture(BCBlocks.QUARRY.get()), "machine"));
         tankBlock(BCBlocks.TANK.get());
         engineBlock(BCBlocks.REDSTONE_ENGINE.get());
@@ -36,6 +37,17 @@ public class BCBlockStateProvider extends BlockStateProvider {
             }
 
         }
+    }
+
+    private void crateBlock(CrateBlock block) {
+        horizontalBlock(block, models().cube(name(block),
+                blockTexture(block, "_top"),
+                blockTexture(block, "_top"),
+                blockTexture(block, "_front"),
+                blockTexture(block, "_side"),
+                blockTexture(block, "_side"),
+                blockTexture(block, "_side")
+        ));
     }
 
     private void engineBlock(Block block) {
@@ -166,6 +178,11 @@ public class BCBlockStateProvider extends BlockStateProvider {
 
     private String name(Block block) {
         return key(block).getPath();
+    }
+
+    public ResourceLocation blockTexture(Block block, String suffix) {
+        ResourceLocation name = key(block);
+        return ResourceLocation.fromNamespaceAndPath(name.getNamespace(), ModelProvider.BLOCK_FOLDER + "/" + name.getPath() + suffix);
     }
 
     public ResourceLocation blockTexture(Block block) {

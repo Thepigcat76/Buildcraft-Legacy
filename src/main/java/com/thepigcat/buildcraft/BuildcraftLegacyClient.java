@@ -1,8 +1,5 @@
 package com.thepigcat.buildcraft;
 
-import com.mojang.blaze3d.shaders.FogShape;
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.thepigcat.buildcraft.api.fluids.BaseFluidType;
 import com.thepigcat.buildcraft.client.blockentities.CrateBERenderer;
 import com.thepigcat.buildcraft.client.blockentities.EngineBERenderer;
 import com.thepigcat.buildcraft.client.blockentities.PipeBERenderer;
@@ -15,29 +12,18 @@ import com.thepigcat.buildcraft.client.screens.CombustionEngineScreen;
 import com.thepigcat.buildcraft.client.screens.StirlingEngineScreen;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.registries.BCBlocks;
-import com.thepigcat.buildcraft.registries.BCFluidTypes;
 import com.thepigcat.buildcraft.registries.BCMenuTypes;
-import net.minecraft.client.Camera;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
-import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FastColor;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
-import net.neoforged.neoforge.fluids.FluidType;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Vector3f;
 
 @Mod(value = BuildcraftLegacyClient.MODID, dist = Dist.CLIENT)
 public final class BuildcraftLegacyClient {
@@ -48,6 +34,45 @@ public final class BuildcraftLegacyClient {
         eventBus.addListener(this::registerClientExtensions);
         eventBus.addListener(this::registerModelLayers);
         eventBus.addListener(this::registerMenuScreens);
+    }
+
+    private void registerClientExtensions(RegisterClientExtensionsEvent event) {
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return TANK_ITEM_RENDERER;
+            }
+        }, BCBlocks.TANK.asItem());
+
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return CRATE_ITEM_RENDERER;
+            }
+        }, BCBlocks.CRATE.asItem());
+
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return ENGINE_ITEM_RENDERERS[0];
+            }
+        }, BCBlocks.REDSTONE_ENGINE.asItem());
+
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return ENGINE_ITEM_RENDERERS[1];
+            }
+        }, BCBlocks.STIRLING_ENGINE.asItem());
+
+        event.registerItem(new IClientItemExtensions() {
+            @Override
+            public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
+                return ENGINE_ITEM_RENDERERS[2];
+            }
+        }, BCBlocks.COMBUSTION_ENGINE.asItem());
+
+
     }
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {
@@ -68,82 +93,6 @@ public final class BuildcraftLegacyClient {
             new EngineItemRenderer(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "entity/cobblestone_engine_piston"), BCBlocks.STIRLING_ENGINE),
             new EngineItemRenderer(ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, "entity/iron_engine_piston"), BCBlocks.COMBUSTION_ENGINE),
     };
-
-    private void registerClientExtensions(RegisterClientExtensionsEvent event) {
-        for (DeferredHolder<FluidType, ? extends FluidType> fluidType : BCFluidTypes.FLUID_TYPES.getEntries()) {
-            if (fluidType.get() instanceof BaseFluidType baseFluidType) {
-                event.registerFluidType(new IClientFluidTypeExtensions() {
-                    @Override
-                    public @NotNull ResourceLocation getStillTexture() {
-                        return baseFluidType.getStillTexture();
-                    }
-
-                    @Override
-                    public @NotNull ResourceLocation getFlowingTexture() {
-                        return baseFluidType.getFlowingTexture();
-                    }
-
-                    @Override
-                    public @Nullable ResourceLocation getOverlayTexture() {
-                        return baseFluidType.getOverlayTexture();
-                    }
-
-                    @Override
-                    public int getTintColor() {
-                        Vec3i color = baseFluidType.getColor();
-                        return FastColor.ARGB32.color(color.getX(), color.getY(), color.getZ());
-                    }
-
-                    @Override
-                    public @NotNull Vector3f modifyFogColor(Camera camera, float partialTick, ClientLevel level, int renderDistance, float darkenWorldAmount, Vector3f fluidFogColor) {
-                        Vec3i color = baseFluidType.getFogColor();
-                        return new Vector3f(color.getX() / 255f, color.getY() / 255f, color.getZ() / 255f);
-                    }
-
-                    @Override
-                    public void modifyFogRender(Camera camera, FogRenderer.FogMode mode, float renderDistance, float partialTick, float nearDistance, float farDistance, FogShape shape) {
-                        RenderSystem.setShaderFogStart(1f);
-                        RenderSystem.setShaderFogEnd(6f); // distance when the fog starts
-                    }
-                }, baseFluidType);
-
-                event.registerItem(new IClientItemExtensions() {
-                    @Override
-                    public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                        return TANK_ITEM_RENDERER;
-                    }
-                }, BCBlocks.TANK.asItem());
-
-                event.registerItem(new IClientItemExtensions() {
-                    @Override
-                    public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                        return CRATE_ITEM_RENDERER;
-                    }
-                }, BCBlocks.CRATE.asItem());
-
-                event.registerItem(new IClientItemExtensions() {
-                    @Override
-                    public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                        return ENGINE_ITEM_RENDERERS[0];
-                    }
-                }, BCBlocks.REDSTONE_ENGINE.asItem());
-
-                event.registerItem(new IClientItemExtensions() {
-                    @Override
-                    public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                        return ENGINE_ITEM_RENDERERS[1];
-                    }
-                }, BCBlocks.STIRLING_ENGINE.asItem());
-
-                event.registerItem(new IClientItemExtensions() {
-                    @Override
-                    public @NotNull BlockEntityWithoutLevelRenderer getCustomRenderer() {
-                        return ENGINE_ITEM_RENDERERS[2];
-                    }
-                }, BCBlocks.COMBUSTION_ENGINE.asItem());
-            }
-        }
-    }
 
     private void registerModelLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(EnginePistonModel.LAYER_LOCATION, EnginePistonModel::createBodyLayer);

@@ -1,11 +1,10 @@
 package com.thepigcat.buildcraft.client.screens;
 
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.client.screens.PDLAbstractContainerScreen;
+import com.portingdeadmods.portingdeadlibs.api.gui.utils.FluidTankRenderer;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
-import com.thepigcat.buildcraft.api.blockentities.ContainerBlockEntity;
-import com.thepigcat.buildcraft.api.client.screens.BCAbstractContainerScreen;
-import com.thepigcat.buildcraft.api.client.utils.FluidTankRenderer;
-import com.thepigcat.buildcraft.api.menus.BCAbstractContainerMenu;
-import com.thepigcat.buildcraft.content.blockentities.CombustionEngineBE;
+import com.thepigcat.buildcraft.content.menus.CombustionEngineMenu;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,10 +18,10 @@ import java.util.Optional;
 
 import static com.thepigcat.buildcraft.client.screens.StirlingEngineScreen.LIT_PROGRESS_SPRITE;
 
-public class CombustionEngineScreen extends BCAbstractContainerScreen<CombustionEngineBE> {
+public class CombustionEngineScreen extends PDLAbstractContainerScreen<CombustionEngineMenu> {
     private FluidTankRenderer fluidTankRenderer;
 
-    public CombustionEngineScreen(BCAbstractContainerMenu<CombustionEngineBE> menu, Inventory playerInventory, Component title) {
+    public CombustionEngineScreen(CombustionEngineMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
     }
 

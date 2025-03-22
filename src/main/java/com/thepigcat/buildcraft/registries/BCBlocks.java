@@ -50,10 +50,6 @@ public final class BCBlocks {
 //    public static final DeferredBlock<Block> QUARRY = registerBlockAndItem("quarry", Block::new,
 //            BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
 
-    // Fluids
-    public static final DeferredBlock<LiquidBlock> OIL_FLUID = BLOCKS.register("oil_block",
-            () -> new LiquidBlock(BCFluids.OIL_SOURCE.get(), BlockBehaviour.Properties.ofFullCopy(Blocks.LAVA)));
-
     public static <T extends Block> DeferredBlock<T> registerBlockAndItem(String name, Function<BlockBehaviour.Properties, T> blockConstructor, BlockBehaviour.Properties props) {
         DeferredBlock<T> toReturn = BLOCKS.registerBlock(name, blockConstructor, props);
         DeferredItem<BlockItem> item = BCItems.ITEMS.registerSimpleBlockItem(toReturn);

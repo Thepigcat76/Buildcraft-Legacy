@@ -1,10 +1,9 @@
-// 1.21.1	2024-11-09T16:38:23.431736306	Item Models: buildcraft
+// 1.21.1	2025-03-22T12:01:59.086130856	Item Models: buildcraft
 f8a5e12aa58a8e75f604bf6f3bc626a66e8dc560 assets/buildcraft/models/item/cobblestone_pipe.json
 41335712397375917a9add5a1582bc85e7292b6b assets/buildcraft/models/item/diamond_gear.json
 959ff24934e8e9bc10192f39c19be7c91ce284a0 assets/buildcraft/models/item/gold_gear.json
 a099eb89cb96ee7dd93f7f3d32f1f9791ab1d771 assets/buildcraft/models/item/iron_gear.json
-6c39d1f0077e48c841fd9d53d2685f78210f0c52 assets/buildcraft/models/item/machine_frame.json
-377a748a1fa61f3941aeca6e81e987fb542d8735 assets/buildcraft/models/item/oil_bucket.json
+786d97249883d5290cd46c1b2867d2973351dd7d assets/buildcraft/models/item/oil_bucket.json
 7864562555f2c5e98e07bb16156ada0b9634cdf5 assets/buildcraft/models/item/stone_gear.json
 fa7e40a6d328930579204a0b6ca6c47273735df4 assets/buildcraft/models/item/wooden_gear.json
 5a8291e8e8efb0cc380d01312720726e017d083c assets/buildcraft/models/item/wooden_pipe.json

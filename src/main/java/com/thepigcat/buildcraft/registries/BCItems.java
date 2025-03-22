@@ -24,8 +24,6 @@ public final class BCItems {
     public static final DeferredItem<Item> IRON_GEAR = registerItem("iron_gear", Item::new);
     public static final DeferredItem<Item> GOLD_GEAR = registerItem("gold_gear", Item::new);
     public static final DeferredItem<Item> DIAMOND_GEAR = registerItem("diamond_gear", Item::new);
-    public static final DeferredItem<BucketItem> OIL_BUCKET = registerItem("oil_bucket",
-            () -> new BucketItem(BCFluids.OIL_SOURCE.get(), new Item.Properties().craftRemainder(Items.BUCKET).stacksTo(1)));
 
     private static <T extends Item> DeferredItem<T> registerItem(String name, Function<Item.Properties, T> itemConstructor) {
         DeferredItem<T> item = ITEMS.registerItem(name, itemConstructor, new Item.Properties());

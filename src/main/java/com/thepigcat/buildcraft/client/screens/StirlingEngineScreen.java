@@ -1,9 +1,8 @@
 package com.thepigcat.buildcraft.client.screens;
 
+import com.portingdeadmods.portingdeadlibs.api.client.screens.PDLAbstractContainerScreen;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
-import com.thepigcat.buildcraft.api.client.screens.BCAbstractContainerScreen;
-import com.thepigcat.buildcraft.api.menus.BCAbstractContainerMenu;
-import com.thepigcat.buildcraft.content.blockentities.StirlingEngineBE;
+import com.thepigcat.buildcraft.content.menus.StirlingEngineMenu;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -11,10 +10,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
-public class StirlingEngineScreen extends BCAbstractContainerScreen<StirlingEngineBE> {
+public class StirlingEngineScreen extends PDLAbstractContainerScreen<StirlingEngineMenu> {
     public static final ResourceLocation LIT_PROGRESS_SPRITE = ResourceLocation.parse("container/smoker/lit_progress");
 
-    public StirlingEngineScreen(BCAbstractContainerMenu<StirlingEngineBE> menu, Inventory playerInventory, Component title) {
+    public StirlingEngineScreen(StirlingEngineMenu menu, Inventory playerInventory, Component title) {
         super(menu, playerInventory, title);
     }
 

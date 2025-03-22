@@ -1,17 +1,15 @@
 package com.thepigcat.buildcraft.api.blockentities;
 
-import com.google.common.collect.ImmutableMap;
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.utils.IOAction;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
-import com.thepigcat.buildcraft.api.capabilties.IOActions;
 import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.packs.repository.Pack;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.capabilities.BlockCapability;
@@ -20,7 +18,6 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.energy.IEnergyStorage;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,7 +29,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
     public float lastMovement;
     private boolean backward;
 
-    private Map<Direction, Pair<IOActions, int[]>> sidedInteractions;
+    private Map<Direction, Pair<IOAction, int[]>> sidedInteractions;
 
     public EngineBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
@@ -42,7 +39,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
         Direction facing = getBlockState().getValue(EngineBlock.FACING);
         for (Direction dir : Direction.values()) {
             if (dir != facing) {
-                this.sidedInteractions.put(dir, Pair.of(IOActions.INSERT, new int[]{0}));
+                this.sidedInteractions.put(dir, Pair.of(IOAction.INSERT, new int[]{0}));
             }
         }
     }
@@ -65,7 +62,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
             this.sidedInteractions = new HashMap<>();
             for (Direction dir : Direction.values()) {
                 if (dir != facing) {
-                    this.sidedInteractions.put(dir, Pair.of(IOActions.INSERT, new int[]{0}));
+                    this.sidedInteractions.put(dir, Pair.of(IOAction.INSERT, new int[]{0}));
                 }
             }
             this.exportCache = BlockCapabilityCache.create(Capabilities.EnergyStorage.BLOCK, serverLevel, worldPosition.relative(facing), facing.getOpposite());
@@ -109,10 +106,10 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
     }
 
     @Override
-    public <T> Map<Direction, Pair<IOActions, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> capability) {
+    public <T> Map<Direction, Pair<IOAction, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> capability) {
         Direction facing = getBlockState().getValue(EngineBlock.FACING);
         if (capability == Capabilities.EnergyStorage.BLOCK) {
-            return Map.of(facing, Pair.of(IOActions.EXTRACT, new int[0]));
+            return Map.of(facing, Pair.of(IOAction.EXTRACT, new int[0]));
         }
         BuildcraftLegacy.LOGGER.debug("Sided interactions: {}", sidedInteractions);
         return sidedInteractions;

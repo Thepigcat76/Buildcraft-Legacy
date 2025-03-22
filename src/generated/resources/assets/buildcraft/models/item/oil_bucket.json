@@ -1,5 +1,6 @@
 {
-  "parent": "neoforge:item/bucket_drip",
-  "fluid": "buildcraft:oil",
-  "loader": "neoforge:fluid_container"
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "buildcraft:item/oil_bucket"
+  }
 }

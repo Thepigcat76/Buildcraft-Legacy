@@ -1,6 +1,7 @@
 package com.thepigcat.buildcraft;
 
-import com.thepigcat.buildcraft.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
@@ -8,6 +9,7 @@ import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
 import com.thepigcat.buildcraft.registries.*;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
@@ -41,6 +43,10 @@ public final class BuildcraftLegacy {
                     for (DeferredItem<?> item : BCItems.TAB_ITEMS) {
                         output.accept(item);
                     }
+
+                    for (PDLFluid fluid : BCFluids.HELPER.getFluids()) {
+                        output.accept(fluid.deferredBucket);
+                    }
                 }).build());
     }
 
@@ -49,8 +55,7 @@ public final class BuildcraftLegacy {
         BCBlockEntities.BLOCK_ENTITIES.register(modEventBus);
         BCBlocks.BLOCKS.register(modEventBus);
         BCItems.ITEMS.register(modEventBus);
-        BCFluids.FLUIDS.register(modEventBus);
-        BCFluidTypes.FLUID_TYPES.register(modEventBus);
+        BCFluids.HELPER.register(modEventBus);
         BCDataComponents.DATA_COMPONENTS.register(modEventBus);
         BCMenuTypes.MENUS.register(modEventBus);
 
@@ -79,5 +84,9 @@ public final class BuildcraftLegacy {
         PayloadRegistrar registrar = event.registrar(MODID);
         registrar.playToClient(SyncPipeDirectionPayload.TYPE, SyncPipeDirectionPayload.STREAM_CODEC, SyncPipeDirectionPayload::sync);
         registrar.playToClient(SyncPipeMovementPayload.TYPE, SyncPipeMovementPayload.STREAM_CODEC, SyncPipeMovementPayload::sync);
+    }
+
+    public static ResourceLocation rl(String path) {
+        return ResourceLocation.fromNamespaceAndPath(MODID, path);
     }
 }

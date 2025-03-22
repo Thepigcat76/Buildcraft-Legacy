@@ -44,7 +44,7 @@ public class BCItemModelProvider extends ItemModelProvider {
         basicItem(BCItems.GOLD_GEAR.get());
         basicItem(BCItems.DIAMOND_GEAR.get());
 
-        bucketItem(BCFluids.OIL_SOURCE.get());
+        basicItem(BCFluids.OIL.getBucket());
 
         blockItems();
     }

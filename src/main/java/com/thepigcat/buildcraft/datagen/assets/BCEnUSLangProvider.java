@@ -2,7 +2,7 @@ package com.thepigcat.buildcraft.datagen.assets;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.registries.BCBlocks;
-import com.thepigcat.buildcraft.registries.BCFluidTypes;
+import com.thepigcat.buildcraft.registries.BCFluids;
 import com.thepigcat.buildcraft.registries.BCItems;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
@@ -25,19 +25,19 @@ public class BCEnUSLangProvider extends LanguageProvider {
         addItem(BCItems.IRON_GEAR, "Iron Gear");
         addItem(BCItems.GOLD_GEAR, "Gold Gear");
         addItem(BCItems.DIAMOND_GEAR, "Diamond Gear");
-        addItem(BCItems.OIL_BUCKET, "Oil Bucket");
+        addItem(BCFluids.OIL.getDeferredBucket(), "Oil Bucket");
 
         addBlock(BCBlocks.CRATE, "Crate");
         addBlock(BCBlocks.TANK, "Tank");
         addBlock(BCBlocks.COBBLESTONE_ITEM_PIPE, "Cobblestone Item Pipe");
         addBlock(BCBlocks.WOODEN_ITEM_PIPE, "Wooden Item Pipe");
-        addBlock(BCBlocks.OIL_FLUID, "Oil");
+        addBlock(BCFluids.OIL.block, "Oil");
 
         addBlock(BCBlocks.REDSTONE_ENGINE, "Redstone Engine");
         addBlock(BCBlocks.STIRLING_ENGINE, "Stirling Engine");
         addBlock(BCBlocks.COMBUSTION_ENGINE, "Combustion Engine");
 
-        addFluidType(BCFluidTypes.OIL_FLUID_TYPE, "Oil");
+        addFluidType(BCFluids.OIL.fluidType, "Oil");
 
         add("itemGroup.buildcraft.bc_tab", "Buildcraft");
     }

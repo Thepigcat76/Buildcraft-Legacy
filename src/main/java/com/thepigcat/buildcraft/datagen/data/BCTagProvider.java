@@ -68,7 +68,7 @@ public class BCTagProvider {
 
         @Override
         protected void addTags(HolderLookup.Provider provider) {
-            tag(BCTags.Fluids.OIL).add(BCFluids.OIL_SOURCE.get(), BCFluids.OIL_FLOWING.get());
+            tag(BCTags.Fluids.OIL).add(BCFluids.OIL.getStillFluid(), BCFluids.OIL.getStillFluid());
             tag(BCTags.Fluids.COMBUSTION_FUEL).addTag(BCTags.Fluids.OIL);
         }
     }

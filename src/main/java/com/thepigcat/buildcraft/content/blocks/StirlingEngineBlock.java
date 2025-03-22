@@ -1,7 +1,7 @@
 package com.thepigcat.buildcraft.content.blocks;
 
 import com.mojang.serialization.MapCodec;
-import com.thepigcat.buildcraft.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.world.level.block.BaseEntityBlock;

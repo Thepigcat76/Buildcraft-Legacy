@@ -1,10 +1,9 @@
 package com.thepigcat.buildcraft.content.blocks;
 
 import com.mojang.serialization.MapCodec;
-import com.thepigcat.buildcraft.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
 import com.thepigcat.buildcraft.content.blockentities.CombustionEngineBE;
-import com.thepigcat.buildcraft.content.blockentities.TankBE;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
@@ -73,6 +72,8 @@ public class CombustionEngineBlock extends EngineBlock {
                 player.setItemInHand(hand, emptyBucket);
                 return ItemInteractionResult.SUCCESS;
             }
+        } else {
+            player.openMenu(be, pos);
         }
         return ItemInteractionResult.FAIL;
     }
