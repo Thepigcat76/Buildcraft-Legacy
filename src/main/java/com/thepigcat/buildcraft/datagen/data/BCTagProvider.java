@@ -8,9 +8,11 @@ import com.thepigcat.buildcraft.tags.BCTags;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
+import net.minecraft.data.tags.BiomeTagsProvider;
 import net.minecraft.data.tags.FluidTagsProvider;
 import net.minecraft.data.tags.ItemTagsProvider;
 import net.minecraft.tags.BlockTags;
+import net.neoforged.neoforge.common.Tags;
 import net.neoforged.neoforge.common.data.BlockTagsProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import org.jetbrains.annotations.Nullable;
@@ -23,6 +25,7 @@ public class BCTagProvider {
         generator.addProvider(isServer, provider);
         generator.addProvider(isServer, new Item(packOutput, lookupProvider, provider.contentsGetter()));
         generator.addProvider(isServer, new Fluid(packOutput, lookupProvider, existingFileHelper));
+        generator.addProvider(isServer, new Biome(packOutput, lookupProvider, existingFileHelper));
     }
 
     public static class Block extends BlockTagsProvider {
@@ -70,6 +73,18 @@ public class BCTagProvider {
         protected void addTags(HolderLookup.Provider provider) {
             tag(BCTags.Fluids.OIL).add(BCFluids.OIL.getStillFluid(), BCFluids.OIL.getStillFluid());
             tag(BCTags.Fluids.COMBUSTION_FUEL).addTag(BCTags.Fluids.OIL);
+        }
+    }
+
+    public static class Biome extends BiomeTagsProvider {
+        public Biome(PackOutput output, CompletableFuture<HolderLookup.Provider> provider, @Nullable ExistingFileHelper existingFileHelper) {
+            super(output, provider, BuildcraftLegacy.MODID, existingFileHelper);
+        }
+
+        @Override
+        protected void addTags(HolderLookup.Provider provider) {
+            tag(BCTags.Biomes.GENERATE_OIL)
+                    .addTags(Tags.Biomes.IS_PLAINS, Tags.Biomes.IS_DESERT, Tags.Biomes.IS_BADLANDS, Tags.Biomes.IS_SNOWY, Tags.Biomes.IS_SAVANNA);
         }
     }
 

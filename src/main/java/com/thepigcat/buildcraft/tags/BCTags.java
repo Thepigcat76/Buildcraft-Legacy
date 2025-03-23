@@ -5,6 +5,7 @@ import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.level.material.Fluid;
 
 public final class BCTags {
@@ -37,4 +38,14 @@ public final class BCTags {
             return TagKey.create(Registries.FLUID, ResourceLocation.fromNamespaceAndPath("c", name));
         }
     }
+
+    public static final class Biomes {
+        public static final TagKey<Biome> GENERATE_OIL = modTag("generate_oil");
+
+        private static TagKey<Biome> modTag(String name) {
+            return TagKey.create(Registries.BIOME, ResourceLocation.fromNamespaceAndPath(BuildcraftLegacy.MODID, name));
+        }
+
+    }
+
 }

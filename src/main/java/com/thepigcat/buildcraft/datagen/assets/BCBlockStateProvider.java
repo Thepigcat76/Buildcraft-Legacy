@@ -47,7 +47,7 @@ public class BCBlockStateProvider extends BlockStateProvider {
                 blockTexture(block, "_side"),
                 blockTexture(block, "_side"),
                 blockTexture(block, "_side")
-        ));
+        ).texture("particle", blockTexture(block, "_top")));
     }
 
     private void engineBlock(Block block) {

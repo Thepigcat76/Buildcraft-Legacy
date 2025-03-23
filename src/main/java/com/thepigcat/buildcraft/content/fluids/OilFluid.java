@@ -10,16 +10,22 @@ import org.joml.Vector4i;
 public class OilFluid extends PDLFluid {
     public OilFluid(String name) {
         super(name);
-        this.fluidType = registerFluidType(FluidType.Properties.create(), new Vector4i(255, 255, 255, 255), FluidTemplates.OIL);
+        this.fluidType = registerFluidType(FluidType.Properties.create()
+                .canSwim(false)
+                .canDrown(true)
+                .canExtinguish(false)
+                .viscosity(2000)
+                .density(2000)
+                .canConvertToSource(false), new Vector4i(255, 255, 255, 255), FluidTemplates.OIL);
     }
 
     @Override
     public BaseFlowingFluid.Properties fluidProperties() {
-        return super.fluidProperties().block(this.block).bucket(this.deferredBucket);
+        return super.fluidProperties().block(this.block).bucket(this.deferredBucket).slopeFindDistance(2).levelDecreasePerBlock(2);
     }
 
     @Override
     public BlockBehaviour.Properties blockProperties() {
-        return BlockBehaviour.Properties.ofFullCopy(Blocks.LAVA);
+        return BlockBehaviour.Properties.ofFullCopy(Blocks.LAVA).lightLevel(blockState -> 0);
     }
 }

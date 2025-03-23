@@ -91,6 +91,7 @@ public class ItemPipeBE extends PipeBlockEntity<IItemHandler> {
 
         if (!this.itemHandler.getStackInSlot(0).isEmpty()) {
                 this.lastMovement = this.movement;
+                // TODO: Use custom movement
                 this.movement += 0.01f;
 
                 if (!level.isClientSide()) {

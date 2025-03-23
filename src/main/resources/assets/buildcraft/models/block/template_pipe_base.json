@@ -1,0 +1,6 @@
+{
+  "parent": "buildcraft:block/pipe_base",
+  "textures": {
+    "texture": "builtin"
+  }
+}

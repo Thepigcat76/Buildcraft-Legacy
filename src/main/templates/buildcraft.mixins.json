@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.thepigcat.buildcraft.mixins",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "buildcraft.refmap.json",
+  "mixins": [
+    "ModelBakeryMixin",
+    "BlockStateModelLoaderMixin"
+  ],
+  "client": [
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

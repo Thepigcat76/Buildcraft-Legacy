@@ -9,6 +9,7 @@ import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.Mth;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
@@ -41,6 +42,10 @@ public class PipeBERenderer implements BlockEntityRenderer<ItemPipeBE> {
                 poseStack.translate(0.5, 0.5, 0.5);
             }
             poseStack.scale(0.5f, 0.5f, 0.5f);
+            if (stack.getItem() instanceof BlockItem) {
+                poseStack.scale(0.5f, 0.5f, 0.5f);
+                //poseStack.translate(0.5, 0.5, 0.5);
+            }
             Minecraft.getInstance().getItemRenderer().renderStatic(stack, ItemDisplayContext.NONE, i, i1, poseStack, multiBufferSource, pipeBlockEntity.getLevel(), 1);
         }
         poseStack.popPose();

@@ -2,7 +2,9 @@ package com.thepigcat.buildcraft.registries;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.*;
+import com.thepigcat.buildcraft.content.blocks.ItemPipeBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
@@ -12,7 +14,12 @@ public final class BCBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, BuildcraftLegacy.MODID);
 
     public static final Supplier<BlockEntityType<ItemPipeBE>> ITEM_PIPE = BLOCK_ENTITIES.register("item_pipe",
-            () -> BlockEntityType.Builder.of(ItemPipeBE::new, BCBlocks.COBBLESTONE_ITEM_PIPE.get()).build(null));
+            () -> BlockEntityType.Builder.of(ItemPipeBE::new, collectPipes()).build(null));
+
+    private static Block[] collectPipes() {
+        return BuiltInRegistries.BLOCK.stream().filter(block -> block instanceof ItemPipeBlock).toList().toArray(Block[]::new);
+    }
+
     public static final Supplier<BlockEntityType<ExtractItemPipeBE>> EXTRACTING_ITEM_PIPE = BLOCK_ENTITIES.register("extracting_item_pipe",
             () -> BlockEntityType.Builder.of(ExtractItemPipeBE::new, BCBlocks.WOODEN_ITEM_PIPE.get()).build(null));
 

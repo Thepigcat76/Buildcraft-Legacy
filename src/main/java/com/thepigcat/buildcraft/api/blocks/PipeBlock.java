@@ -207,15 +207,6 @@ public abstract class PipeBlock extends BaseEntityBlock {
         be.setDirections(directions);
     }
 
-    @Override
-    protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
-        if (!level.isClientSide) {
-            ItemPipeBE be = BlockUtils.getBE(ItemPipeBE.class, level, pos);
-            player.sendSystemMessage(Component.literal("Item: " + be.getItemHandler().getStackInSlot(0)));
-        }
-        return ItemInteractionResult.SUCCESS;
-    }
-
     public abstract PipeState getConnectionType(LevelAccessor level, BlockPos pipePos, BlockState pipeState, Direction connectionDirection, BlockPos connectPos);
 
     public enum PipeState implements StringRepresentable {

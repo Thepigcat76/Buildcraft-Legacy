@@ -4,6 +4,7 @@
     "down": "buildcraft:block/crate_top",
     "east": "buildcraft:block/crate_side",
     "north": "buildcraft:block/crate_front",
+    "particle": "buildcraft:block/crate_top",
     "south": "buildcraft:block/crate_side",
     "up": "buildcraft:block/crate_top",
     "west": "buildcraft:block/crate_side"

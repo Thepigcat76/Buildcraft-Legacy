@@ -7,6 +7,7 @@ import com.thepigcat.buildcraft.content.blockentities.CombustionEngineBE;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.ItemInteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.neoforged.neoforge.capabilities.Capabilities;
+import net.neoforged.neoforge.common.SoundActions;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 
@@ -36,7 +38,6 @@ public class CombustionEngineBlock extends EngineBlock {
     protected MapCodec<? extends BaseEntityBlock> codec() {
         return simpleCodec(CombustionEngineBlock::new);
     }
-
 
 
     @Override
@@ -68,6 +69,10 @@ public class CombustionEngineBlock extends EngineBlock {
                 return ItemInteractionResult.SUCCESS;
             } else if (!fluidInItemTank.isEmpty() && tankFluidHandler.fill(fluidInItemTank.copyWithAmount(1000), IFluidHandler.FluidAction.SIMULATE) == 1000) {
                 tankFluidHandler.fill(fluidInItemTank.copyWithAmount(1000), IFluidHandler.FluidAction.EXECUTE);
+                SoundEvent sound = fluidInItemTank.getFluid().getFluidType().getSound(SoundActions.BUCKET_FILL);
+                if (sound != null) {
+                    player.playSound(sound);
+                }
                 ItemStack emptyBucket = ItemUtils.createFilledResult(stack, player, BucketItem.getEmptySuccessItem(stack, player));
                 player.setItemInHand(hand, emptyBucket);
                 return ItemInteractionResult.SUCCESS;

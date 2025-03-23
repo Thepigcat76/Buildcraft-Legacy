@@ -5,6 +5,7 @@ import com.thepigcat.buildcraft.datagen.assets.BCEnUSLangProvider;
 import com.thepigcat.buildcraft.datagen.assets.BCBlockStateProvider;
 import com.thepigcat.buildcraft.datagen.assets.BCItemModelProvider;
 import com.thepigcat.buildcraft.datagen.data.BCBlockLootTableProvider;
+import com.thepigcat.buildcraft.datagen.data.BCDatapackRegistryProvider;
 import com.thepigcat.buildcraft.datagen.data.BCRecipeProvider;
 import com.thepigcat.buildcraft.datagen.data.BCTagProvider;
 import net.minecraft.core.HolderLookup;
@@ -35,6 +36,7 @@ public class DataGatherer {
         generator.addProvider(event.includeClient(), new BCEnUSLangProvider(packOutput));
 
         BCTagProvider.createTagProviders(generator, packOutput, lookupProvider, existingFileHelper, event.includeServer());
+        generator.addProvider(event.includeServer(), new BCDatapackRegistryProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new BCRecipeProvider(packOutput, lookupProvider));
         generator.addProvider(event.includeServer(), new LootTableProvider(packOutput, Collections.emptySet(), List.of(
                 new LootTableProvider.SubProviderEntry(BCBlockLootTableProvider::new, LootContextParamSets.BLOCK)

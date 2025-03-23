@@ -1,4 +1,4 @@
-// 1.21.1	2025-03-22T12:28:42.550427826	Block States: buildcraft
+// 1.21.1	2025-03-22T20:37:30.159472073	Block States: buildcraft
 6ce54b90596a062e43a1ee1a0d64c3a047379ae6 assets/buildcraft/blockstates/cobblestone_pipe.json
 0d6769fd3414a794c7d9073654d5be79f79ee7e9 assets/buildcraft/blockstates/combustion_engine.json
 32a3c6fa0763bd21bfe669f93c92e785ffbf8f0c assets/buildcraft/blockstates/crate.json
@@ -9,7 +9,7 @@ f65d91e718bcc109d36ae60e9f90ae79551db632 assets/buildcraft/blockstates/wooden_pi
 582b480e2e3ba1bc565165e9e9568eaaafd6ca0f assets/buildcraft/models/block/cobblestone_pipe_base.json
 78a65c9b277b26d6f5afc1408f68b2ac6ad72506 assets/buildcraft/models/block/cobblestone_pipe_connection.json
 ac8f62d5e7f75cf978dcbfe21f2d3a8eb057b19c assets/buildcraft/models/block/combustion_engine.json
-9ed7e0223d94dfb38b1761da8762b59b1370289b assets/buildcraft/models/block/crate.json
+6f092fe06dbcc81b80e75fafd221e838e6db818a assets/buildcraft/models/block/crate.json
 e1533ed6da5c968981b049d79dfa283081859a21 assets/buildcraft/models/block/redstone_engine.json
 a2f77d3803a4efce683461f8a9dc887c2b9c8ce6 assets/buildcraft/models/block/stirling_engine.json
 28b91e61cc13b484d8516cf69bcc20886f771ab2 assets/buildcraft/models/block/tank.json
