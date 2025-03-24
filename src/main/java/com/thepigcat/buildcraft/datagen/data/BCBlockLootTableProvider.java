@@ -21,8 +21,8 @@ public class BCBlockLootTableProvider extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        dropSelf(BCBlocks.WOODEN_ITEM_PIPE.get());
-        dropSelf(BCBlocks.COBBLESTONE_ITEM_PIPE.get());
+//        dropSelf(BCBlocks.WOODEN_ITEM_PIPE.get());
+//        dropSelf(BCBlocks.COBBLESTONE_ITEM_PIPE.get());
 
         dropSelf(BCBlocks.TANK.get());
         dropSelf(BCBlocks.CRATE.get());

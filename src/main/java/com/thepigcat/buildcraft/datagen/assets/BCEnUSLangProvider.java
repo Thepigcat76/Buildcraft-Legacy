@@ -29,8 +29,8 @@ public class BCEnUSLangProvider extends LanguageProvider {
 
         addBlock(BCBlocks.CRATE, "Crate");
         addBlock(BCBlocks.TANK, "Tank");
-        addBlock(BCBlocks.COBBLESTONE_ITEM_PIPE, "Cobblestone Item Pipe");
-        addBlock(BCBlocks.WOODEN_ITEM_PIPE, "Wooden Item Pipe");
+//        addBlock(BCBlocks.COBBLESTONE_ITEM_PIPE, "Cobblestone Item Pipe");
+//        addBlock(BCBlocks.WOODEN_ITEM_PIPE, "Wooden Item Pipe");
         addBlock(BCFluids.OIL.block, "Oil");
 
         addBlock(BCBlocks.REDSTONE_ENGINE, "Redstone Engine");

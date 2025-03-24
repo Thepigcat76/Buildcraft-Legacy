@@ -26,10 +26,10 @@ public final class BCBlocks {
     public static final DeferredRegister.Blocks BLOCKS = DeferredRegister.createBlocks(BuildcraftLegacy.MODID);
 
     // PIPES
-    public static final DeferredBlock<ItemPipeBlock> COBBLESTONE_ITEM_PIPE = registerBlockAndItem("cobblestone_pipe", ItemPipeBlock::new,
-            BlockBehaviour.Properties.of().strength(1.5f, 6).sound(SoundType.STONE).mapColor(MapColor.STONE));
-    public static final DeferredBlock<ExtractingItemPipeBlock> WOODEN_ITEM_PIPE = registerBlockAndItem("wooden_pipe", ExtractingItemPipeBlock::new,
-            BlockBehaviour.Properties.of().strength(2.0f, 3).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
+//    public static final DeferredBlock<ItemPipeBlock> COBBLESTONE_ITEM_PIPE = registerBlockAndItem("cobblestone_pipe", ItemPipeBlock::new,
+//            BlockBehaviour.Properties.of().strength(1.5f, 6).sound(SoundType.STONE).mapColor(MapColor.STONE));
+//    public static final DeferredBlock<ExtractingItemPipeBlock> WOODEN_ITEM_PIPE = registerBlockAndItem("wooden_pipe", ExtractingItemPipeBlock::new,
+//            BlockBehaviour.Properties.of().strength(2.0f, 3).sound(SoundType.WOOD).mapColor(MapColor.WOOD));
 
     // ENGINES
     public static final DeferredBlock<RedstoneEngineBlock> REDSTONE_ENGINE = registerBlockAndItem("redstone_engine", RedstoneEngineBlock::new,

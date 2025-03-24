@@ -36,9 +36,9 @@ public class BCTagProvider {
         @Override
         protected void addTags(HolderLookup.Provider provider) {
             tag(BlockTags.MINEABLE_WITH_AXE)
-                    .add(BCBlocks.CRATE.get(), BCBlocks.WOODEN_ITEM_PIPE.get());
+                    .add(BCBlocks.CRATE.get());
             tag(BlockTags.MINEABLE_WITH_PICKAXE)
-                    .add(BCBlocks.TANK.get(), BCBlocks.COBBLESTONE_ITEM_PIPE.get());
+                    .add(BCBlocks.TANK.get());
         }
     }
 

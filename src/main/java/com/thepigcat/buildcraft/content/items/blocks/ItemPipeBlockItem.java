@@ -1,6 +1,8 @@
 package com.thepigcat.buildcraft.content.items.blocks;
 
+import com.thepigcat.buildcraft.PipesRegistry;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
@@ -13,6 +15,6 @@ public class ItemPipeBlockItem extends BlockItem {
 
     @Override
     public @NotNull Component getName(ItemStack stack) {
-        return super.getName(stack);
+        return PipesRegistry.PIPES.get(this.builtInRegistryHolder().key().location().getPath()).name().map(Component::translatable).orElse((MutableComponent) super.getName(stack));
     }
 }

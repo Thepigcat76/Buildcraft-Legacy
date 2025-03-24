@@ -40,8 +40,8 @@ public class BCRecipeProvider extends net.minecraft.data.recipes.RecipeProvider 
         gearRecipe(recipeOutput, Tags.Items.INGOTS_GOLD, BCTags.Items.IRON_GEAR, BCItems.GOLD_GEAR);
         gearRecipe(recipeOutput, Tags.Items.GEMS_DIAMOND, BCTags.Items.GOLD_GEAR, BCItems.DIAMOND_GEAR);
 
-        pipeRecipe(recipeOutput, ItemTags.PLANKS, BCBlocks.WOODEN_ITEM_PIPE);
-        pipeRecipe(recipeOutput, Tags.Items.COBBLESTONES, BCBlocks.COBBLESTONE_ITEM_PIPE);
+//        pipeRecipe(recipeOutput, ItemTags.PLANKS, BCBlocks.WOODEN_ITEM_PIPE);
+//        pipeRecipe(recipeOutput, Tags.Items.COBBLESTONES, BCBlocks.COBBLESTONE_ITEM_PIPE);
 
         engineRecipe(recipeOutput, ItemTags.PLANKS, BCTags.Items.WOODEN_GEAR, BCBlocks.REDSTONE_ENGINE);
         engineRecipe(recipeOutput, Tags.Items.COBBLESTONES, BCTags.Items.STONE_GEAR, BCBlocks.STIRLING_ENGINE);

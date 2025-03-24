@@ -62,7 +62,7 @@ public final class BuildcraftLegacy {
     static {
         CREATIVE_MODE_TABS.register("bc_tab", () -> CreativeModeTab.builder()
                 .title(Component.translatable("itemGroup.buildcraft.bc_tab"))
-                .icon(BCBlocks.COBBLESTONE_ITEM_PIPE::toStack)
+                .icon(BCBlocks.TANK::toStack)
                 .displayItems((parameters, output) -> {
                     for (DeferredItem<?> item : BCItems.TAB_ITEMS) {
                         output.accept(item);
@@ -72,6 +72,7 @@ public final class BuildcraftLegacy {
                         output.accept(fluid.deferredBucket);
                     }
 
+                    // TODO: ORDERING
                     for (Map.Entry<String, Pipe> entry : PipesRegistry.PIPES.entrySet()) {
                         Block block = BuiltInRegistries.BLOCK.get(rl(entry.getKey()));
                         output.accept(block);

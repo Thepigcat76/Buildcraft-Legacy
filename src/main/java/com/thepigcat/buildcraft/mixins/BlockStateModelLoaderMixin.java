@@ -2,6 +2,8 @@ package com.thepigcat.buildcraft.mixins;
 
 import com.google.gson.JsonParser;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
+import com.thepigcat.buildcraft.PipesRegistry;
+import com.thepigcat.buildcraft.api.pipes.Pipe;
 import com.thepigcat.buildcraft.content.blocks.ItemPipeBlock;
 import com.thepigcat.buildcraft.registries.BCBlocks;
 import com.thepigcat.buildcraft.util.ModelUtils;
@@ -44,17 +46,16 @@ public abstract class BlockStateModelLoaderMixin {
     @Inject(method = "<init>", at = @At("TAIL"))
     private void buildcraft$init(Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> blockStateResources, ProfilerFiller profiler, UnbakedModel missingModel, BlockColors blockColors, BiConsumer<ModelResourceLocation, UnbakedModel> discoveredModelOutput, CallbackInfo ci) {
         this.blockStateResources = new HashMap<>(blockStateResources);
-        for (Block block : BuiltInRegistries.BLOCK) {
-            if (block instanceof ItemPipeBlock) {
-                ResourceLocation blockId = block.builtInRegistryHolder().key().location();
-                String modelDef = ModelUtils.BLOCK_MODEL_DEFINITION.apply(blockId);
-                List<BlockStateModelLoader.LoadedJson> value = List.of(new BlockStateModelLoader.LoadedJson("mod/" + BuildcraftLegacy.MODID, JsonParser.parseString(modelDef)));
-                this.blockStateResources.put(
-                        BLOCKSTATE_LISTER.idToFile(blockId),
-                        value
-                );
-
-            }
+        for (Map.Entry<String, Pipe> entry : PipesRegistry.PIPES.entrySet()) {
+            Block block = BuiltInRegistries.BLOCK.get(BuildcraftLegacy.rl(entry.getKey()));
+            ResourceLocation blockId = block.builtInRegistryHolder().key().location();
+            Pipe pipe = entry.getValue();
+            String modelDef = pipe.getType().blockModelDefinition().apply(pipe, blockId);
+            List<BlockStateModelLoader.LoadedJson> value = List.of(new BlockStateModelLoader.LoadedJson("mod/" + BuildcraftLegacy.MODID, JsonParser.parseString(modelDef)));
+            this.blockStateResources.put(
+                    BLOCKSTATE_LISTER.idToFile(blockId),
+                    value
+            );
         }
         this.blockStateResources = Collections.unmodifiableMap(this.blockStateResources);
     }

@@ -119,28 +119,28 @@ public final class PipesRegistry {
     private static boolean handleMigrations(JsonObject json) {
         boolean changed = false;
 
-        // add disabled flag
-        if (!json.has("disabled")) {
-            json.addProperty("disabled", 0.1f);
-            changed = true;
-        }
-
-        // add transfer_speed flag
-        if (!json.has("transfer_speed")) {
-            json.addProperty("transfer_speed", 0.1f);
-            changed = true;
-        }
-
-        // add extracting field
-        if (!json.has("extracting")) {
-            json.addProperty("extracting", false);
-            changed = true;
-        }
-
-        if (!json.has("texture")) {
-            json.addProperty("texture", "");
-            changed = true;
-        }
+//        // add disabled flag
+//        if (!json.has("disabled")) {
+//            json.addProperty("disabled", 0.1f);
+//            changed = true;
+//        }
+//
+//        // add transfer_speed flag
+//        if (!json.has("transfer_speed")) {
+//            json.addProperty("transfer_speed", 0.1f);
+//            changed = true;
+//        }
+//
+//        // add extracting field
+//        if (!json.has("extracting")) {
+//            json.addProperty("extracting", false);
+//            changed = true;
+//        }
+//
+//        if (!json.has("texture")) {
+//            json.addProperty("texture", "");
+//            changed = true;
+//        }
 
         return changed;
     }
