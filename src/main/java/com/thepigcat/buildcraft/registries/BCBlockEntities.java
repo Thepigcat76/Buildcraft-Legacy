@@ -2,6 +2,7 @@ package com.thepigcat.buildcraft.registries;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.*;
+import com.thepigcat.buildcraft.content.blocks.ExtractingItemPipeBlock;
 import com.thepigcat.buildcraft.content.blocks.ItemPipeBlock;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.world.level.block.Block;
@@ -14,14 +15,10 @@ public final class BCBlockEntities {
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(BuiltInRegistries.BLOCK_ENTITY_TYPE, BuildcraftLegacy.MODID);
 
     public static final Supplier<BlockEntityType<ItemPipeBE>> ITEM_PIPE = BLOCK_ENTITIES.register("item_pipe",
-            () -> BlockEntityType.Builder.of(ItemPipeBE::new, collectPipes()).build(null));
-
-    private static Block[] collectPipes() {
-        return BuiltInRegistries.BLOCK.stream().filter(block -> block instanceof ItemPipeBlock).toList().toArray(Block[]::new);
-    }
+            () -> BlockEntityType.Builder.of(ItemPipeBE::new, collectBlocks(ItemPipeBlock.class)).build(null));
 
     public static final Supplier<BlockEntityType<ExtractItemPipeBE>> EXTRACTING_ITEM_PIPE = BLOCK_ENTITIES.register("extracting_item_pipe",
-            () -> BlockEntityType.Builder.of(ExtractItemPipeBE::new, BCBlocks.WOODEN_ITEM_PIPE.get()).build(null));
+            () -> BlockEntityType.Builder.of(ExtractItemPipeBE::new, collectBlocks(ExtractingItemPipeBlock.class)).build(null));
 
     public static final Supplier<BlockEntityType<TankBE>> TANK = BLOCK_ENTITIES.register("tank",
             () -> BlockEntityType.Builder.of(TankBE::new, BCBlocks.TANK.get()).build(null));
@@ -34,4 +31,8 @@ public final class BCBlockEntities {
             () -> BlockEntityType.Builder.of(StirlingEngineBE::new, BCBlocks.STIRLING_ENGINE.get()).build(null));
     public static final Supplier<BlockEntityType<CombustionEngineBE>> COMBUSTION_ENGINE = BLOCK_ENTITIES.register("combustion_engine",
             () -> BlockEntityType.Builder.of(CombustionEngineBE::new, BCBlocks.COMBUSTION_ENGINE.get()).build(null));
+
+    private static Block[] collectBlocks(Class<? extends Block> clazz) {
+        return BuiltInRegistries.BLOCK.stream().filter(clazz::isInstance).toList().toArray(Block[]::new);
+    }
 }

@@ -5,10 +5,10 @@ import com.thepigcat.buildcraft.api.pipes.PipeHolder;
 import com.thepigcat.buildcraft.util.PipeRegistrationHelper;
 
 public final class BCPipes {
-    public static final PipeRegistrationHelper HELPER = new PipeRegistrationHelper();
+    public static final PipeRegistrationHelper HELPER = new PipeRegistrationHelper(BuildcraftLegacy.MODID);
 
-    public static final PipeHolder WOODEN = HELPER.register("wooden", 0.2f, true);
-    public static final PipeHolder COBBLESTONE = HELPER.register("cobblestone", 0.2f, false);
-    public static final PipeHolder DIAMOND = HELPER.register("diamond", 0.5f, true);
-    public static final PipeHolder GOLD = HELPER.register("gold", 0.5f, false);
+    //public static final PipeHolder WOODEN = HELPER.registerPipe("wooden", BCPipeTypes.DEFAULT, 0.2f);
+    //public static final PipeHolder COBBLESTONE = HELPER.registerPipe("cobblestone", BCPipeTypes.EXTRACTING, 0.2f);
+    public static final PipeHolder DIAMOND = HELPER.registerPipe("diamond", BCPipeTypes.DEFAULT, 0.5f);
+    public static final PipeHolder GOLD = HELPER.registerPipe("gold", BCPipeTypes.DEFAULT, 0.5f);
 }

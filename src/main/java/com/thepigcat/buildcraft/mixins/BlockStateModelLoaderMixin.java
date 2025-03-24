@@ -10,6 +10,7 @@ import net.minecraft.client.resources.model.BlockStateModelLoader;
 import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.FileToIdConverter;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraft.world.level.block.Block;
@@ -36,28 +37,26 @@ public abstract class BlockStateModelLoaderMixin {
     @Final
     private Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> blockStateResources;
 
-    @Shadow protected abstract void loadBlockStateDefinitions(ResourceLocation blockStateId, StateDefinition<Block, BlockState> stateDefenition);
+    @Shadow
+    @Final
+    public static FileToIdConverter BLOCKSTATE_LISTER;
 
     @Inject(method = "<init>", at = @At("TAIL"))
     private void buildcraft$init(Map<ResourceLocation, List<BlockStateModelLoader.LoadedJson>> blockStateResources, ProfilerFiller profiler, UnbakedModel missingModel, BlockColors blockColors, BiConsumer<ModelResourceLocation, UnbakedModel> discoveredModelOutput, CallbackInfo ci) {
         this.blockStateResources = new HashMap<>(blockStateResources);
         for (Block block : BuiltInRegistries.BLOCK) {
             if (block instanceof ItemPipeBlock) {
-                String path = block.builtInRegistryHolder().key().location().getPath();
-                if (path.endsWith("_test")) {
-                    List<BlockStateModelLoader.LoadedJson> value = List.of(new BlockStateModelLoader.LoadedJson("mod/"+BuildcraftLegacy.MODID, JsonParser.parseString(ModelUtils.BLOCK_MODEL_DEFINITION.apply(path))));
-                    this.blockStateResources.put(
-                            BuildcraftLegacy.rl("blockstates/" + path + ".json"),
-                            value
-                    );
-                }
+                ResourceLocation blockId = block.builtInRegistryHolder().key().location();
+                String modelDef = ModelUtils.BLOCK_MODEL_DEFINITION.apply(blockId);
+                List<BlockStateModelLoader.LoadedJson> value = List.of(new BlockStateModelLoader.LoadedJson("mod/" + BuildcraftLegacy.MODID, JsonParser.parseString(modelDef)));
+                this.blockStateResources.put(
+                        BLOCKSTATE_LISTER.idToFile(blockId),
+                        value
+                );
+
             }
         }
         this.blockStateResources = Collections.unmodifiableMap(this.blockStateResources);
     }
 
-    @Inject(method = "loadAllBlockStates", at = @At("TAIL"))
-    private void buildcraft$loadAllBlockStates(CallbackInfo ci) {
-        this.loadBlockStateDefinitions(BuildcraftLegacy.rl("block/pipe_template"), BCBlocks.COBBLESTONE_ITEM_PIPE.get().getStateDefinition());
-    }
 }

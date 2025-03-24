@@ -1,0 +1,7 @@
+{"multipart":[{"apply":{"model":"buildcraft:block/cobblestone_pipe_connection"},"when":{"down":"connected"}},
+  {"apply":{"model":"buildcraft:block/cobblestone_pipe_connection","x":180},"when":{"up":"connected"}},
+  {"apply":{"model":"buildcraft:block/cobblestone_pipe_connection","x":90,"y":180},"when":{"north":"connected"}},
+  {"apply":{"model":"buildcraft:block/cobblestone_pipe_connection","x":90,"y":270},"when":{"east":"connected"}},
+  {"apply":{"model":buildcraft:block/cobblestone_pipe_connection","x":90},"when":{"south":"connected"}},
+  {"apply":{"model":"buildcraft:block/cobblestone_pipe_connection","x":90,"y":90},"when":{"west":"connected"}},
+  {"apply":{"model":"buildcraft:block/cobblestone_pipe_base"}}]}

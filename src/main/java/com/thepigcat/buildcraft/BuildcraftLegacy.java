@@ -3,6 +3,7 @@ package com.thepigcat.buildcraft;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import com.thepigcat.buildcraft.api.pipes.Pipe;
+import com.thepigcat.buildcraft.api.pipes.PipeType;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
@@ -12,6 +13,7 @@ import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
 import com.thepigcat.buildcraft.registries.*;
+import com.thepigcat.buildcraft.util.PipeRegistrationHelper;
 import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -69,6 +71,11 @@ public final class BuildcraftLegacy {
                     for (PDLFluid fluid : BCFluids.HELPER.getFluids()) {
                         output.accept(fluid.deferredBucket);
                     }
+
+                    for (Map.Entry<String, Pipe> entry : PipesRegistry.PIPES.entrySet()) {
+                        Block block = BuiltInRegistries.BLOCK.get(rl(entry.getKey()));
+                        output.accept(block);
+                    }
                 }).build());
     }
 
@@ -80,6 +87,7 @@ public final class BuildcraftLegacy {
         BCFluids.HELPER.register(modEventBus);
         BCDataComponents.DATA_COMPONENTS.register(modEventBus);
         BCMenuTypes.MENUS.register(modEventBus);
+        BCPipeTypes.init();
 
         modContainer.registerConfig(ModConfig.Type.COMMON, BCConfig.SPEC);
 
@@ -122,15 +130,25 @@ public final class BuildcraftLegacy {
 
         if (event.getRegistryKey() == Registries.BLOCK) {
             for (Map.Entry<String, Pipe> entry : PipesRegistry.PIPES.entrySet()) {
-                ResourceLocation id = rl(entry.getKey() + "_test");
-                event.register(Registries.BLOCK, id, () -> new ItemPipeBlock(BlockBehaviour.Properties.of().strength(1.5f, 6).sound(SoundType.STONE).mapColor(MapColor.STONE)));
+                PipeType<?, ?> type = PipeRegistrationHelper.PIPE_TYPES.getOrDefault(entry.getValue().type(), BCPipeTypes.DEFAULT.value());
+                ResourceLocation id = rl(entry.getKey());
+                if (!event.getRegistry().containsKey(id)) {
+                    event.register(Registries.BLOCK, id, () -> type.blockConstructor().apply(BlockBehaviour.Properties.of().strength(1.5f, 6).sound(SoundType.STONE).mapColor(MapColor.STONE)));
+                } else {
+                    BuildcraftLegacy.LOGGER.error("Failed to register pipe {} because a block with the same name exists already", id);
+                }
             }
         }
 
         if (event.getRegistryKey() == Registries.ITEM) {
             for (Map.Entry<String, Pipe> entry : PipesRegistry.PIPES.entrySet()) {
-                ResourceLocation id = rl(entry.getKey() + "_test");
-                event.register(Registries.ITEM, id, () -> new BlockItem(BuiltInRegistries.BLOCK.get(id), new Item.Properties()));
+                PipeType<?, ?> type = PipeRegistrationHelper.PIPE_TYPES.getOrDefault(entry.getValue().type(), BCPipeTypes.DEFAULT.value());
+                ResourceLocation id = rl(entry.getKey());
+                if (!event.getRegistry().containsKey(id)) {
+                    event.register(Registries.ITEM, id, () -> type.blockItemConstructor().apply(BuiltInRegistries.BLOCK.get(id), new Item.Properties()));
+                } else {
+                    BuildcraftLegacy.LOGGER.error("Failed to register pipe {} because a block item with the same name exists already", id);
+                }
             }
         }
     }
