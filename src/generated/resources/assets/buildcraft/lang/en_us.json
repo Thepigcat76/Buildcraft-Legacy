@@ -1,12 +1,10 @@
 {
-  "block.buildcraft.cobblestone_pipe": "Cobblestone Item Pipe",
   "block.buildcraft.combustion_engine": "Combustion Engine",
   "block.buildcraft.crate": "Crate",
   "block.buildcraft.oil_fluid": "Oil",
   "block.buildcraft.redstone_engine": "Redstone Engine",
   "block.buildcraft.stirling_engine": "Stirling Engine",
   "block.buildcraft.tank": "Tank",
-  "block.buildcraft.wooden_pipe": "Wooden Item Pipe",
   "fluid_type.buildcraft.oil": "Oil",
   "item.buildcraft.diamond_gear": "Diamond Gear",
   "item.buildcraft.gold_gear": "Gold Gear",

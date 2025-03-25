@@ -1,7 +1,6 @@
-// 1.21.1	2024-11-04T16:52:40.922331651	Recipes
+// 1.21.1	2025-03-25T21:09:19.403794757	Recipes
 88cc2edfe29d3f0478fd055713bba10b3c2a8672 data/buildcraft/advancement/recipes/decorations/crate.json
 0f51aae86513bdbfee33c12878fa6076139a36e7 data/buildcraft/advancement/recipes/decorations/tank.json
-0fdfae1cb43222252ed2c05e234c650c5dfcb0d5 data/buildcraft/advancement/recipes/misc/cobblestone_pipe.json
 668ec437fe36f6f959e44cb481c3f406051b2b45 data/buildcraft/advancement/recipes/misc/combustion_engine.json
 9cb8863afc5322b7475aeab8d63a85792f4c870a data/buildcraft/advancement/recipes/misc/diamond_gear.json
 c6813a16db86ce1eeb67f3e5979acad8ef262e26 data/buildcraft/advancement/recipes/misc/gold_gear.json
@@ -10,9 +9,7 @@ c6813a16db86ce1eeb67f3e5979acad8ef262e26 data/buildcraft/advancement/recipes/mis
 d47ccf76f19a04b320683fe858c099ebbefe4ce1 data/buildcraft/advancement/recipes/misc/stirling_engine.json
 3f1415407aab48073bc431907c7fb48cbd33c7f5 data/buildcraft/advancement/recipes/misc/stone_gear.json
 725cf6d4e67d3acc35c442621e3ce2de27bffa0b data/buildcraft/advancement/recipes/misc/wooden_gear.json
-4c3fd644400854dc339a790612486391287ee5b5 data/buildcraft/advancement/recipes/misc/wooden_pipe.json
 ce088b172986441de4a99e61ccc71d1f4a7c1b43 data/buildcraft/advancement/recipes/tools/wrench.json
-d941de91e19301321cb6dd9d0a08df279c47936e data/buildcraft/recipe/cobblestone_pipe.json
 c091d0b2c3b313c9ada5b325ce3f97d11cd60dcd data/buildcraft/recipe/combustion_engine.json
 6b2c5dad8975e41304a42ff306c515098726056a data/buildcraft/recipe/crate.json
 07707b8d6e79b3edb8b378fb185d0acb6a1eb342 data/buildcraft/recipe/diamond_gear.json
@@ -23,5 +20,4 @@ a05699dd845d55390e0999f311094da2ba20eb7e data/buildcraft/recipe/stirling_engine.
 94e908affef55a8b77920cb68529ca9639a891bb data/buildcraft/recipe/stone_gear.json
 637c59c2773a239f0b38f1802f0b55c0b03f5669 data/buildcraft/recipe/tank.json
 d6142b4fa14d26995585ed3d8f576b4de20107d2 data/buildcraft/recipe/wooden_gear.json
-f0834d43136fbb6e822b99274e8aacc37fedda1a data/buildcraft/recipe/wooden_pipe.json
 89e9c9a81681a7f72dcaa223cc43b3e33bfbcd30 data/buildcraft/recipe/wrench.json

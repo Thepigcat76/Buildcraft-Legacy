@@ -1,8 +1,6 @@
-// 1.21.1	2024-11-03T23:51:45.529210544	Loot Tables
-5ed7447c20f41b7d8f1ef90c9391c6e646d8a652 data/buildcraft/loot_table/blocks/cobblestone_pipe.json
+// 1.21.1	2025-03-25T21:09:19.402236778	Loot Tables
 c21809addc58ab140075c66b458cd9dfd4662000 data/buildcraft/loot_table/blocks/combustion_engine.json
 f2441cab3a04d892d386100c0e4a85a6e195ddd4 data/buildcraft/loot_table/blocks/crate.json
 604b01d975055f698cb350b1d28671e707a8de1c data/buildcraft/loot_table/blocks/redstone_engine.json
 f05860b6a77b2fad7bd93d4ed247576fa769c737 data/buildcraft/loot_table/blocks/stirling_engine.json
 6d403d2dc7e2118da59699a3517a83e79f831090 data/buildcraft/loot_table/blocks/tank.json
-5d815b018e31cf865a9b9402453754abdf85522e data/buildcraft/loot_table/blocks/wooden_pipe.json

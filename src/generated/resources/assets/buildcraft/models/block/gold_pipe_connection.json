@@ -1,0 +1,6 @@
+{
+  "parent": "buildcraft:block/pipe_connection",
+  "textures": {
+    "texture": "buildcraft:block/gold_pipe"
+  }
+}

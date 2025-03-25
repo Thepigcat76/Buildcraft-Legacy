@@ -1,5 +1,6 @@
 package com.thepigcat.buildcraft;
 
+import com.mojang.datafixers.util.Either;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
 import com.thepigcat.buildcraft.api.capabilties.JumboItemHandlerItemWrapper;
@@ -21,6 +22,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
@@ -50,6 +52,8 @@ import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import org.spongepowered.asm.mixin.injection.struct.InjectorGroupInfo;
 
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 
 @Mod(BuildcraftLegacy.MODID)
@@ -74,11 +78,10 @@ public final class BuildcraftLegacy {
                         output.accept(fluid.deferredBucket);
                     }
 
-                    // TODO: ORDERING
-                    for (Map.Entry<String, Pipe> entry : PipesRegistry.PIPES.entrySet()) {
-                        Block block = BuiltInRegistries.BLOCK.get(rl(entry.getKey()));
+                    PipesRegistry.PIPES.entrySet().stream().sorted(Comparator.comparingInt(e -> e.getValue().tabOrdering())).forEach(e -> {
+                        Block block = BuiltInRegistries.BLOCK.get(rl(e.getKey()));
                         output.accept(block);
-                    }
+                    });
                 }).build());
     }
 
@@ -139,7 +142,13 @@ public final class BuildcraftLegacy {
                 PipeType<?, ?> type = PipeRegistrationHelper.PIPE_TYPES.getOrDefault(entry.getValue().type(), BCPipeTypes.DEFAULT.value());
                 ResourceLocation id = rl(entry.getKey());
                 if (!event.getRegistry().containsKey(id)) {
-                    event.register(Registries.BLOCK, id, () -> type.blockConstructor().apply(BlockBehaviour.Properties.of().strength(1.5f, 6).sound(SoundType.STONE).mapColor(MapColor.STONE)));
+                    Either<BlockBehaviour.Properties, ResourceLocation> properties = entry.getValue().properties();
+                    ResourceLocation block = properties.right().orElse(ResourceLocation.parse("cobblestone"));
+                    BuildcraftLegacy.LOGGER.debug("Properties: {}", properties);
+                    event.register(Registries.BLOCK, id, () -> type.blockConstructor().apply(properties.left().isPresent()
+                            ? properties.left().get()
+                            : BlockBehaviour.Properties.ofFullCopy(BuiltInRegistries.BLOCK.get(block))
+                    ));
                 } else {
                     BuildcraftLegacy.LOGGER.error("Failed to register pipe {} because a block with the same name exists already", id);
                 }

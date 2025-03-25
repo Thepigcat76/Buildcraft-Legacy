@@ -1,13 +1,16 @@
 package com.thepigcat.buildcraft.util;
 
 import com.mojang.datafixers.util.Either;
+import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.api.pipes.Pipe;
 import com.thepigcat.buildcraft.api.pipes.PipeHolder;
 import com.thepigcat.buildcraft.api.pipes.PipeType;
 import com.thepigcat.buildcraft.api.pipes.PipeTypeHolder;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 
@@ -17,6 +20,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Supplier;
 
 public final class PipeRegistrationHelper {
     public static final Map<ResourceLocation, PipeType<?, ?>> PIPE_TYPES = new HashMap<>();
@@ -42,17 +46,35 @@ public final class PipeRegistrationHelper {
     }
 
     public PipeHolder registerPipe(String id, boolean disabled, PipeTypeHolder<?, ?> pipeType, String name, float transferSpeed,
-                                   List<ResourceLocation> textures, Either<BlockBehaviour.Properties, Block> properties,
-                                   boolean customBlockModel, boolean customItemModel) {
+                                   List<ResourceLocation> textures, Either<BlockBehaviour.Properties, ResourceLocation> properties,
+                                   ResourceLocation dropItem, Ingredient ingredient, List<TagKey<Block>> miningTools, int tabOrdering,
+                                   boolean customBlockModel, boolean customItemModel, boolean customRecipe, boolean customLoottable,
+                                   boolean customTags) {
         String key = id + "_pipe";
-        Pipe value = new Pipe(disabled, pipeType.key(), Optional.ofNullable(name), transferSpeed, textures, properties, customBlockModel, customItemModel);
+        Pipe value = new Pipe(
+                disabled,
+                pipeType.key(),
+                Optional.ofNullable(name),
+                transferSpeed,
+                textures,
+                properties,
+                dropItem,
+                ingredient,
+                miningTools,
+                tabOrdering,
+                customBlockModel,
+                customItemModel,
+                customRecipe,
+                customLoottable,
+                customTags
+        );
         this.pipes.put(key, value);
         return new PipeHolder(key, value);
     }
 
     public PipeHolder registerPipe(String id, PipeTypeHolder<?, ?> pipeType, String name, float transferSpeed,
-                                   List<ResourceLocation> textures, Either<BlockBehaviour.Properties, Block> properties) {
-        return registerPipe(id, false, pipeType, name, transferSpeed, textures, properties, false, false);
+                                   List<ResourceLocation> textures, Either<BlockBehaviour.Properties, ResourceLocation> properties, Ingredient ingredient, List<TagKey<Block>> miningTools, int tabOrdering) {
+        return registerPipe(id, false, pipeType, name, transferSpeed, textures, properties, BuildcraftLegacy.rl(id + "_pipe"), ingredient, miningTools, tabOrdering, false, false, false, false, false);
     }
 
     public Map<String, Pipe> getPipes() {

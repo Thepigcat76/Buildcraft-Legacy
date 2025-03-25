@@ -6,7 +6,8 @@
   "refmap": "buildcraft.refmap.json",
   "mixins": [
     "ModelBakeryMixin",
-    "BlockStateModelLoaderMixin"
+    "BlockStateModelLoaderMixin",
+    "MappedRegistryMixin"
   ],
   "client": [
   ],

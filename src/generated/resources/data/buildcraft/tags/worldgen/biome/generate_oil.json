@@ -3,6 +3,7 @@
     "#c:is_plains",
     "#c:is_desert",
     "#c:is_badlands",
-    "#c:is_snowy"
+    "#c:is_snowy",
+    "#c:is_savanna"
   ]
 }

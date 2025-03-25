@@ -2,7 +2,7 @@
   "multipart": [
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_connection"
+        "model": "buildcraft:block/gold_pipe_connection"
       },
       "when": {
         "down": "connected"
@@ -10,7 +10,7 @@
     },
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_connection",
+        "model": "buildcraft:block/gold_pipe_connection",
         "x": 180
       },
       "when": {
@@ -19,7 +19,7 @@
     },
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_connection",
+        "model": "buildcraft:block/gold_pipe_connection",
         "x": 90,
         "y": 180
       },
@@ -29,7 +29,7 @@
     },
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_connection",
+        "model": "buildcraft:block/gold_pipe_connection",
         "x": 90,
         "y": 270
       },
@@ -39,7 +39,7 @@
     },
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_connection",
+        "model": "buildcraft:block/gold_pipe_connection",
         "x": 90
       },
       "when": {
@@ -48,7 +48,7 @@
     },
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_connection",
+        "model": "buildcraft:block/gold_pipe_connection",
         "x": 90,
         "y": 90
       },
@@ -58,7 +58,7 @@
     },
     {
       "apply": {
-        "model": "buildcraft:block/template_pipe_base"
+        "model": "buildcraft:block/gold_pipe_base"
       }
     }
   ]
