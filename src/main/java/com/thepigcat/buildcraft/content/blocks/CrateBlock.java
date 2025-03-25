@@ -5,6 +5,7 @@ import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.data.BCDataComponents;
+import com.thepigcat.buildcraft.data.components.BigStackContainerContents;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.BlockUtils;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
@@ -77,7 +78,7 @@ public class CrateBlock extends BaseEntityBlock {
 
     @Override
     protected void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
-        if (!state.is(newState.getBlock())) {
+        if (!state.is(newState.getBlock()) && !BCConfig.crateRetainItems) {
             CrateBE crateBE = BlockUtils.getBE(CrateBE.class, level, pos);
             Containers.dropContents(level, pos, NonNullList.of(ItemStack.EMPTY, crateBE.getItemHandler().getStackInSlot(0)));
         }
@@ -89,8 +90,8 @@ public class CrateBlock extends BaseEntityBlock {
     protected @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof CrateBE be && BCConfig.crateRetainItems) {
             ItemStack stack = new ItemStack(this);
-            if (!be.getItemHandler(null).getStackInSlot(0).isEmpty()) {
-                stack.set(BCDataComponents.CRATE_CONTENT, ItemContainerContents.fromItems(List.of(be.getItemHandler().getStackInSlot(0))));
+            if (!be.getItemHandler().getStackInSlot(0).isEmpty()) {
+                stack.set(BCDataComponents.CRATE_CONTENT, BigStackContainerContents.fromItems(be.getItemHandler().getItems(), be.getItemHandler().getSlotLimit()));
             }
             return List.of(stack);
         }
@@ -100,7 +101,6 @@ public class CrateBlock extends BaseEntityBlock {
     @Override
     protected ItemInteractionResult useItemOn(ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hitResult) {
         BlockEntity be = level.getBlockEntity(pos);
-        BuildcraftLegacy.LOGGER.debug("random, 0 - 3: {}", level.random.nextInt(0, 3));
         if (be != null) {
             IItemHandler itemHandler = CapabilityUtils.itemHandlerCapability(be);
             if (itemHandler != null) {

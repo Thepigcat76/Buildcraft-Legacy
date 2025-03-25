@@ -2,6 +2,7 @@ package com.thepigcat.buildcraft.client.items;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.thepigcat.buildcraft.api.blocks.EngineBlock;
+import com.thepigcat.buildcraft.api.capabilties.JumboItemHandler;
 import com.thepigcat.buildcraft.client.blockentities.CrateBERenderer;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.registries.BCBlocks;
@@ -26,9 +27,9 @@ public class CrateItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         RenderUtils.renderBlockModel(BCBlocks.CRATE.get().defaultBlockState(), poseStack, buffer, packedLight, packedOverlay);
-        ItemStack itemStack = stack.get(BCDataComponents.CRATE_CONTENT).copyOne();
+        JumboItemHandler.BigStack itemStack = stack.get(BCDataComponents.CRATE_CONTENT).copyOne();
         if (!itemStack.isEmpty()) {
-            CrateBERenderer.renderItemsAndCount(poseStack, buffer, packedOverlay, itemStack, Direction.NORTH);
+            CrateBERenderer.renderItemsAndCount(poseStack, buffer, packedOverlay, itemStack.getSlotStack(), Direction.NORTH);
         }
     }
 }

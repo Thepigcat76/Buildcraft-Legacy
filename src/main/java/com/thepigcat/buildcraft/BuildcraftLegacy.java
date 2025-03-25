@@ -2,6 +2,7 @@ package com.thepigcat.buildcraft;
 
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
 import com.portingdeadmods.portingdeadlibs.api.fluids.PDLFluid;
+import com.thepigcat.buildcraft.api.capabilties.JumboItemHandlerItemWrapper;
 import com.thepigcat.buildcraft.api.pipes.Pipe;
 import com.thepigcat.buildcraft.api.pipes.PipeType;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
@@ -28,6 +29,7 @@ import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
 import net.neoforged.neoforge.client.event.ModelEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
+import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -115,6 +117,9 @@ public final class BuildcraftLegacy {
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.REDSTONE_ENGINE.get(), ContainerBlockEntity::getEnergyStorageOnSide);
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.STIRLING_ENGINE.get(), ContainerBlockEntity::getEnergyStorageOnSide);
         event.registerBlockEntity(Capabilities.EnergyStorage.BLOCK, BCBlockEntities.COMBUSTION_ENGINE.get(), ContainerBlockEntity::getEnergyStorageOnSide);
+
+        event.registerItem(Capabilities.ItemHandler.ITEM, (stack, ctx) -> new JumboItemHandlerItemWrapper(stack), BCBlocks.CRATE);
+        event.registerItem(Capabilities.FluidHandler.ITEM, (stack, ctx) -> new FluidHandlerItemStack(BCDataComponents.TANK_CONTENT, stack, BCConfig.tankCapacity), BCBlocks.TANK);
     }
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {

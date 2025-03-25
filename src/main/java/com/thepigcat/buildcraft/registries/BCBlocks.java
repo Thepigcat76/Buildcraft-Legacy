@@ -5,6 +5,7 @@ import com.thepigcat.buildcraft.content.blocks.*;
 import com.thepigcat.buildcraft.content.items.blocks.CrateBlockItem;
 import com.thepigcat.buildcraft.content.items.blocks.TankBlockItem;
 import com.thepigcat.buildcraft.data.BCDataComponents;
+import com.thepigcat.buildcraft.data.components.BigStackContainerContents;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemContainerContents;
@@ -42,7 +43,7 @@ public final class BCBlocks {
     // MISC
     public static final DeferredBlock<CrateBlock> CRATE = registerBlockAndItem("crate", CrateBlock::new,
             BlockBehaviour.Properties.of().strength(2.0f).sound(SoundType.WOOD).mapColor(MapColor.WOOD),
-            () -> new CrateBlockItem(new Item.Properties().component(BCDataComponents.CRATE_CONTENT, ItemContainerContents.EMPTY)));
+            () -> new CrateBlockItem(new Item.Properties().component(BCDataComponents.CRATE_CONTENT, BigStackContainerContents.EMPTY)));
     // TODO: Option to empty the tank
     public static final DeferredBlock<TankBlock> TANK = registerBlockAndItem("tank", TankBlock::new,
             BlockBehaviour.Properties.of().strength(0.3f).sound(SoundType.GLASS),

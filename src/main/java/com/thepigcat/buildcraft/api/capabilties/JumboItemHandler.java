@@ -14,6 +14,9 @@ import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtOps;
 import net.minecraft.nbt.Tag;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.ByteBufCodecs;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.resources.RegistryOps;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.common.util.INBTSerializable;
@@ -39,7 +42,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
         this.slotLimit = slotLimit;
         this.items = new ArrayList<>();
         for (int i = 0; i < slots; i++) {
-            this.items.add(i, new BigStack(ItemStack.EMPTY, 0));
+            this.getItems().add(i, new BigStack(ItemStack.EMPTY, 0));
         }
     }
 
@@ -50,13 +53,13 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
 
     @Override
     public int getSlots() {
-        return this.items.size();
+        return this.getItems().size();
     }
 
     @Override
     public ItemStack getStackInSlot(int slot) {
         validateSlotIndex(slot);
-        return this.items.get(slot).slotStack;
+        return this.getItems().get(slot).getSlotStack();
     }
 
     public List<BigStack> getItems() {
@@ -66,7 +69,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
     @Override
     public ItemStack insertItem(int slot, ItemStack stack, boolean simulate) {
         if (isItemValid(slot, stack)) {
-            BigStack bigStack = this.items.get(slot);
+            BigStack bigStack = this.getItems().get(slot);
             int inserted = Math.min(getSlotLimit(slot) - bigStack.getAmount(), stack.getCount());
             if (!simulate) {
                 if (bigStack.getStack().isEmpty())
@@ -87,7 +90,7 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
     public ItemStack extractItem(int slot, int amount, boolean simulate) {
         if (amount == 0) return ItemStack.EMPTY;
 
-        BigStack bigStack = this.items.get(slot);
+        BigStack bigStack = this.getItems().get(slot);
         if (bigStack.getStack().isEmpty()) return ItemStack.EMPTY;
         if (bigStack.getAmount() <= amount) {
             ItemStack out = bigStack.getStack().copy();
@@ -123,13 +126,13 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
     }
 
     protected void validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= items.size())
-            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + items.size() + ")");
+        if (slot < 0 || slot >= this.getItems().size())
+            throw new RuntimeException("Slot " + slot + " not in valid range - [0," + this.getItems().size() + ")");
     }
 
     @Override
     public Tag serializeNBT(net.minecraft.core.HolderLookup.Provider provider) {
-        DataResult<Tag> tagDataResult = CODEC.encodeStart(NbtOps.INSTANCE, this);
+        DataResult<Tag> tagDataResult = CODEC.encodeStart(RegistryOps.create(NbtOps.INSTANCE, provider), this);
         if (tagDataResult.isSuccess()) {
             return tagDataResult.getOrThrow();
         }
@@ -139,10 +142,10 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
 
     @Override
     public void deserializeNBT(net.minecraft.core.HolderLookup.Provider provider, Tag nbt) {
-        DataResult<Pair<JumboItemHandler, Tag>> pairDataResult = CODEC.decode(NbtOps.INSTANCE, nbt);
+        DataResult<Pair<JumboItemHandler, Tag>> pairDataResult = CODEC.decode(RegistryOps.create(NbtOps.INSTANCE, provider), nbt);
         if (pairDataResult.isSuccess()) {
             JumboItemHandler jumboItemHandler = pairDataResult.getOrThrow().getFirst();
-            this.items = jumboItemHandler.items;
+            this.items = jumboItemHandler.getItems();
             this.slotLimit = jumboItemHandler.slotLimit;
         }
     }
@@ -152,6 +155,13 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
                         ItemStack.OPTIONAL_CODEC.fieldOf("stack").forGetter(BigStack::getEncodeStack),
                         Codec.INT.fieldOf("amount").forGetter(BigStack::getAmount)
                 ).apply(builder, BigStack::new)
+        );
+        public static final StreamCodec<RegistryFriendlyByteBuf, BigStack> STREAM_CODEC = StreamCodec.composite(
+                ItemStack.OPTIONAL_STREAM_CODEC,
+                BigStack::getEncodeStack,
+                ByteBufCodecs.INT,
+                BigStack::getAmount,
+                BigStack::new
         );
         public static final BigStack EMPTY = new BigStack(ItemStack.EMPTY, 0);
 
@@ -165,12 +175,22 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
             this.slotStack = stack.copyWithCount(amount);
         }
 
+        public BigStack(ItemStack stack, ItemStack slotStack, int amount) {
+            this.stack = stack.copy();
+            this.slotStack = slotStack;
+            this.amount = amount;
+        }
+
         public ItemStack getStack() {
             return stack;
         }
 
         public ItemStack getEncodeStack() {
-            return stack.copyWithCount(1);
+            return slotStack.copyWithCount(1);
+        }
+
+        public ItemStack getSlotStack() {
+            return this.slotStack.copyWithCount(this.amount);
         }
 
         public void setStack(ItemStack stack) {
@@ -192,5 +212,14 @@ public class JumboItemHandler implements IItemHandler, INBTSerializable<Tag> {
             this.slotStack = ItemStack.EMPTY;
             this.stack = ItemStack.EMPTY;
         }
+
+        public boolean isEmpty() {
+            return this.stack.isEmpty();
+        }
+
+        public BigStack copy() {
+            return new BigStack(this.stack.copy(), this.slotStack.copy(), this.amount);
+        }
+
     }
 }

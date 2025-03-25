@@ -23,7 +23,7 @@ public final class ModelUtils {
     };
     public static final BiFunction<Pipe, ResourceLocation, String> EXTRACTING_BLOCK_MODEL_DEFINITION = (pipe, pipeId) -> {
         String pipeIdLiteral = pipeId.withPrefix("block/").toString();
-        String s = """
+        return """
                 {
                   "multipart": [
                     {
@@ -145,7 +145,6 @@ public final class ModelUtils {
                     }
                   ]
                 }""".formatted(pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral, pipeIdLiteral);
-        return s;
     };
 
     public static final BiFunction<Pipe, String, String> DEFAULT_ITEM_MODEL_FILE = ((pipe, pipeId) -> {

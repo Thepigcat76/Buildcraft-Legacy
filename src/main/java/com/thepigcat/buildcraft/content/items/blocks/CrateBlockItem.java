@@ -22,8 +22,8 @@ public class CrateBlockItem extends BlockItem {
     @Override
     protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
         BlockEntity be = level.getBlockEntity(pos);
-        if (be instanceof CrateBE tankBE) {
-            tankBE.getItemHandler(null).insertItem(0, stack.get(BCDataComponents.CRATE_CONTENT).copyOne(), false);
+        if (be instanceof CrateBE crateBE) {
+            crateBE.getItemHandler(null).insertItem(0, stack.get(BCDataComponents.CRATE_CONTENT).copyOne().getSlotStack(), false);
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
     }
