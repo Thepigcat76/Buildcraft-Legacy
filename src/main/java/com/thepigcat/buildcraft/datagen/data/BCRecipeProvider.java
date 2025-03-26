@@ -3,10 +3,13 @@ package com.thepigcat.buildcraft.datagen.data;
 import com.thepigcat.buildcraft.registries.BCBlocks;
 import com.thepigcat.buildcraft.registries.BCItems;
 import com.thepigcat.buildcraft.tags.BCTags;
+import net.minecraft.advancements.Criterion;
+import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
+import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -63,6 +66,10 @@ public class BCRecipeProvider extends net.minecraft.data.recipes.RecipeProvider 
                 .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
                 .save(recipeOutput);
+    }
+
+    public static Criterion<InventoryChangeTrigger.TriggerInstance> has(TagKey<Item> tag) {
+        return RecipeProvider.has(tag);
     }
 
     private void engineRecipe(RecipeOutput recipeOutput, TagKey<Item> material, TagKey<Item> gear, ItemLike result) {

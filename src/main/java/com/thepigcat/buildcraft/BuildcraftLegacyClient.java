@@ -23,6 +23,8 @@ import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterMenuScreensEvent;
 import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsEvent;
+import net.neoforged.neoforge.client.gui.ConfigurationScreen;
+import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import org.jetbrains.annotations.NotNull;
 
 @Mod(value = BuildcraftLegacyClient.MODID, dist = Dist.CLIENT)
@@ -34,6 +36,8 @@ public final class BuildcraftLegacyClient {
         eventBus.addListener(this::registerClientExtensions);
         eventBus.addListener(this::registerModelLayers);
         eventBus.addListener(this::registerMenuScreens);
+
+        modContainer.registerExtensionPoint(IConfigScreenFactory.class, ConfigurationScreen::new);
     }
 
     private void registerClientExtensions(RegisterClientExtensionsEvent event) {
