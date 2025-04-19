@@ -26,6 +26,7 @@ import java.util.Optional;
 
 public abstract class EngineBlockEntity extends ContainerBlockEntity implements RedstoneBlockEntity {
     private RedstoneSignalType redstoneSignalType;
+    private int redstoneSignalStrength;
     private BlockCapabilityCache<IEnergyStorage, Direction> exportCache;
     private CompoundTag movementData;
     protected boolean active;
@@ -116,6 +117,14 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity implements 
         return redstoneSignalType;
     }
 
+    public void setRedstoneSignalStrength(int redstoneSignalStrength) {
+        this.redstoneSignalStrength = redstoneSignalStrength;
+    }
+
+    public int getRedstoneSignalStrength() {
+        return redstoneSignalStrength;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -137,6 +146,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity implements 
     protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
         this.movementData = tag.getCompound("movementData");
         this.active = tag.getBoolean("active");
+        this.redstoneSignalStrength = tag.getInt("signalStrength");
         this.redstoneSignalType = RedstoneSignalType.CODEC.decode(NbtOps.INSTANCE, tag.get("redstone_signal")).result().orElse(com.mojang.datafixers.util.Pair.of(RedstoneSignalType.IGNORED, new CompoundTag())).getFirst();
     }
 
@@ -148,6 +158,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity implements 
         movementData.putFloat("lastMovement", lastMovement);
         tag.put("movementData", movementData);
         tag.putBoolean("active", active);
+        tag.putInt("signalStrength", this.redstoneSignalStrength);
         Optional<Tag> tag1 = RedstoneSignalType.CODEC.encodeStart(NbtOps.INSTANCE, this.redstoneSignalType).result();
         tag1.ifPresent(value -> {
             tag.put("redstone_signal", value);

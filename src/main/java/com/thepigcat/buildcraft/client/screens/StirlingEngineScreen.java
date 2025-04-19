@@ -12,6 +12,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.player.Inventory;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Collections;
 import java.util.List;
 
 public class StirlingEngineScreen extends PDLAbstractContainerScreen<StirlingEngineMenu> {
@@ -26,7 +27,8 @@ public class StirlingEngineScreen extends PDLAbstractContainerScreen<StirlingEng
     protected void init() {
         super.init();
 
-        this.redstoneWidget = addRenderableWidget(new RedstoneWidget(this.leftPos + this.imageWidth, this.topPos + 2, 32, 32));
+        redstoneWidget = new RedstoneWidget(menu.blockEntity, this.leftPos + this.imageWidth, this.topPos + 2, 32, 32);
+        redstoneWidget.visitWidgets(this::addRenderableWidget);
     }
 
     @Override
@@ -52,7 +54,7 @@ public class StirlingEngineScreen extends PDLAbstractContainerScreen<StirlingEng
 
     // TODO: Move this to pdl
     public List<Rect2i> getBounds() {
-        return List.of(this.redstoneWidget.getBounds());
+        return this.redstoneWidget != null ? List.of(this.redstoneWidget.getBounds()) : Collections.emptyList();
     }
 
 }

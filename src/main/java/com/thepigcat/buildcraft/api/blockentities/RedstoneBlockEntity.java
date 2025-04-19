@@ -2,9 +2,14 @@ package com.thepigcat.buildcraft.api.blockentities;
 
 import com.mojang.serialization.Codec;
 import net.minecraft.util.StringRepresentable;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 // TODO: Move this to pdl
 public interface RedstoneBlockEntity {
+    default BlockEntity self() {
+        return (BlockEntity) this;
+    }
+
     int emitRedstoneLevel();
 
     void setRedstoneSignalType(RedstoneSignalType redstoneSignalType);
@@ -28,5 +33,14 @@ public interface RedstoneBlockEntity {
         public String getSerializedName() {
             return this.name;
         }
+
+        public boolean isActive(int signalStrength) {
+            return switch (this) {
+                case IGNORED -> true;
+                case LOW_SIGNAL -> signalStrength > 0;
+                case HIGH_SIGNAL -> signalStrength == 15;
+            };
+        }
+
     }
 }

@@ -7,10 +7,7 @@ import net.minecraft.advancements.Criterion;
 import net.minecraft.advancements.critereon.InventoryChangeTrigger;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
-import net.minecraft.data.recipes.RecipeCategory;
-import net.minecraft.data.recipes.RecipeOutput;
-import net.minecraft.data.recipes.RecipeProvider;
-import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.*;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
@@ -65,6 +62,11 @@ public class BCRecipeProvider extends net.minecraft.data.recipes.RecipeProvider 
                 .pattern("GGG")
                 .define('G', Tags.Items.GLASS_BLOCKS)
                 .unlockedBy("has_glass", has(Tags.Items.GLASS_BLOCKS))
+                .save(recipeOutput);
+
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, BCBlocks.TANK)
+                .requires(BCBlocks.TANK)
+                .unlockedBy("has_tank", has(BCBlocks.TANK))
                 .save(recipeOutput);
     }
 

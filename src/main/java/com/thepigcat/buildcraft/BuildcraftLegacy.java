@@ -9,35 +9,25 @@ import com.thepigcat.buildcraft.api.pipes.PipeType;
 import com.thepigcat.buildcraft.content.blockentities.CrateBE;
 import com.thepigcat.buildcraft.content.blockentities.ItemPipeBE;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
-import com.thepigcat.buildcraft.content.blocks.ItemPipeBlock;
-import com.thepigcat.buildcraft.content.blocks.TestBlock;
 import com.thepigcat.buildcraft.data.BCDataComponents;
+import com.thepigcat.buildcraft.networking.RedstoneSignalTypeSyncPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeDirectionPayload;
 import com.thepigcat.buildcraft.networking.SyncPipeMovementPayload;
 import com.thepigcat.buildcraft.registries.*;
 import com.thepigcat.buildcraft.util.PipeRegistrationHelper;
-import net.minecraft.client.renderer.block.BlockModelShaper;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
-import net.neoforged.neoforge.client.event.ModelEvent;
-import net.neoforged.neoforge.client.extensions.common.IClientItemExtensions;
 import net.neoforged.neoforge.fluids.capability.templates.FluidHandlerItemStack;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.registries.DeferredItem;
-import net.neoforged.neoforge.registries.ModifyRegistriesEvent;
 import net.neoforged.neoforge.registries.RegisterEvent;
-import net.neoforged.neoforge.registries.callback.AddCallback;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -50,10 +40,8 @@ import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.fml.config.ModConfig;
 import net.neoforged.neoforge.registries.DeferredRegister;
-import org.spongepowered.asm.mixin.injection.struct.InjectorGroupInfo;
 
 import java.util.Comparator;
-import java.util.List;
 import java.util.Map;
 
 @Mod(BuildcraftLegacy.MODID)
@@ -127,8 +115,9 @@ public final class BuildcraftLegacy {
 
     private void registerPayloads(RegisterPayloadHandlersEvent event) {
         PayloadRegistrar registrar = event.registrar(MODID);
-        registrar.playToClient(SyncPipeDirectionPayload.TYPE, SyncPipeDirectionPayload.STREAM_CODEC, SyncPipeDirectionPayload::sync);
-        registrar.playToClient(SyncPipeMovementPayload.TYPE, SyncPipeMovementPayload.STREAM_CODEC, SyncPipeMovementPayload::sync);
+        registrar.playToClient(SyncPipeDirectionPayload.TYPE, SyncPipeDirectionPayload.STREAM_CODEC, SyncPipeDirectionPayload::handle);
+        registrar.playToClient(SyncPipeMovementPayload.TYPE, SyncPipeMovementPayload.STREAM_CODEC, SyncPipeMovementPayload::handle);
+        registrar.playToServer(RedstoneSignalTypeSyncPayload.TYPE, RedstoneSignalTypeSyncPayload.STREAM_CODEC, RedstoneSignalTypeSyncPayload::handle);
     }
 
     private void onRegister(RegisterEvent event) {

@@ -31,17 +31,19 @@ public class CombustionEngineBE extends EngineBlockEntity implements MenuProvide
     @Override
     public void commonTick() {
         super.commonTick();
-        IFluidHandler fluidHandler = getFluidHandler();
-        if (!fluidHandler.getFluidInTank(0).isEmpty()) {
-            burnProgress++;
-            if (!level.isClientSide()) {
-                getEnergyStorage().receiveEnergy(getEnergyProduction(), false);
-                if (burnProgress % 3 == 0) {
-                    fluidHandler.drain(1, IFluidHandler.FluidAction.EXECUTE);
+        if (getRedstoneSignalType().isActive(this.getRedstoneSignalStrength())) {
+            IFluidHandler fluidHandler = getFluidHandler();
+            if (!fluidHandler.getFluidInTank(0).isEmpty()) {
+                burnProgress++;
+                if (!level.isClientSide()) {
+                    getEnergyStorage().receiveEnergy(getEnergyProduction(), false);
+                    if (burnProgress % 15 == 0) {
+                        fluidHandler.drain(1, IFluidHandler.FluidAction.EXECUTE);
+                    }
                 }
+            } else {
+                burnProgress = 0;
             }
-        } else {
-            burnProgress = 0;
         }
     }
 
@@ -57,7 +59,7 @@ public class CombustionEngineBE extends EngineBlockEntity implements MenuProvide
 
     @Override
     public boolean isActive() {
-        return burnProgress > 0;
+        return burnProgress > 0 && getRedstoneSignalType().isActive(this.getRedstoneSignalStrength());
     }
 
     public int getBurnProgress() {

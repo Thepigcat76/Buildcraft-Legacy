@@ -13,8 +13,8 @@ public class CombustionEngineMenu extends PDLAbstractContainerMenu<CombustionEng
     public CombustionEngineMenu(int containerId, @NotNull Inventory inv, @NotNull CombustionEngineBE blockEntity) {
         super(BCMenuTypes.COMBUSTION_ENGINE.get(), containerId, inv, blockEntity);
 
-        addPlayerInventory(inv);
-        addPlayerHotbar(inv);
+        addPlayerInventory(inv, 94);
+        addPlayerHotbar(inv, 152);
     }
 
     public CombustionEngineMenu(int containerId, @NotNull Inventory inv, @NotNull RegistryFriendlyByteBuf friendlyByteBuf) {

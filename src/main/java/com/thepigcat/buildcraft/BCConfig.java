@@ -13,13 +13,14 @@ public final class BCConfig {
     private static final ModConfigSpec.IntValue TANK_CAPACITY = BUILDER
             .comment("The maximum amount of fluid a tank can store")
             .defineInRange("tank_capacity", 8_000, 0, Integer.MAX_VALUE);
-    private static final ModConfigSpec.BooleanValue TANK_RETAIN_FLUIDS = BUILDER
-            .comment("Whether the tank should keep its fluid after being broken")
-            .define("tank_retain_fluid", true);
 
     private static final ModConfigSpec.IntValue COMBUSTION_ENGINE_FLUID_CAPACITY = BUILDER
             .comment("The maximum amount of fluid the combustion engine can store")
             .defineInRange("combustion_engine_tank_capacity", 2_000, 0, Integer.MAX_VALUE);
+
+    private static final ModConfigSpec.BooleanValue TANK_RETAIN_FLUIDS = BUILDER
+            .comment("Whether the tank should keep its fluid after being broken")
+            .define("tank_retain_fluid", true);
 
     private static final ModConfigSpec.BooleanValue CRATE_RETAIN_ITEMS = BUILDER
             .comment("Whether the crate should keep its items after being broken instead of them dropping on the ground")
@@ -57,6 +58,7 @@ public final class BCConfig {
     @SubscribeEvent
     static void onLoad(final ModConfigEvent event) {
         tankCapacity = TANK_CAPACITY.get();
+        combustionEngineFluidCapacity = COMBUSTION_ENGINE_FLUID_CAPACITY.getAsInt();
         tankRetainFluids = TANK_RETAIN_FLUIDS.get();
         crateRetainItems = CRATE_RETAIN_ITEMS.get();
 
@@ -80,6 +82,6 @@ public final class BCConfig {
     private static ModConfigSpec.IntValue engineEnergyCapacity(String id, int defaultValue) {
         return BUILDER
                 .comment("Energy capacity of the %s engine".formatted(id))
-                .defineInRange("%sEngineEnergyCapacity".formatted(id), defaultValue, 0, Integer.MAX_VALUE);
+                .defineInRange("%s_engine_energy_capacity".formatted(id), defaultValue, 0, Integer.MAX_VALUE);
     }
 }

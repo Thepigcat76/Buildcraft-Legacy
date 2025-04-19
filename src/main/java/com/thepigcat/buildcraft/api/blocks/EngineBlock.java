@@ -74,4 +74,12 @@ public abstract class EngineBlock extends ContainerBlock {
     protected VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPES.get(state.getValue(FACING));
     }
+
+    @Override
+    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
+        super.neighborChanged(state, level, pos, neighborBlock, neighborPos, movedByPiston);
+
+        int signal = level.getBestNeighborSignal(pos);
+        BlockUtils.getBE(EngineBlockEntity.class, level, pos).setRedstoneSignalStrength(signal);
+    }
 }

@@ -58,32 +58,34 @@ public class StirlingEngineBE extends EngineBlockEntity implements MenuProvider 
             if (burnProgress > 0 && this.burnProgress <= 0) {
                 this.burnProgress = burnProgress;
                 this.burnTime = burnProgress;
-                // TODO: Replace shrink with something else
-                stack.shrink(1);
+                itemHandler.extractItem(0, 1, false);
             }
         }
     }
 
     @Override
     public boolean isActive() {
-        return getBurnProgress() > 0;
+        return getBurnProgress() > 0 && getRedstoneSignalType().isActive(this.getRedstoneSignalStrength());
     }
 
     @Override
     public void commonTick() {
         super.commonTick();
-        IItemHandler itemHandler = getItemHandler();
-        if (this.burnProgress > 0) {
-            burnProgress--;
-            getEnergyStorage().receiveEnergy(1, false);
-        } else {
-            this.burnTime = 0;
-            ItemStack stack = itemHandler.getStackInSlot(0);
-            int burnProgress = stack.getBurnTime(RecipeType.SMELTING);
-            if (burnProgress > 0) {
-                this.burnProgress = burnProgress;
-                this.burnTime = burnProgress;
-                stack.shrink(1);
+
+        if (this.getRedstoneSignalType().isActive(this.getRedstoneSignalStrength())) {
+            IItemHandler itemHandler = getItemHandler();
+            if (this.burnProgress > 0) {
+                burnProgress--;
+                getEnergyStorage().receiveEnergy(1, false);
+            } else {
+                this.burnTime = 0;
+                ItemStack stack = itemHandler.getStackInSlot(0);
+                int burnProgress = stack.getBurnTime(RecipeType.SMELTING);
+                if (burnProgress > 0) {
+                    this.burnProgress = burnProgress;
+                    this.burnTime = burnProgress;
+                    itemHandler.extractItem(0, 1, false);
+                }
             }
         }
 

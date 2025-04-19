@@ -29,7 +29,7 @@ public record SyncPipeMovementPayload(BlockPos pos, float movement, float lastMo
         return TYPE;
     }
 
-    public static void sync(SyncPipeMovementPayload payload, IPayloadContext context) {
+    public static void handle(SyncPipeMovementPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             ItemPipeBE be = BlockUtils.getBE(ItemPipeBE.class, context.player().level(), payload.pos());
             if (be != null) {

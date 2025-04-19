@@ -76,7 +76,6 @@ public final class BuildcraftLegacyClient {
             }
         }, BCBlocks.COMBUSTION_ENGINE.asItem());
 
-
     }
 
     private void registerRenderers(EntityRenderersEvent.RegisterRenderers event) {

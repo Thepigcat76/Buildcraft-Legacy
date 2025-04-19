@@ -1,6 +1,7 @@
 package com.thepigcat.buildcraft.datagen.assets;
 
 import com.thepigcat.buildcraft.BuildcraftLegacy;
+import com.thepigcat.buildcraft.api.blockentities.RedstoneBlockEntity;
 import com.thepigcat.buildcraft.registries.BCBlocks;
 import com.thepigcat.buildcraft.registries.BCFluids;
 import com.thepigcat.buildcraft.registries.BCItems;
@@ -29,8 +30,6 @@ public class BCEnUSLangProvider extends LanguageProvider {
 
         addBlock(BCBlocks.CRATE, "Crate");
         addBlock(BCBlocks.TANK, "Tank");
-//        addBlock(BCBlocks.COBBLESTONE_ITEM_PIPE, "Cobblestone Item Pipe");
-//        addBlock(BCBlocks.WOODEN_ITEM_PIPE, "Wooden Item Pipe");
         addBlock(BCFluids.OIL.block, "Oil");
 
         addBlock(BCBlocks.REDSTONE_ENGINE, "Redstone Engine");
@@ -40,6 +39,14 @@ public class BCEnUSLangProvider extends LanguageProvider {
         addFluidType(BCFluids.OIL.fluidType, "Oil");
 
         add("itemGroup.buildcraft.bc_tab", "Buildcraft");
+
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.IGNORED, "Ignored");
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.LOW_SIGNAL, "Low Signal");
+        addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType.HIGH_SIGNAL, "High Signal");
+    }
+
+    private void addRedstoneSignalType(RedstoneBlockEntity.RedstoneSignalType signalType, String translation) {
+        add("redstone_signal_type."+BuildcraftLegacy.MODID+"."+signalType.getSerializedName(), translation);
     }
 
     private void addFluidType(Supplier<FluidType> fluidTypeSupplier, String translation) {

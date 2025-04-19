@@ -32,7 +32,7 @@ public record SyncPipeDirectionPayload(BlockPos pos, Optional<Direction> from, O
         return TYPE;
     }
 
-    public static void sync(SyncPipeDirectionPayload payload, IPayloadContext context) {
+    public static void handle(SyncPipeDirectionPayload payload, IPayloadContext context) {
         context.enqueueWork(() -> {
             ItemPipeBE be = BlockUtils.getBE(ItemPipeBE.class, context.player().level(), payload.pos());
             if (be != null) {

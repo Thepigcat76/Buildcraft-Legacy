@@ -13,5 +13,8 @@
   "item.buildcraft.stone_gear": "Stone Gear",
   "item.buildcraft.wooden_gear": "Wooden Gear",
   "item.buildcraft.wrench": "Wrench",
-  "itemGroup.buildcraft.bc_tab": "Buildcraft"
+  "itemGroup.buildcraft.bc_tab": "Buildcraft",
+  "redstone_signal_type.buildcraft.high_signal": "High Signal",
+  "redstone_signal_type.buildcraft.ignored": "Ignored",
+  "redstone_signal_type.buildcraft.low_signal": "Low Signal"
 }
