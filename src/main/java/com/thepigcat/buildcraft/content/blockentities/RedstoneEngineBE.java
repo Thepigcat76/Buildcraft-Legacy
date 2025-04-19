@@ -34,4 +34,9 @@ public class RedstoneEngineBE extends EngineBlockEntity {
     public int emitRedstoneLevel() {
         return 0;
     }
+
+    @Override
+    public boolean isActive() {
+        return getRedstoneSignalStrength() > 0;
+    }
 }

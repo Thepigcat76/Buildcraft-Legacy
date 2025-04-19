@@ -23,6 +23,7 @@ public class RedstoneWidget extends AbstractWidget {
     public static final ResourceLocation WIDGET_OPEN_SPRITE = BuildcraftLegacy.rl("widget/redstone_widget_open");
     public static final int WIDGET_WIDTH = 32, WIDGET_HEIGHT = 32;
     public static final int WIDGET_OPEN_WIDTH = 80, WIDGET_OPEN_HEIGHT = 80;
+    public static final ItemStack REDSTONE_STACK = new ItemStack(Items.REDSTONE);
 
     private final LazyImageButton[] buttons;
     private final LazyImageButton buttonNoControl;
@@ -127,7 +128,7 @@ public class RedstoneWidget extends AbstractWidget {
 
             guiGraphics.blitSprite(WIDGET_OPEN_SPRITE, getX(), getY(), WIDGET_OPEN_WIDTH, WIDGET_OPEN_HEIGHT);
 
-            guiGraphics.renderFakeItem(new ItemStack(Items.REDSTONE), getX() + 3, getY() + 8);
+            guiGraphics.renderFakeItem(REDSTONE_STACK, getX() + 3, getY() + 8);
             guiGraphics.drawString(font, Component.literal("Redstone").withStyle(ChatFormatting.WHITE), getX() + 20, getY() + 13, -1);
 
             guiGraphics.drawString(font, Component.literal("Signal").withStyle(ChatFormatting.GRAY), getX() + 5, getY() + 54, -1);

@@ -1,8 +1,14 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
+import com.google.common.collect.ImmutableMap;
+import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.utils.IOAction;
+import com.portingdeadmods.portingdeadlibs.utils.capabilities.SidedCapUtils;
 import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
+import com.thepigcat.buildcraft.util.BlockUtils;
+import it.unimi.dsi.fastutil.Pair;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
@@ -17,6 +23,7 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.neoforged.neoforge.capabilities.BlockCapability;
 import net.neoforged.neoforge.capabilities.BlockCapabilityCache;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.common.SoundActions;
@@ -28,91 +35,81 @@ import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class TankBE extends BlockEntity {
-    private final FluidTank fluidTank;
+import java.util.Map;
 
-    private BlockCapabilityCache<IFluidHandler, Direction> bottomCache;
+public class TankBE extends ContainerBlockEntity {
+    private BlockPos bottomTankPos;
+    private boolean topJoined;
+    private boolean bottomJoined;
 
     public TankBE(BlockPos pos, BlockState blockState) {
         super(BCBlockEntities.TANK.get(), pos, blockState);
-        this.fluidTank = new FluidTank(BCConfig.tankCapacity) {
-            @Override
-            protected void onContentsChanged() {
-                super.onContentsChanged();
-                setChanged();
-                if (!level.isClientSide) {
-                    level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
-                }
-            }
-        };
-    }
-
-    public FluidTank getFluidTank() {
-        return fluidTank;
-    }
-
-    public FluidTank getFluidTank(Direction direction) {
-        return fluidTank;
+        addFluidTank(0);
     }
 
     @Override
-    public void onLoad() {
-        super.onLoad();
-        if (level instanceof ServerLevel serverLevel) {
-            this.bottomCache = BlockCapabilityCache.create(Capabilities.FluidHandler.BLOCK, serverLevel, worldPosition.below(), Direction.DOWN);
+    public IFluidHandler getFluidHandler() {
+        return this.bottomTankPos != null ? (this.bottomTankPos.equals(worldPosition) ? this.getFluidTank() : BlockUtils.getBE(TankBE.class, level, this.bottomTankPos).getFluidHandler()) : this.getFluidTank();
+    }
+
+    public void setBottomTankPos(BlockPos bottomTankPos) {
+        this.bottomTankPos = bottomTankPos;
+        update();
+    }
+
+    public void initTank(int tanks) {
+        this.getFluidTank().setCapacity(tanks * BCConfig.tankCapacity);
+        update();
+    }
+
+    public BlockPos getBottomTankPos() {
+        return bottomTankPos;
+    }
+
+    @Override
+    public <T> Map<Direction, Pair<IOAction, int[]>> getSidedInteractions(BlockCapability<T, @Nullable Direction> blockCapability) {
+        return allBoth(0);
+    }
+
+    @Override
+    protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
+        super.loadData(tag, provider);
+        this.bottomTankPos = BlockPos.of(tag.getLong("bottomTankPos"));
+    }
+
+    @Override
+    protected void saveData(CompoundTag tag, HolderLookup.Provider provider) {
+        super.saveData(tag, provider);
+        if (this.bottomTankPos != null) {
+            tag.putLong("bottomTankPos", this.bottomTankPos.asLong());
         }
-    }
-
-    public void tick() {
-        if (!level.isClientSide() && !this.fluidTank.getFluidInTank(0).isEmpty()) {
-            IFluidHandler fluidHandler = this.bottomCache.getCapability();
-            if (fluidHandler != null) {
-                FluidStack fluidStack = this.fluidTank.drain(20, IFluidHandler.FluidAction.SIMULATE);
-                int filled = fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE);
-
-                FluidStack drained = this.fluidTank.drain(filled, IFluidHandler.FluidAction.EXECUTE);
-                fluidHandler.fill(drained, IFluidHandler.FluidAction.EXECUTE);
-            }
-        }
-    }
-
-    @Override
-    protected void loadAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.loadAdditional(tag, registries);
-        this.fluidTank.readFromNBT(registries, tag.getCompound("fluidTank"));
-    }
-
-    @Override
-    protected void saveAdditional(CompoundTag tag, HolderLookup.Provider registries) {
-        super.saveAdditional(tag, registries);
-        CompoundTag fluidTankTag = new CompoundTag();
-        this.fluidTank.writeToNBT(registries, fluidTankTag);
-        tag.put("fluidTank", fluidTankTag);
-    }
-
-    @Nullable
-    @Override
-    public Packet<ClientGamePacketListener> getUpdatePacket() {
-        return ClientboundBlockEntityDataPacket.create(this);
-    }
-
-    @Override
-    public @NotNull CompoundTag getUpdateTag(HolderLookup.Provider provider) {
-        return saveWithoutMetadata(provider);
-    }
-
-    @Override
-    public void removeComponentsFromTag(CompoundTag tag) {
-        super.removeComponentsFromTag(tag);
-        tag.remove("fluidTank");
     }
 
     @Override
     public void saveToItem(ItemStack stack, HolderLookup.Provider registries) {
-        CompoundTag compoundtag = this.saveCustomOnly(registries);
-        this.removeComponentsFromTag(compoundtag);
-        BlockItem.setBlockEntityData(stack, this.getType(), compoundtag);
-        stack.applyComponents(this.collectComponents());
-        stack.set(BCDataComponents.TANK_CONTENT.get(), SimpleFluidContent.copyOf(this.fluidTank.getFluid()));
+        super.saveToItem(stack, registries);
+
+        stack.set(BCDataComponents.TANK_CONTENT.get(), SimpleFluidContent.copyOf(this.getFluidTank().getFluid()));
     }
+
+    public void setTopJoined(boolean topJoined) {
+        this.topJoined = topJoined;
+    }
+
+    public void setBottomJoined(boolean bottomJoined) {
+        this.bottomJoined = bottomJoined;
+    }
+
+    public boolean isTopJoined() {
+        return topJoined;
+    }
+
+    public boolean isBottomJoined() {
+        return bottomJoined;
+    }
+
+    public static ImmutableMap<Direction, Pair<IOAction, int[]>> allBoth(int... slots) {
+        return ImmutableMap.of(Direction.NORTH, Pair.of(IOAction.BOTH, slots), Direction.EAST, Pair.of(IOAction.BOTH, slots), Direction.SOUTH, Pair.of(IOAction.BOTH, slots), Direction.WEST, Pair.of(IOAction.BOTH, slots), Direction.UP, Pair.of(IOAction.BOTH, slots), Direction.DOWN, Pair.of(IOAction.BOTH, slots));
+    }
+
 }

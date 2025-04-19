@@ -125,10 +125,6 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity implements 
         return redstoneSignalStrength;
     }
 
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
     public boolean isActive() {
         return active;
     }

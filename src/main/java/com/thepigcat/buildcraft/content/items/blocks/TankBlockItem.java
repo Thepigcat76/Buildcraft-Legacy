@@ -1,5 +1,6 @@
 package com.thepigcat.buildcraft.content.items.blocks;
 
+import com.portingdeadmods.portingdeadlibs.api.capabilities.DynamicFluidTank;
 import com.thepigcat.buildcraft.content.blockentities.TankBE;
 import com.thepigcat.buildcraft.data.BCDataComponents;
 import com.thepigcat.buildcraft.registries.BCBlocks;
@@ -12,6 +13,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.SimpleFluidContent;
+import net.neoforged.neoforge.fluids.capability.templates.FluidTank;
 import org.jetbrains.annotations.Nullable;
 
 public class TankBlockItem extends BlockItem {
@@ -23,7 +25,7 @@ public class TankBlockItem extends BlockItem {
     protected boolean updateCustomBlockEntityTag(BlockPos pos, Level level, @Nullable Player player, ItemStack stack, BlockState state) {
         BlockEntity be = level.getBlockEntity(pos);
         if (be instanceof TankBE tankBE) {
-            tankBE.getFluidTank().setFluid(stack.getOrDefault(BCDataComponents.TANK_CONTENT, SimpleFluidContent.EMPTY).copy());
+            ((DynamicFluidTank) tankBE.getFluidHandler()).setFluid(stack.getOrDefault(BCDataComponents.TANK_CONTENT, SimpleFluidContent.EMPTY).copy());
         }
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
     }

@@ -16,31 +16,8 @@ import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
 
 public class RedstoneEngineBlock extends EngineBlock {
-    public static final BooleanProperty ACTIVE = BooleanProperty.create("active");
-
     public RedstoneEngineBlock(Properties properties) {
         super(properties);
-        registerDefaultState(defaultBlockState().setValue(ACTIVE, false));
-    }
-
-    @Override
-    protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
-        super.createBlockStateDefinition(builder.add(ACTIVE));
-    }
-
-    @Override
-    public void onNeighborChange(BlockState state, LevelReader level, BlockPos pos, BlockPos neighbor) {
-        super.onNeighborChange(state, level, pos, neighbor);
-    }
-
-    @Override
-    protected void neighborChanged(BlockState state, Level level, BlockPos pos, Block neighborBlock, BlockPos neighborPos, boolean movedByPiston) {
-        boolean flag = level.hasNeighborSignal(pos);
-        if (!this.defaultBlockState().is(neighborBlock) && flag != state.getValue(ACTIVE)) {
-            level.setBlock(pos, state.setValue(ACTIVE, flag), 2);
-            RedstoneEngineBE be = (RedstoneEngineBE) level.getBlockEntity(pos);
-            be.setActive(flag);
-        }
     }
 
     @Override
