@@ -2,6 +2,7 @@ package com.thepigcat.buildcraft.api.blocks;
 
 import com.portingdeadmods.portingdeadlibs.api.blocks.ContainerBlock;
 import com.thepigcat.buildcraft.api.blockentities.EngineBlockEntity;
+import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -52,6 +53,16 @@ public abstract class EngineBlock extends ContainerBlock {
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         BlockState state = super.getStateForPlacement(context);
         return state != null ? state.setValue(FACING, context.getClickedFace()) : null;
+    }
+
+    @Override
+    protected boolean hasAnalogOutputSignal(BlockState state) {
+        return true;
+    }
+
+    @Override
+    protected int getAnalogOutputSignal(BlockState state, Level level, BlockPos pos) {
+        return BlockUtils.getBE(EngineBlockEntity.class, level, pos).emitRedstoneLevel();
     }
 
     @Override

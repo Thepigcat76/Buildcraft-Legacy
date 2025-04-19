@@ -9,6 +9,8 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.NbtOps;
+import net.minecraft.nbt.Tag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -20,8 +22,10 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
-public abstract class EngineBlockEntity extends ContainerBlockEntity {
+public abstract class EngineBlockEntity extends ContainerBlockEntity implements RedstoneBlockEntity {
+    private RedstoneSignalType redstoneSignalType;
     private BlockCapabilityCache<IEnergyStorage, Direction> exportCache;
     private CompoundTag movementData;
     protected boolean active;
@@ -33,7 +37,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
 
     public EngineBlockEntity(BlockEntityType<?> blockEntityType, BlockPos blockPos, BlockState blockState) {
         super(blockEntityType, blockPos, blockState);
-        addEnergyStorage(1000);
+        addEnergyStorage(getEnergyCapacity());
         this.movement = 0.5f;
         this.sidedInteractions = new HashMap<>();
         Direction facing = getBlockState().getValue(EngineBlock.FACING);
@@ -42,7 +46,12 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
                 this.sidedInteractions.put(dir, Pair.of(IOAction.INSERT, new int[]{0}));
             }
         }
+        this.redstoneSignalType = RedstoneSignalType.IGNORED;
     }
+
+    public abstract int getEnergyCapacity();
+
+    public abstract int getEnergyProduction();
 
     @Override
     public void onLoad() {
@@ -97,6 +106,16 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
         }
     }
 
+    @Override
+    public void setRedstoneSignalType(RedstoneSignalType redstoneSignalType) {
+        this.redstoneSignalType = redstoneSignalType;
+    }
+
+    @Override
+    public RedstoneSignalType getRedstoneSignalType() {
+        return redstoneSignalType;
+    }
+
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -111,7 +130,6 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
         if (capability == Capabilities.EnergyStorage.BLOCK) {
             return Map.of(facing, Pair.of(IOAction.EXTRACT, new int[0]));
         }
-        BuildcraftLegacy.LOGGER.debug("Sided interactions: {}", sidedInteractions);
         return sidedInteractions;
     }
 
@@ -119,6 +137,7 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
     protected void loadData(CompoundTag tag, HolderLookup.Provider provider) {
         this.movementData = tag.getCompound("movementData");
         this.active = tag.getBoolean("active");
+        this.redstoneSignalType = RedstoneSignalType.CODEC.decode(NbtOps.INSTANCE, tag.get("redstone_signal")).result().orElse(com.mojang.datafixers.util.Pair.of(RedstoneSignalType.IGNORED, new CompoundTag())).getFirst();
     }
 
     @Override
@@ -129,5 +148,9 @@ public abstract class EngineBlockEntity extends ContainerBlockEntity {
         movementData.putFloat("lastMovement", lastMovement);
         tag.put("movementData", movementData);
         tag.putBoolean("active", active);
+        Optional<Tag> tag1 = RedstoneSignalType.CODEC.encodeStart(NbtOps.INSTANCE, this.redstoneSignalType).result();
+        tag1.ifPresent(value -> {
+            tag.put("redstone_signal", value);
+        });
     }
 }

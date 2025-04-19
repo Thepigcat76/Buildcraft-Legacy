@@ -4,6 +4,7 @@ import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntit
 import com.portingdeadmods.portingdeadlibs.api.client.screens.PDLAbstractContainerScreen;
 import com.portingdeadmods.portingdeadlibs.api.gui.utils.FluidTankRenderer;
 import com.thepigcat.buildcraft.BuildcraftLegacy;
+import com.thepigcat.buildcraft.client.screens.widgets.RedstoneWidget;
 import com.thepigcat.buildcraft.content.menus.CombustionEngineMenu;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.client.Minecraft;
@@ -30,6 +31,8 @@ public class CombustionEngineScreen extends PDLAbstractContainerScreen<Combustio
         super.init();
         ContainerBlockEntity blockEntity = this.getMenu().getBlockEntity();
         this.fluidTankRenderer = new FluidTankRenderer(CapabilityUtils.fluidHandlerCapability(blockEntity).getTankCapacity(0), true, 18, 18);
+
+        addRenderableWidget(new RedstoneWidget(this.leftPos + this.imageWidth, this.topPos + 2, 32, 32));
     }
 
     @Override

@@ -3,10 +3,7 @@
 package com.thepigcat.buildcraft;
 
 import com.google.common.base.Stopwatch;
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
 import com.thepigcat.buildcraft.api.pipes.Pipe;
 import com.thepigcat.buildcraft.api.pipes.PipeHolder;
 import com.thepigcat.buildcraft.registries.BCPipes;
@@ -22,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public final class PipesRegistry {
     public static final Map<String, Pipe> PIPES = new HashMap<>();
-    private static final Gson GSON = new Gson();
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
     private static boolean isErrored = false;
 
     public static void writeDefaultPipeFiles() {

@@ -1,10 +1,12 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
+import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.api.blockentities.EngineBlockEntity;
 import com.thepigcat.buildcraft.content.menus.StirlingEngineMenu;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.util.CapabilityUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -16,6 +18,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.neoforge.items.IItemHandler;
+import net.neoforged.neoforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -34,6 +37,16 @@ public class StirlingEngineBE extends EngineBlockEntity implements MenuProvider 
 
     public int getBurnProgress() {
         return burnProgress;
+    }
+
+    @Override
+    public int getEnergyCapacity() {
+        return BCConfig.stirlingEngineEnergyCapacity;
+    }
+
+    @Override
+    public int getEnergyProduction() {
+        return BCConfig.stirlingEngineEnergyProduction;
     }
 
     @Override
@@ -98,5 +111,10 @@ public class StirlingEngineBE extends EngineBlockEntity implements MenuProvider 
         super.saveData(tag, provider);
         tag.putInt("burnProgress", burnProgress);
         tag.putInt("burnTime", burnTime);
+    }
+
+    @Override
+    public int emitRedstoneLevel() {
+        return ItemHandlerHelper.calcRedstoneFromInventory(getItemHandler());
     }
 }

@@ -79,6 +79,7 @@ public class CombustionEngineBlock extends EngineBlock {
             }
         } else {
             player.openMenu(be, pos);
+            return ItemInteractionResult.SUCCESS;
         }
         return ItemInteractionResult.FAIL;
     }

@@ -1,5 +1,6 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
+import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.api.capabilties.JumboItemHandler;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import net.minecraft.core.BlockPos;
@@ -21,7 +22,7 @@ public class CrateBE extends BlockEntity {
 
     public CrateBE(BlockPos pos, BlockState blockState) {
         super(BCBlockEntities.CRATE.get(), pos, blockState);
-        this.itemHandler = new JumboItemHandler(4096) {
+        this.itemHandler = new JumboItemHandler(BCConfig.crateItems) {
             @Override
             public boolean isItemValid(int slot, ItemStack stack) {
                 ItemStack stackInSlot = getStackInSlot(slot);

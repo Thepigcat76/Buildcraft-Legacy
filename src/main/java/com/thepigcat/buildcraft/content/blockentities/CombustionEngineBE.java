@@ -1,10 +1,13 @@
 package com.thepigcat.buildcraft.content.blockentities;
 
+import com.thepigcat.buildcraft.BCConfig;
 import com.thepigcat.buildcraft.api.blockentities.EngineBlockEntity;
 import com.thepigcat.buildcraft.content.menus.CombustionEngineMenu;
 import com.thepigcat.buildcraft.registries.BCBlockEntities;
 import com.thepigcat.buildcraft.tags.BCTags;
+import com.thepigcat.buildcraft.util.BlockUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -22,7 +25,7 @@ public class CombustionEngineBE extends EngineBlockEntity implements MenuProvide
 
     public CombustionEngineBE(BlockPos blockPos, BlockState blockState) {
         super(BCBlockEntities.COMBUSTION_ENGINE.get(), blockPos, blockState);
-        addFluidTank(1000, fluidStack -> fluidStack.is(BCTags.Fluids.COMBUSTION_FUEL));
+        addFluidTank(BCConfig.combustionEngineFluidCapacity, fluidStack -> fluidStack.is(BCTags.Fluids.COMBUSTION_FUEL));
     }
 
     @Override
@@ -32,7 +35,7 @@ public class CombustionEngineBE extends EngineBlockEntity implements MenuProvide
         if (!fluidHandler.getFluidInTank(0).isEmpty()) {
             burnProgress++;
             if (!level.isClientSide()) {
-                getEnergyStorage().receiveEnergy(1, false);
+                getEnergyStorage().receiveEnergy(getEnergyProduction(), false);
                 if (burnProgress % 3 == 0) {
                     fluidHandler.drain(1, IFluidHandler.FluidAction.EXECUTE);
                 }
@@ -43,12 +46,27 @@ public class CombustionEngineBE extends EngineBlockEntity implements MenuProvide
     }
 
     @Override
+    public int getEnergyCapacity() {
+        return BCConfig.combustionEngineEnergyCapacity;
+    }
+
+    @Override
+    public int getEnergyProduction() {
+        return BCConfig.combustionEngineEnergyProduction;
+    }
+
+    @Override
     public boolean isActive() {
         return burnProgress > 0;
     }
 
     public int getBurnProgress() {
         return burnProgress;
+    }
+
+    @Override
+    public int emitRedstoneLevel() {
+        return BlockUtils.calcRedstoneFromTank(getFluidHandler());
     }
 
     @Override
