@@ -37,10 +37,12 @@ public class TankBERenderer implements BlockEntityRenderer<TankBE> {
             renderTankContents(fluidStack, fluidAmount, BCConfig.tankCapacity, poseStack, bufferSource, combinedLight, entity.isBottomJoined(), entity.isTopJoined()
                     && fluidAmount == BCConfig.tankCapacity
                     && nextFluidAmount > 0);
+
+            renderErrorBlock(poseStack, entity.getBottomTankPos().subtract(entity.getBlockPos()), bufferSource);
         }
     }
 
-    private static void renderErrorBlock(PoseStack poseStack, BlockPos blockPos, double camX, double camY, double camZ, MultiBufferSource bufferSource) {
+    private static void renderErrorBlock(PoseStack poseStack, BlockPos blockPos, MultiBufferSource bufferSource) {
         poseStack.pushPose();
         int r = 255;
         int g = 0;

@@ -184,6 +184,54 @@ public class TankBlock extends ContainerBlock {
     }
 
     @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            if (state.getValue(TOP_JOINED) && state.getValue(BOTTOM_JOINED)) {
+                splitTank(level, pos);
+            } else if (state.getValue(TOP_JOINED) && !state.getValue(BOTTOM_JOINED)) {
+                moveFluidsAbove(level, pos);
+            } else if (!state.getValue(TOP_JOINED) && state.getValue(BOTTOM_JOINED)) {
+                removeFluidFromBottomTank(level, pos);
+            }
+        }
+        super.onRemove(state, level, pos, newState, movedByPiston);
+    }
+
+    private static void removeFluidFromBottomTank(Level level, BlockPos pos) {
+        TankBE removedTank = BlockUtils.getBE(TankBE.class, level, pos);
+        FluidStack fluidStack = removedTank.getFluidHandler().getFluidInTank(0);
+        int tank = removedTank.getBlockPos().getY() - removedTank.getBottomTankPos().getY();
+        int prevFluidAmount = tank * BCConfig.tankCapacity;
+        int fluidAmount = Math.min(fluidStack.getAmount() - prevFluidAmount, BCConfig.tankCapacity);
+        removedTank.getFluidHandler().drain(fluidAmount, IFluidHandler.FluidAction.EXECUTE);
+    }
+
+    private static void moveFluidsAbove(Level level, BlockPos pos) {
+        TankBE removedTank = BlockUtils.getBE(TankBE.class, level, pos);
+        TankBE aboveTank = BlockUtils.getBE(TankBE.class, level, pos.above());
+        FluidStack fluidInTank = removedTank.getFluidTank().getFluidInTank(0);
+        int amount = Math.max(fluidInTank.getAmount() - BCConfig.tankCapacity, 0);
+        aboveTank.initialFluid = fluidInTank.copyWithAmount(amount);
+    }
+
+    private static void splitTank(Level level, BlockPos pos) {
+        TankBE removedTank = BlockUtils.getBE(TankBE.class, level, pos);
+        FluidStack fluidStack = removedTank.getFluidHandler().getFluidInTank(0);
+        int tank = removedTank.getBlockPos().getY() - removedTank.getBottomTankPos().getY();
+
+        TankBE topTank = BlockUtils.getBE(TankBE.class, level, pos.above());
+        int topFluidAmount = Math.max(fluidStack.getAmount() - ((tank + 1) * BCConfig.tankCapacity), 0);
+        topTank.initialFluid = fluidStack.copyWithAmount(topFluidAmount);
+
+        int prevFluidAmount = tank * BCConfig.tankCapacity;
+        int fluidAmount = Math.min(fluidStack.getAmount() - prevFluidAmount, BCConfig.tankCapacity);
+        BlockPos bottomTankPos = removedTank.getBottomTankPos();
+
+        TankBE bottomTank = BlockUtils.getBE(TankBE.class, level, bottomTankPos);
+        bottomTank.initialFluid = removedTank.getFluidHandler().getFluidInTank(0).copyWithAmount(fluidStack.getAmount() - topFluidAmount - fluidAmount);
+    }
+
+    @Override
     protected @NotNull VoxelShape getShape(BlockState state, BlockGetter level, BlockPos pos, CollisionContext context) {
         return SHAPE;
     }

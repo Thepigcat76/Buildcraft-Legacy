@@ -2,6 +2,7 @@ package com.thepigcat.buildcraft.content.blockentities;
 
 import com.google.common.collect.ImmutableMap;
 import com.portingdeadmods.portingdeadlibs.api.blockentities.ContainerBlockEntity;
+import com.portingdeadmods.portingdeadlibs.api.capabilities.DynamicFluidTank;
 import com.portingdeadmods.portingdeadlibs.api.utils.IOAction;
 import com.portingdeadmods.portingdeadlibs.utils.capabilities.SidedCapUtils;
 import com.thepigcat.buildcraft.BCConfig;
@@ -41,6 +42,7 @@ public class TankBE extends ContainerBlockEntity {
     private BlockPos bottomTankPos;
     private boolean topJoined;
     private boolean bottomJoined;
+    public FluidStack initialFluid;
 
     public TankBE(BlockPos pos, BlockState blockState) {
         super(BCBlockEntities.TANK.get(), pos, blockState);
@@ -48,8 +50,26 @@ public class TankBE extends ContainerBlockEntity {
     }
 
     @Override
+    public DynamicFluidTank getFluidTank() {
+        return super.getFluidTank();
+    }
+
+    @Override
     public IFluidHandler getFluidHandler() {
-        return this.bottomTankPos != null ? (this.bottomTankPos.equals(worldPosition) ? this.getFluidTank() : BlockUtils.getBE(TankBE.class, level, this.bottomTankPos).getFluidHandler()) : this.getFluidTank();
+        if (this.bottomTankPos != null) {
+            if (this.bottomTankPos.equals(worldPosition)) {
+                return (this.getFluidTank());
+            } else {
+                TankBE tankBE = BlockUtils.getBE(TankBE.class, level, this.bottomTankPos);
+                if (tankBE != null) {
+                    return (tankBE.getFluidHandler());
+                } else {
+                    return this.getFluidTank();
+                }
+            }
+        } else {
+            return this.getFluidTank();
+        }
     }
 
     public void setBottomTankPos(BlockPos bottomTankPos) {
@@ -59,6 +79,9 @@ public class TankBE extends ContainerBlockEntity {
 
     public void initTank(int tanks) {
         this.getFluidTank().setCapacity(tanks * BCConfig.tankCapacity);
+        if (this.initialFluid != null) {
+            this.getFluidTank().setFluid(this.initialFluid);
+        }
         update();
     }
 
