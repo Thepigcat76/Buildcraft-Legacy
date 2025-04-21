@@ -49,6 +49,10 @@ public class TankBE extends ContainerBlockEntity {
         addFluidTank(0);
     }
 
+    public FluidStack getFluid() {
+        return getFluidHandler().getFluidInTank(0);
+    }
+
     @Override
     public DynamicFluidTank getFluidTank() {
         return super.getFluidTank();
@@ -81,6 +85,7 @@ public class TankBE extends ContainerBlockEntity {
         this.getFluidTank().setCapacity(tanks * BCConfig.tankCapacity);
         if (this.initialFluid != null) {
             this.getFluidTank().setFluid(this.initialFluid);
+            this.initialFluid = null;
         }
         update();
     }

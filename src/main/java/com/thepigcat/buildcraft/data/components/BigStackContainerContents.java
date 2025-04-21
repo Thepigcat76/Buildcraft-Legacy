@@ -169,14 +169,7 @@ public class BigStackContainerContents {
     }
 
     public BigStack getStackInSlot(int slot) {
-        this.validateSlotIndex(slot);
         return this.items.get(slot).copy();
-    }
-
-    private void validateSlotIndex(int slot) {
-        if (slot < 0 || slot >= this.getSlots()) {
-            throw new UnsupportedOperationException("Slot " + slot + " not in valid range - [0," + this.getSlots() + ")");
-        }
     }
 
     record Slot(int index, BigStack item) {

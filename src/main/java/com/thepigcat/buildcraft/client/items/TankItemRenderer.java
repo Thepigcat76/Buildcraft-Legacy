@@ -11,6 +11,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.neoforged.neoforge.fluids.FluidStack;
+import net.neoforged.neoforge.fluids.SimpleFluidContent;
 
 public class TankItemRenderer extends BlockEntityWithoutLevelRenderer {
     public TankItemRenderer() {
@@ -20,7 +21,7 @@ public class TankItemRenderer extends BlockEntityWithoutLevelRenderer {
     @Override
     public void renderByItem(ItemStack stack, ItemDisplayContext displayContext, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int packedOverlay) {
         super.renderByItem(stack, displayContext, poseStack, buffer, packedLight, packedOverlay);
-        FluidStack fluidStack = stack.get(BCDataComponents.TANK_CONTENT).copy();
+        FluidStack fluidStack = stack.getOrDefault(BCDataComponents.TANK_CONTENT, SimpleFluidContent.EMPTY).copy();
         if (!fluidStack.isEmpty()) {
             TankBERenderer.renderTankContents(fluidStack, fluidStack.getAmount(), BCConfig.tankCapacity, poseStack, buffer, packedLight, false, false);
         }

@@ -38,7 +38,7 @@ public class TankBERenderer implements BlockEntityRenderer<TankBE> {
                     && fluidAmount == BCConfig.tankCapacity
                     && nextFluidAmount > 0);
 
-            renderErrorBlock(poseStack, entity.getBottomTankPos().subtract(entity.getBlockPos()), bufferSource);
+            //renderErrorBlock(poseStack, entity.getBottomTankPos().subtract(entity.getBlockPos()), bufferSource);
         }
     }
 

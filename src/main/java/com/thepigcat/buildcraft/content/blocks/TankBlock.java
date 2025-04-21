@@ -25,6 +25,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
@@ -35,9 +36,11 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BooleanProperty;
+import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.capabilities.Capabilities;
@@ -136,19 +139,39 @@ public class TankBlock extends ContainerBlock {
         BlockState state = super.getStateForPlacement(context);
         Level level = context.getLevel();
         BlockPos clickedPos = context.getClickedPos();
-        boolean topJoined = level.getBlockState(clickedPos.above()).is(this);
-        boolean bottomJoined = level.getBlockState(clickedPos.below()).is(this);
+        FluidStack itemTankFluid = context.getItemInHand().getOrDefault(BCDataComponents.TANK_CONTENT, SimpleFluidContent.EMPTY).copy();
+        boolean topJoined = level.getBlockEntity(clickedPos.above()) instanceof TankBE tankBE && (tankBE.getFluid().is(itemTankFluid.getFluid()) || tankBE.getFluid().isEmpty() || itemTankFluid.isEmpty());
+        boolean bottomJoined = level.getBlockEntity(clickedPos.below()) instanceof TankBE tankBE && (tankBE.getFluid().is(itemTankFluid.getFluid()) || tankBE.getFluid().isEmpty() || itemTankFluid.isEmpty());
+
+        if (topJoined && bottomJoined) {
+            TankBE aboveTank = BlockUtils.getBE(TankBE.class, level, clickedPos.above());
+            TankBE belowTank = BlockUtils.getBE(TankBE.class, level, clickedPos.below());
+            if (!aboveTank.getFluid().is(belowTank.getFluid().getFluid()) || !aboveTank.getFluid().is(itemTankFluid.getFluid())) {
+                topJoined = false;
+            }
+
+        }
+
         return state != null ? state.setValue(TOP_JOINED, topJoined).setValue(BOTTOM_JOINED, bottomJoined) : null;
     }
 
     @Override
     protected @NotNull BlockState updateShape(BlockState state, Direction direction, BlockState neighborState, LevelAccessor level, BlockPos pos, BlockPos neighborPos) {
         TankBE tankBE = BlockUtils.getBE(TankBE.class, level, pos);
+        FluidStack fluidInTank = tankBE.getFluidHandler().getFluidInTank(0);
         boolean value = neighborState.is(this);
         if (direction == Direction.UP) {
+            if (value) {
+                FluidStack fluidInTank1 = BlockUtils.getBE(TankBE.class, level, pos.above()).getFluidHandler().getFluidInTank(0);
+                value = fluidInTank1.is(fluidInTank.getFluid()) || fluidInTank.isEmpty() || fluidInTank1.isEmpty();
+            }
             tankBE.setTopJoined(value);
             return state.setValue(TOP_JOINED, value);
         } else if (direction == Direction.DOWN) {
+            if (value) {
+                FluidStack fluidInTank1 = BlockUtils.getBE(TankBE.class, level, pos.below()).getFluidHandler().getFluidInTank(0);
+                value = fluidInTank1.is(fluidInTank.getFluid()) || fluidInTank.isEmpty() || fluidInTank1.isEmpty();
+            }
             tankBE.setBottomJoined(value);
             return state.setValue(BOTTOM_JOINED, value);
         }
@@ -159,28 +182,64 @@ public class TankBlock extends ContainerBlock {
     protected void onPlace(BlockState state, Level level, BlockPos pos, BlockState oldState, boolean movedByPiston) {
         super.onPlace(state, level, pos, oldState, movedByPiston);
 
+        int aboveFluidAmount = 0;
+        if (state.getValue(TOP_JOINED)) {
+            TankBE aboveTank = BlockUtils.getBE(TankBE.class, level, pos.above());
+            aboveFluidAmount = aboveTank.getFluidHandler().getFluidInTank(0).getAmount();
+        }
+
         TankBE tankBE = BlockUtils.getBE(TankBE.class, level, pos);
+        FluidStack baseFluidCopy = tankBE.getFluidTank().getFluid().copy();
+        int baseFluidAmount = tankBE.getFluidTank().getFluid().getAmount();
         tankBE.setTopJoined(state.getValue(TOP_JOINED));
         tankBE.setBottomJoined(state.getValue(BOTTOM_JOINED));
         if (!state.getValue(BOTTOM_JOINED) && !state.getValue(TOP_JOINED)) {
             tankBE.setBottomTankPos(pos);
+            tankBE.initTank(1);
+            return;
         }
 
         BlockPos bottomPos = pos;
         if (state.getValue(BOTTOM_JOINED)) {
-            while (level.getBlockState(bottomPos.below()).is(this)) {
+            while (level.getBlockState(bottomPos).getValue(BOTTOM_JOINED)) {
                 bottomPos = bottomPos.below();
             }
         }
 
         BlockPos curPos = bottomPos;
-        while (level.getBlockState(curPos).is(this)) {
+        while (level.getBlockState(curPos).getValue(TOP_JOINED)) {
             BlockUtils.getBE(TankBE.class, level, curPos).setBottomTankPos(bottomPos);
             curPos = curPos.above();
         }
-        BlockPos topPos = curPos.below();
+        BlockUtils.getBE(TankBE.class, level, curPos).setBottomTankPos(bottomPos);
+        BlockPos topPos = curPos;
         int yDiff = topPos.getY() - bottomPos.getY();
-        BlockUtils.getBE(TankBE.class, level, bottomPos).initTank(yDiff + 1);
+
+        TankBE bottomTankBe = BlockUtils.getBE(TankBE.class, level, bottomPos);
+        if (!state.is(oldState.getBlock()) && state.getValue(TOP_JOINED) && state.getValue(BOTTOM_JOINED)) {
+            FluidStack fluidInTank = bottomTankBe.getFluidHandler().getFluidInTank(0);
+            int amount = fluidInTank.getAmount();
+            if (fluidInTank.isEmpty()) {
+                fluidInTank = baseFluidCopy;
+            }
+            bottomTankBe.initialFluid = fluidInTank.copyWithAmount(amount + aboveFluidAmount + baseFluidAmount);
+        } else if (!state.is(oldState.getBlock()) && state.getValue(TOP_JOINED) && !state.getValue(BOTTOM_JOINED)) {
+            FluidStack fluidInTank = BlockUtils.getBE(TankBE.class, level, pos.above()).getFluidTank().getFluidInTank(0);
+            int amount = fluidInTank.getAmount();
+            if (fluidInTank.isEmpty()) {
+                fluidInTank = baseFluidCopy;
+            }
+            bottomTankBe.initialFluid = fluidInTank.copyWithAmount(amount + baseFluidAmount);
+        } else if (!state.is(oldState.getBlock()) && !state.getValue(TOP_JOINED) && state.getValue(BOTTOM_JOINED)) {
+            FluidStack fluidInTank = bottomTankBe.getFluidTank().getFluidInTank(0);
+            int amount = fluidInTank.getAmount();
+            if (fluidInTank.isEmpty()) {
+                fluidInTank = baseFluidCopy;
+            }
+            bottomTankBe.initialFluid = fluidInTank.copyWithAmount(amount + baseFluidAmount);
+        }
+
+        bottomTankBe.initTank(yDiff + 1);
     }
 
     @Override
@@ -240,11 +299,16 @@ public class TankBlock extends ContainerBlock {
     protected @NotNull List<ItemStack> getDrops(BlockState state, LootParams.Builder params) {
         if (params.getOptionalParameter(LootContextParams.BLOCK_ENTITY) instanceof TankBE be && BCConfig.tankRetainFluids) {
             ItemStack stack = new ItemStack(this);
-            if (!be.getFluidHandler().getFluidInTank(0).isEmpty()) {
-                stack.set(BCDataComponents.TANK_CONTENT, SimpleFluidContent.copyOf(be.getFluidHandler().getFluidInTank(0)));
+            FluidStack fluidStack = be.getFluidHandler().getFluidInTank(0);
+            int tank = be.getBlockPos().getY() - be.getBottomTankPos().getY();
+            int prevFluidAmount = tank * BCConfig.tankCapacity;
+            int fluidAmount = Math.min(fluidStack.getAmount() - prevFluidAmount, BCConfig.tankCapacity);
+            if (fluidAmount >= 0) {
+                stack.set(BCDataComponents.TANK_CONTENT, SimpleFluidContent.copyOf(be.getFluidHandler().getFluidInTank(0).copyWithAmount(fluidAmount)));
             }
             return List.of(stack);
         }
         return super.getDrops(state, params);
     }
+
 }
